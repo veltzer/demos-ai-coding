@@ -1,4 +1,4 @@
-# Exercise 7: Code Review and Bug Detection with Copilot
+# Code Review and Bug Detection with Copilot
 
 ## Learning Objective
 Learn how GitHub Copilot can identify subtle bugs, security issues, and code quality problems that might be missed in manual reviews. This exercise focuses on signal safety and memory management issues.
