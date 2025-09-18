@@ -1,8 +1,0 @@
-{
-  "github.copilot.chat.mcp.servers": {
-    "math-service": {
-      "command": "node",
-      "args": ["/home/mark/tmp/math-mcp-service.js"]
-    }
-  }
-}
