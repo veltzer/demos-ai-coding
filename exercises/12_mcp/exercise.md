@@ -8,13 +8,13 @@ MCP (Model Context Protocol) allows AI assistants like GitHub Copilot to interac
 
 ## Setup Instructions
 
-### 1. Install Dependencies
+### 1. Install Dependencies after getting the `package.json` file
 
 ```bash
 npm install
 ```
 
-### 2. Test the MCP Service
+### 2. Test the MCP Service after getting the code for the mcp service `math-mcp-service.js`
 
 First, let's verify the service works:
 
