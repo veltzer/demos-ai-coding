@@ -1,9 +1,9 @@
 {
 	"servers": {
 		"math-service": {
-		"type": "stdio",
-		"command": "/home/mark/git/veltzer/demos-ai-coding/exercises/12_mcp/math-mcp-service.js",
-		"args": []
+			"type": "stdio",
+			"command": "/home/mark/git/veltzer/demos-ai-coding/exercises/12_mcp/math-mcp-service.js",
+			"args": []
 		}
 	}
 }
