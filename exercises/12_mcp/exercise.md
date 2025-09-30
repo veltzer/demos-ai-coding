@@ -30,9 +30,7 @@ Press `Ctrl+C` to stop it.
 
 Create or edit your VS Code settings to include the MCP service:
 
-1. Open VS Code Settings (JSON) by pressing `Ctrl+Shift+P` and typing "Preferences: Open User Settings (JSON)"
-
-2. Add this configuration to your settings.json:
+1. Write this snipplet into `~/.config/mcp/my_mcp.json`:
 
 ```json
 {
