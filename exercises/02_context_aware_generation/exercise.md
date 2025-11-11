@@ -5,9 +5,9 @@ Learn how Copilot uses existing code context to generate relevant and consistent
 
 ## Instructions
 1. Create a new Python file called `todo_app.py`
-2. Start by defining a data structure for todos
-3. Implement a few functions, then let Copilot suggest similar ones
-4. Observe how Copilot maintains consistency with your existing code style
+1. Start by defining a data structure for todos
+1. Implement a few functions, then let Copilot suggest similar ones
+1. Observe how Copilot maintains consistency with your existing code style
 
 ## Your Task
 Build a simple todo list manager. Start with this foundation:

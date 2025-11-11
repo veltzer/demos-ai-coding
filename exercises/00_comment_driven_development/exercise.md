@@ -5,9 +5,9 @@ Learn how to use descriptive comments to guide Copilot in generating the code yo
 
 ## Instructions
 1. Create a new Python file called `calculator.py`
-2. Write detailed comments describing what you want the code to do
-3. Let Copilot suggest the implementation based on your comments
-4. Accept or modify the suggestions as needed
+1. Write detailed comments describing what you want the code to do
+1. Let Copilot suggest the implementation based on your comments
+1. Accept or modify the suggestions as needed
 
 ## Your Task
 Write comments and let Copilot generate code for a simple calculator that can:

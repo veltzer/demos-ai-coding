@@ -5,9 +5,9 @@ Learn to use Copilot Chat for code explanations, debugging, and optimization sug
 
 ## Instructions
 1. Create a new Python file called `data_processor.py`
-2. Write the initial code provided below
-3. Use Copilot Chat to understand, improve, and extend the code
-4. Practice asking specific questions about the code
+1. Write the initial code provided below
+1. Use Copilot Chat to understand, improve, and extend the code
+1. Practice asking specific questions about the code
 
 ## Your Task
 Start with this code that processes a list of student grades:
@@ -18,7 +18,7 @@ def process_grades(grades):
     count = 0
     high = 0
     low = 100
-    
+
     for grade in grades:
         if grade >= 0 and grade <= 100:
             total += grade
@@ -27,7 +27,7 @@ def process_grades(grades):
                 high = grade
             if grade < low:
                 low = grade
-    
+
     if count > 0:
         average = total / count
         return {

@@ -54,24 +54,25 @@ After adding the configuration, restart VS Code completely to load the MCP servi
 ### Method 1: GitHub Copilot Chat
 
 1. Open GitHub Copilot Chat (`Ctrl+Shift+I` or click the chat icon)
-2. Try these prompts:
+1. Try these prompts:
 
-```
+```txt
 Can you add 15 and 27 for me?
 ```
 
-```
+```txt
 What's 8 multiplied by 12?
 ```
 
-```
+```txt
 Tell me a random math fact
 ```
 
 ### Method 2: Check MCP Connection
 
 1. In Copilot Chat, type:
-```
+
+```txt
 What MCP tools do you have access to?
 ```
 
@@ -99,7 +100,7 @@ The MCP service provides three tools:
 
 ### Debugging
 To see if your MCP service is running, you can check the VS Code Output panel:
-1. Go to View → Output
+1. Go to View -> Output
 2. Select "GitHub Copilot" from the dropdown
 3. Look for messages about MCP services
 
@@ -111,7 +112,7 @@ Here's what a successful interaction looks like:
 
 **Copilot**: I'll use the math service to add those numbers for you.
 
-*[Copilot calls the add tool]*
+[Copilot calls the add tool]
 
 **Copilot**: 42 + 58 = 100
 

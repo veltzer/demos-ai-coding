@@ -5,9 +5,9 @@ Learn how Copilot can help you discover and implement common coding patterns and
 
 ## Instructions
 1. Create a new Python file called `file_manager.py`
-2. Implement file operations using different approaches
-3. Let Copilot suggest improvements and alternative patterns
-4. Compare different implementations
+1. Implement file operations using different approaches
+1. Let Copilot suggest improvements and alternative patterns
+1. Compare different implementations
 
 ## Your Task
 
@@ -58,13 +58,13 @@ import json
 class ConfigManager:
     def __init__(self, config_file):
         # Let Copilot suggest the initialization
-        
+
     def get(self, key, default=None):
         # Let Copilot suggest how to get configuration values
-        
+
     def update(self, key, value):
         # Let Copilot suggest how to update configuration
-        
+
     def save(self):
         # Let Copilot suggest how to save changes back to file
 ```
@@ -99,19 +99,22 @@ for filename in test_files:
 Ask Copilot to help you implement:
 
 1. **Async File Operations**
+
 ```python
 # Async function to read file without blocking
 async def read_file_async(filename):
 ```
 
-2. **File Watcher Pattern**
+1. **File Watcher Pattern**
+
 ```python
 # Class that watches a file for changes
 class FileWatcher:
     def __init__(self, filename, callback):
 ```
 
-3. **Batch File Processor**
+1. **Batch File Processor**
+
 ```python
 # Function to process multiple files with progress tracking
 def process_files_batch(file_list, processor_function):
@@ -120,6 +123,6 @@ def process_files_batch(file_list, processor_function):
 ## Reflection Questions
 After completing this exercise, consider:
 1. Which file reading pattern do you prefer and why?
-2. How did Copilot's suggestions differ from what you might have written?
-3. What new Python patterns did you discover?
-4. When would you use each error handling approach?
+1. How did Copilot's suggestions differ from what you might have written?
+1. What new Python patterns did you discover?
+1. When would you use each error handling approach?

@@ -5,10 +5,10 @@ Learn how to iteratively improve code design using GitHub Copilot, implementing 
 
 ## Instructions
 1. Create a new Python file called `word_counter.py`
-2. Start with a basic implementation
-3. Use Copilot to iteratively add features
-4. Learn how to guide Copilot through design improvements
-5. Test each iteration to understand the improvements
+1. Start with a basic implementation
+1. Use Copilot to iteratively add features
+1. Learn how to guide Copilot through design improvements
+1. Test each iteration to understand the improvements
 
 ## Your Task
 
@@ -27,19 +27,20 @@ import sys
 def count_words_in_file(filepath):
     """Count the number of words in a file."""
     # Let Copilot implement basic word counting
-    
+
 def main():
     """Main function to process command line arguments."""
     if len(sys.argv) < 2:
         print("Usage: word_counter.py <file1> [file2] [file3] ...")
         sys.exit(1)
-    
+
     # Process each file from command line
     # Let Copilot complete the implementation
 ```
 
 Expected output format:
-```
+
+```txt
 [file1.txt] 1234 words
 [file2.txt] 5678 words
 [file3.txt] 910 words
@@ -59,13 +60,13 @@ class WordCounter:
         self.cache = {}  # Simple dictionary cache
         self.cache_hits = 0
         self.cache_misses = 0
-    
+
     def count_words_cached(self, filepath):
         """Count words with in-memory caching."""
         # Check if file is in cache
         # Let Copilot implement caching logic
         # Should only count words once per file
-        
+
     def print_cache_stats(self):
         """Print cache hit/miss statistics."""
         # Let Copilot implement cache statistics
@@ -81,19 +82,19 @@ from datetime import datetime
 
 class PersistentWordCounter(WordCounter):
     CACHE_FILE = ".word_count_cache.json"
-    
+
     def __init__(self):
         super().__init__()
         self.persistent_cache = self.load_cache()
-    
+
     def load_cache(self):
         """Load cache from disk."""
         # Let Copilot implement cache loading
-        
+
     def save_cache(self):
         """Save cache to disk."""
         # Let Copilot implement cache saving
-        
+
     def get_file_signature(self, filepath):
         """Generate a signature for file to detect changes."""
         # IMPORTANT: How do we know if file changed?
@@ -120,11 +121,11 @@ class AdvancedWordCounter(PersistentWordCounter):
     def __init__(self, num_threads=4):
         super().__init__()
         self.num_threads = num_threads
-        
+
     def count_words_parallel(self, filepaths):
         """Process multiple files in parallel."""
         # Let Copilot implement parallel processing
-        
+
     def export_results(self, results, format='json'):
         """Export results to different formats."""
         # Let Copilot implement export functionality
@@ -200,13 +201,13 @@ Implement different caching strategies:
 ```python
 class CacheStrategy:
     """Base class for cache strategies."""
-    
+
 class LRUCacheStrategy(CacheStrategy):
     """Least Recently Used cache eviction."""
-    
+
 class TTLCacheStrategy(CacheStrategy):
     """Time-To-Live based cache expiration."""
-    
+
 class SizeLimitedCache(CacheStrategy):
     """Cache with size limits."""
 ```
@@ -219,11 +220,11 @@ cache:
   type: persistent
   max_size: 100MB
   ttl: 3600  # seconds
-  
+
 processing:
   parallel: true
   threads: 8
-  
+
 output:
   format: json
   verbose: true
@@ -234,13 +235,13 @@ Create a plugin system for word counting algorithms:
 ```python
 class WordCountPlugin:
     """Base class for word counting plugins."""
-    
+
 class SimpleWordCount(WordCountPlugin):
     """Count space-separated words."""
-    
+
 class NLTKWordCount(WordCountPlugin):
     """Use NLTK for advanced tokenization."""
-    
+
 class RegexWordCount(WordCountPlugin):
     """Custom regex-based word counting."""
 ```
@@ -248,9 +249,9 @@ class RegexWordCount(WordCountPlugin):
 ## Code Review Questions
 After implementation, ask Copilot to review:
 1. "Are there any race conditions in the parallel processing?"
-2. "Is the cache thread-safe?"
-3. "What security issues might arise with the persistent cache?"
-4. "How can we optimize memory usage for large file sets?"
+1. "Is the cache thread-safe?"
+1. "What security issues might arise with the persistent cache?"
+1. "How can we optimize memory usage for large file sets?"
 
 ## Real-World Applications
 This pattern applies to:
@@ -262,17 +263,17 @@ This pattern applies to:
 
 ## Reflection Questions
 1. How did the AI handle the file change detection problem?
-2. What caching strategy did Copilot suggest and why?
-3. Were there any edge cases the AI missed?
-4. How did iterative improvements affect code complexity?
-5. What would you do differently without AI assistance?
+1. What caching strategy did Copilot suggest and why?
+1. Were there any edge cases the AI missed?
+1. How did iterative improvements affect code complexity?
+1. What would you do differently without AI assistance?
 
 ## Tips for Better AI Collaboration
 1. **Be Specific**: When asking for cache implementation, specify your requirements
-2. **Iterate Gradually**: Don't try to add all features at once
-3. **Test Each Stage**: Verify each iteration works before adding complexity
-4. **Question Assumptions**: Ask Copilot about edge cases and limitations
-5. **Compare Approaches**: Ask for alternative implementations
+1. **Iterate Gradually**: Don't try to add all features at once
+1. **Test Each Stage**: Verify each iteration works before adding complexity
+1. **Question Assumptions**: Ask Copilot about edge cases and limitations
+1. **Compare Approaches**: Ask for alternative implementations
 
 ## Expected Learning Outcomes
 By completing this exercise, you should understand:

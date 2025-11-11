@@ -8,9 +8,9 @@ Signal handlers in C have strict requirements about which functions are "async-s
 
 ## Instructions
 1. Create a new C file called `calculator.c`
-2. Implement the code as specified below
-3. Use Copilot Chat to review your code
-4. Learn to identify and fix signal safety issues
+1. Implement the code as specified below
+1. Use Copilot Chat to review your code
+1. Learn to identify and fix signal safety issues
 
 ## Your Task
 
@@ -42,7 +42,7 @@ void sigint_handler(int sig) {
         printf("%s", message);
         free(message);  // Problem 4: free() is NOT async-signal-safe
     }
-    
+
     // Problem 5: This might not be atomic on all systems
     keep_running = 0;
 }
@@ -50,13 +50,13 @@ void sigint_handler(int sig) {
 int main() {
     // Register signal handler
     signal(SIGINT, sigint_handler);
-    
+
     printf("Calculator - Press Ctrl+C to exit\n");
     printf("Enter two numbers to add (or 0 0 to continue): ");
-    
+
     while (keep_running) {
         double num1, num2;
-        
+
         if (scanf("%lf %lf", &num1, &num2) == 2) {
             printf("Sum: %.2f\n", num1 + num2);
             printf("Enter two numbers to add: ");
@@ -66,7 +66,7 @@ int main() {
             printf("Invalid input. Please enter two numbers: ");
         }
     }
-    
+
     printf("Program terminated.\n");
     return 0;
 }
@@ -77,9 +77,9 @@ int main() {
 Ask Copilot Chat these specific questions:
 
 1. **General Review**: "Review this C code for any bugs or issues"
-2. **Signal Safety**: "Is this signal handler implementation safe? What problems do you see?"
-3. **Specific Functions**: "What's wrong with calling malloc() and printf() in a signal handler?"
-4. **Best Practices**: "How should I properly implement this signal handler?"
+1. **Signal Safety**: "Is this signal handler implementation safe? What problems do you see?"
+1. **Specific Functions**: "What's wrong with calling malloc() and printf() in a signal handler?"
+1. **Best Practices**: "How should I properly implement this signal handler?"
 
 ### Step 3: Fix the Issues
 
@@ -99,7 +99,7 @@ void sigint_handler(int sig) {
     // Only async-signal-safe functions allowed here
     const char message[] = "Caught SIGINT, exiting...\n";
     write(STDERR_FILENO, message, sizeof(message) - 1);
-    
+
     // This is safe - sig_atomic_t assignment is atomic
     keep_running = 0;
 }
@@ -117,10 +117,10 @@ void sigint_handler(int sig) {
 ## Common Issues Copilot Should Identify
 
 1. **malloc()/free() in signal handler**: Not async-signal-safe, can cause deadlocks
-2. **printf()/sprintf() in signal handler**: Not async-signal-safe, can corrupt output
-3. **Improper signal handler registration**: Should use sigaction() instead of signal()
-4. **Race conditions**: Accessing non-atomic variables unsafely
-5. **Buffer management**: Unsafe string operations
+1. **printf()/sprintf() in signal handler**: Not async-signal-safe, can corrupt output
+1. **Improper signal handler registration**: Should use sigaction() instead of signal()
+1. **Race conditions**: Accessing non-atomic variables unsafely
+1. **Buffer management**: Unsafe string operations
 
 ## Success Criteria
 - [ ] Copilot identifies the malloc() issue
@@ -162,10 +162,10 @@ Ask Copilot Chat: "Rewrite this program using modern best practices for signal h
 ## Key Concepts to Discuss with Copilot
 
 1. **Async-Signal-Safe Functions**: What makes a function safe to call from a signal handler?
-2. **sigaction() vs signal()**: Why is sigaction() preferred?
-3. **Signal Masks**: How to properly block signals during critical sections
-4. **Self-Pipe Trick**: Alternative approach for complex signal handling
-5. **signalfd() (Linux)**: Modern signal handling approaches
+1. **sigaction() vs signal()**: Why is sigaction() preferred?
+1. **Signal Masks**: How to properly block signals during critical sections
+1. **Self-Pipe Trick**: Alternative approach for complex signal handling
+1. **signalfd() (Linux)**: Modern signal handling approaches
 
 ## Real-World Applications
 This type of bug is common in:
@@ -178,9 +178,9 @@ This type of bug is common in:
 ## Reflection Questions
 After completing this exercise:
 1. What other functions might be problematic in signal handlers?
-2. How would you test for signal safety issues?
-3. What are the trade-offs between simple and complex signal handling?
-4. How does Copilot's knowledge of system programming compare to higher-level languages?
+1. How would you test for signal safety issues?
+1. What are the trade-offs between simple and complex signal handling?
+1. How does Copilot's knowledge of system programming compare to higher-level languages?
 
 ## Additional Testing
 Compile and run your code to see the difference:

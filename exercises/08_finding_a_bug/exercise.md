@@ -5,21 +5,22 @@ Learn how to use GitHub Copilot to analyze existing codebases, identify potentia
 
 ## Instructions
 1. Clone or access the pytconf repository
-2. Use Copilot to explore the codebase systematically
-3. Identify potential bugs and code quality issues
-4. Learn to ask the right questions for bug discovery
-5. Practice explaining bugs and proposing fixes
+1. Use Copilot to explore the codebase systematically
+1. Identify potential bugs and code quality issues
+1. Learn to ask the right questions for bug discovery
+1. Practice explaining bugs and proposing fixes
 
 ## Repository Setup
 
 ### Option 1: Clone the Repository
+
 ```bash
 git clone https://github.com/veltzer/pytconf.git
 cd pytconf
 ```
 
 ### Option 2: Browse Online
-Visit: https://github.com/veltzer/pytconf
+Visit: [pytconf](https://github.com/veltzer/pytconf)
 
 ## Your Task
 
@@ -165,11 +166,11 @@ def fixed_function():
 ```
 
 ### Test Case
+
 ```python
 def test_bug_fix():
     # Test that demonstrates the fix works
     ...
-```
 ```
 
 ## What You'll Learn
@@ -192,6 +193,7 @@ def test_bug_fix():
 
 ### Example 1: Mutable Default Arguments
 Ask Copilot: "Find all functions with mutable default arguments"
+
 ```python
 # Buggy pattern to find:
 def process_config(options={}):  # Bug: mutable default
@@ -208,6 +210,7 @@ def process_config(options=None):
 
 ### Example 2: Resource Management
 Ask Copilot: "Find file operations without proper cleanup"
+
 ```python
 # Buggy pattern:
 def read_config(path):
@@ -222,6 +225,7 @@ def read_config(path):
 
 ### Example 3: Type Safety
 Ask Copilot: "Find type inconsistencies in function signatures"
+
 ```python
 # Buggy pattern:
 def get_value(key: str) -> str:
@@ -238,6 +242,7 @@ def get_value(key: str) -> Optional[str]:
 
 ### Challenge 1: Security Audit
 Perform a security-focused review:
+
 ```python
 # Check for:
 - Input validation gaps
@@ -249,9 +254,10 @@ Perform a security-focused review:
 
 ### Challenge 2: Performance Analysis
 Look for performance issues:
+
 ```python
 # Investigate:
-- O(n²) algorithms that could be O(n)
+- O(n**2) algorithms that could be O(n)
 - Unnecessary loops or recursion
 - Memory leaks
 - Inefficient data structures
@@ -260,6 +266,7 @@ Look for performance issues:
 
 ### Challenge 3: Concurrency Issues
 Search for threading problems:
+
 ```python
 # Find:
 - Race conditions
@@ -299,19 +306,19 @@ Search for threading problems:
 
 Ask Copilot to evaluate:
 1. **Complexity**: "Find functions with high cyclomatic complexity"
-2. **Duplication**: "Identify duplicated code blocks"
-3. **Coupling**: "Find tightly coupled modules"
-4. **Cohesion**: "Identify classes with low cohesion"
-5. **Maintainability**: "Rate the maintainability of this module"
+1. **Duplication**: "Identify duplicated code blocks"
+1. **Coupling**: "Find tightly coupled modules"
+1. **Cohesion**: "Identify classes with low cohesion"
+1. **Maintainability**: "Rate the maintainability of this module"
 
 ## Real-World Bug Hunting Tips
 
 ### Systematic Approach
 1. Start with critical paths (main functionality)
-2. Check error handling thoroughly
-3. Examine boundary conditions
-4. Review recent changes (git history)
-5. Focus on complex functions first
+1. Check error handling thoroughly
+1. Examine boundary conditions
+1. Review recent changes (git history)
+1. Focus on complex functions first
 
 ### Using Copilot Effectively
 - Ask specific questions about code segments
@@ -323,24 +330,24 @@ Ask Copilot to evaluate:
 ## Documentation Tasks
 After finding bugs:
 1. Create GitHub issues for each bug
-2. Write clear reproduction steps
-3. Propose fixes with explanations
-4. Add test cases to prevent regression
-5. Update documentation if needed
+1. Write clear reproduction steps
+1. Propose fixes with explanations
+1. Add test cases to prevent regression
+1. Update documentation if needed
 
 ## Reflection Questions
 1. What types of bugs were easiest to find?
-2. Which Copilot queries were most effective?
-3. How did AI assistance change your debugging approach?
-4. What patterns emerged across multiple bugs?
-5. How would you prevent these bugs in new code?
+1. Which Copilot queries were most effective?
+1. How did AI assistance change your debugging approach?
+1. What patterns emerged across multiple bugs?
+1. How would you prevent these bugs in new code?
 
 ## Follow-Up Actions
 1. Fork the repository and implement fixes
-2. Submit pull requests for confirmed bugs
-3. Write blog post about bugs found
-4. Create a bug-finding checklist
-5. Apply learnings to your own projects
+1. Submit pull requests for confirmed bugs
+1. Write blog post about bugs found
+1. Create a bug-finding checklist
+1. Apply learnings to your own projects
 
 ## Expected Learning Outcomes
 By completing this exercise, you should be able to:

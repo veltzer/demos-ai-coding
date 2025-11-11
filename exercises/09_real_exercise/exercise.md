@@ -11,10 +11,10 @@ Learn how to use GitHub Copilot to create a complete, production-ready blog on G
 
 ## Instructions
 1. Create your GitHub Pages repository
-2. Use Copilot to guide you through setup
-3. Build and customize your blog
-4. Deploy and maintain it
-5. Learn GitHub Pages best practices
+1. Use Copilot to guide you through setup
+1. Build and customize your blog
+1. Deploy and maintain it
+1. Learn GitHub Pages best practices
 
 ## Your Task
 
@@ -37,11 +37,12 @@ Learn how to use GitHub Copilot to create a complete, production-ready blog on G
 
 #### Step 2: Initial Setup Questions for Copilot
 Ask Copilot Chat these questions to understand your options:
-```
+
+```txt
 1. "What are the different ways to create a blog on GitHub Pages?"
-2. "Should I use Jekyll, Hugo, or plain HTML for my blog?"
-3. "What are the pros and cons of each approach?"
-4. "How do I enable GitHub Pages for my repository?"
+1. "Should I use Jekyll, Hugo, or plain HTML for my blog?"
+1. "What are the pros and cons of each approach?"
+1. "How do I enable GitHub Pages for my repository?"
 ```
 
 ### Part 2: Choose Your Approach
@@ -92,6 +93,7 @@ Ask Copilot Chat these questions to understand your options:
 
 #### Step 1: Basic Jekyll Setup
 Create `_config.yml`:
+
 ```yaml
 # Ask Copilot: "Create a Jekyll _config.yml for a personal blog"
 title: Your Blog Title
@@ -121,6 +123,7 @@ linkedin_username: yourprofile
 
 #### Step 2: Create Homepage
 Create `index.md`:
+
 ```markdown
 ---
 layout: home
@@ -140,6 +143,7 @@ This is where I share my thoughts on coding, technology, and software developmen
 
 #### Step 3: Create Your First Blog Post
 Create `_posts/2024-01-15-my-first-post.md`:
+
 ```markdown
 ---
 layout: post
@@ -154,15 +158,8 @@ tags: [github, jekyll, blogging]
 
 ## Main Points
 1. Why I started this blog
-2. What I plan to write about
-3. My goals for this year
-
-## Code Example
-```python
-# Let Copilot generate relevant code examples
-def hello_world():
-    print("Hello from my new blog!")
-```
+1. What I plan to write about
+1. My goals for this year
 
 ## Conclusion
 [Wrap up your post]
@@ -202,7 +199,7 @@ class BlogSearch {
         this.searchInput = document.getElementById('search');
         this.resultsContainer = document.getElementById('search-results');
     }
-    
+
     // Let Copilot implement search functionality
 }
 ```
@@ -227,9 +224,9 @@ class BlogSearch {
                 <!-- Calculate reading time -->
             </span>
         </header>
-        
+
         {{ content }}
-        
+
         <footer>
             <!-- Share buttons -->
             <!-- Related posts -->
@@ -244,6 +241,7 @@ class BlogSearch {
 
 #### Blog Post Template Generator
 Create a script to generate new posts:
+
 ```python
 #!/usr/bin/env python3
 # new_post.py
@@ -257,7 +255,7 @@ def create_post(title):
     """Generate a new blog post with frontmatter."""
     date = datetime.datetime.now()
     filename = f"_posts/{date.strftime('%Y-%m-%d')}-{title.lower().replace(' ', '-')}.md"
-    
+
     frontmatter = f"""---
 layout: post
 title: "{title}"
@@ -281,7 +279,7 @@ excerpt: ""
 
 [Wrap up your post]
 """
-    
+
     # Let Copilot complete the implementation
 ```
 
@@ -338,6 +336,7 @@ permalink: /categories/
 
 #### GitHub Actions for Continuous Deployment
 Create `.github/workflows/build-and-deploy.yml`:
+
 ```yaml
 # Ask Copilot: "Create GitHub Actions workflow for Jekyll blog"
 name: Build and Deploy
@@ -351,20 +350,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.0'
-        
+
     # Let Copilot complete the workflow
 ```
 
 #### Custom Domain Setup
-```
+
+```txt
 # CNAME file (if you have a custom domain)
 yourdomain.com
 ```
@@ -375,6 +375,7 @@ MkDocs is excellent for technical blogs and documentation sites. It's Python-bas
 
 #### Step 1: MkDocs Setup
 Create `mkdocs.yml`:
+
 ```yaml
 # Ask Copilot: "Create an MkDocs configuration for a technical blog"
 site_name: My Technical Blog
@@ -398,7 +399,7 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-  
+
   features:
     - navigation.tabs
     - navigation.sections
@@ -473,14 +474,14 @@ extra:
       link: https://twitter.com/[your-handle]
     - icon: fontawesome/brands/linkedin
       link: https://linkedin.com/in/[your-profile]
-  
+
   analytics:
     provider: google
     property: G-XXXXXXXXXX
-  
+
   consent:
     title: Cookie consent
-    description: >- 
+    description: >-
       We use cookies to recognize your repeated visits and preferences, as well
       as to measure the effectiveness of our documentation and whether users
       find what they're searching for. With your consent, you're helping us to
@@ -488,6 +489,7 @@ extra:
 ```
 
 #### Step 2: Create Directory Structure
+
 ```bash
 # Ask Copilot: "Create the directory structure for MkDocs blog"
 mkdir -p docs/blog/posts
@@ -516,6 +518,7 @@ authors:
 
 #### Step 4: Create Your First Blog Post
 Create `docs/blog/posts/first-post.md`:
+
 ```markdown
 ---
 date: 2024-01-15
@@ -540,17 +543,6 @@ This is my first blog post using MkDocs with Material theme.
 
 MkDocs makes it easy to create beautiful documentation and blogs.
 
-## Code Example
-
-Here's how to highlight code with MkDocs:
-
-```python
-def hello_world():
-    """Simple hello world function."""
-    print("Hello from MkDocs!")
-    return True
-```
-
 ## Features
 
 !!! note "Important Note"
@@ -559,18 +551,11 @@ def hello_world():
 ??? example "Collapsible Content"
     You can create collapsible sections for detailed examples.
 
-## Mermaid Diagrams
-
-```mermaid
-graph LR
-    A[Write Content] --> B[Build Site]
-    B --> C[Deploy to GitHub Pages]
-    C --> D[Share with World]
-```
 ```
 
 #### Step 5: GitHub Actions Deployment
 Create `.github/workflows/deploy-mkdocs.yml`:
+
 ```yaml
 # Ask Copilot: "Create GitHub Actions workflow for MkDocs deployment"
 name: Deploy MkDocs
@@ -591,12 +576,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch all history for git info
-      
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      
+
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
@@ -604,7 +589,7 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-      
+
       - name: Install MkDocs and dependencies
         run: |
           pip install mkdocs-material
@@ -613,10 +598,10 @@ jobs:
           pip install mkdocs-minify-plugin
           pip install mkdocs-git-revision-date-localized-plugin
           pip install mkdocs-blog-plugin
-      
+
       - name: Build site
         run: mkdocs build
-      
+
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main'
         run: mkdocs gh-deploy --force
@@ -665,6 +650,7 @@ Create `docs/assets/stylesheets/custom.css`:
 
 ##### JavaScript Enhancements
 Create `docs/assets/javascripts/custom.js`:
+
 ```javascript
 // Ask Copilot: "Add reading time and copy button functionality"
 document.addEventListener('DOMContentLoaded', function() {
@@ -675,7 +661,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const wordsPerMinute = 200;
         const words = text.trim().split(/\s+/).length;
         const time = Math.ceil(words / wordsPerMinute);
-        
+
         // Display reading time
         const readingTime = document.createElement('div');
         readingTime.className = 'reading-time';
@@ -695,12 +681,12 @@ Create `overrides/blog-index.html`:
 <div class="md-content">
   <article class="md-content__inner md-typeset">
     <h1>Blog</h1>
-    
+
     <!-- Featured post section -->
     <div class="featured-post">
       <!-- Let Copilot implement featured post logic -->
     </div>
-    
+
     <!-- Recent posts grid -->
     <div class="blog-grid">
       {% for post in posts %}
@@ -826,41 +812,41 @@ url: "https://username.github.io"
 
 Ask Copilot to help with:
 1. Image optimization and lazy loading
-2. CSS/JS minification
-3. Caching strategies
-4. CDN integration
-5. Critical CSS inlining
+1. CSS/JS minification
+1. Caching strategies
+1. CDN integration
+1. Critical CSS inlining
 
 ## Maintenance Tasks
 
 Regular tasks to keep your blog running:
 1. Update dependencies
-2. Check broken links
-3. Review analytics
-4. Backup content
-5. Update themes
+1. Check broken links
+1. Review analytics
+1. Backup content
+1. Update themes
 
 ## Real-World Extensions
 
 1. **Portfolio Section**: Add project showcases
-2. **Resume Page**: Interactive CV
-3. **Photography Gallery**: Image portfolios
-4. **Tutorial Series**: Structured learning paths
-5. **Resource Library**: Downloadable content
+1. **Resume Page**: Interactive CV
+1. **Photography Gallery**: Image portfolios
+1. **Tutorial Series**: Structured learning paths
+1. **Resource Library**: Downloadable content
 
 ## Reflection Questions
 1. What challenges did you face without explicit instructions?
-2. How did Copilot help you discover solutions?
-3. What would you do differently next time?
-4. Which features were hardest to implement?
-5. How does your blog compare to professional blogs?
+1. How did Copilot help you discover solutions?
+1. What would you do differently next time?
+1. Which features were hardest to implement?
+1. How does your blog compare to professional blogs?
 
 ## Next Steps
 1. Write weekly blog posts
-2. Engage with readers through comments
-3. Share posts on social media
-4. Guest post on other blogs
-5. Monitor analytics and iterate
+1. Engage with readers through comments
+1. Share posts on social media
+1. Guest post on other blogs
+1. Monitor analytics and iterate
 
 ## Resources for Inspiration
 - GitHub Pages documentation

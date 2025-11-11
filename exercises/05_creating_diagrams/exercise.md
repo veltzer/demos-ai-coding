@@ -5,9 +5,9 @@ Learn how to use GitHub Copilot to generate various types of diagrams using Merm
 
 ## Instructions
 1. Create a new file called `diagrams.md`
-2. Use Copilot to help generate different types of diagrams
-3. Learn various diagramming syntaxes and when to use each
-4. Practice describing diagrams in comments to get better suggestions
+1. Use Copilot to help generate different types of diagrams
+1. Learn various diagramming syntaxes and when to use each
+1. Practice describing diagrams in comments to get better suggestions
 
 ## Your Task
 
@@ -139,9 +139,9 @@ Practice using Copilot Chat for diagram creation:
 
 **Chat Prompts to Try:**
 1. "Create a Mermaid diagram showing the lifecycle of a software bug from discovery to resolution"
-2. "Generate a sequence diagram for a typical e-commerce checkout process"
-3. "Create a flowchart for a machine learning model training pipeline"
-4. "Design an ER diagram for a library management system"
+1. "Generate a sequence diagram for a typical e-commerce checkout process"
+1. "Create a flowchart for a machine learning model training pipeline"
+1. "Design an ER diagram for a library management system"
 
 ## What You'll Learn
 - Mermaid syntax for different diagram types
@@ -192,9 +192,9 @@ gantt
 ## Tips for Better Diagram Generation
 
 1. **Be Specific in Comments**: The more detail you provide about what should be in the diagram, the better Copilot's suggestions
-2. **Use Standard Terminology**: Use industry-standard terms that Copilot recognizes
-3. **Start Simple**: Begin with basic diagrams and let Copilot help you expand them
-4. **Iterate**: Use Copilot Chat to refine and improve your diagrams
+1. **Use Standard Terminology**: Use industry-standard terms that Copilot recognizes
+1. **Start Simple**: Begin with basic diagrams and let Copilot help you expand them
+1. **Iterate**: Use Copilot Chat to refine and improve your diagrams
 
 ## Diagram Types Reference
 Learn when to use each type:
