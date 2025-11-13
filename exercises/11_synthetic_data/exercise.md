@@ -18,7 +18,7 @@ Learn how to use GitHub Copilot to generate large-scale synthetic data for testi
 Start with a basic implementation:
 
 ```python
-#!/usr/bin/env python3
+#!/bin/env python
 """
 Synthetic data generator for creating realistic person records.
 Generates 1 million records with demographic information.
