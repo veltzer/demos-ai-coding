@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1602 
+personal_ws-1.1 en 1628 
 AARRR
 ACL
 ACLs
@@ -74,6 +74,7 @@ BitKeeper
 Bitbake
 Bitfield
 Bitwise
+Blazor
 Blockchain
 Boltzman
 Bootlin
@@ -261,6 +262,7 @@ DropBoxManager
 Dtors
 DynamoDb
 DynamoRIO
+EACCES
 EAX
 EBS
 ECK
@@ -620,6 +622,7 @@ Objdump
 Observability
 OllyDbg
 OpenAI
+OpenAPI
 OpenCL
 OpenCensus
 OpenEmbedded
@@ -648,6 +651,8 @@ PLT
 PMD
 POSIX
 PRELOAD
+PRs
+PSR
 PSSCOR
 PTES
 PVS
@@ -672,6 +677,9 @@ PersistentVolumes
 Ph
 PhpStorm
 Pipewire
+Platformer
+PlatformerGame
+PlayerPrefs
 Pluggable
 Pmem
 Pojos
@@ -781,6 +789,7 @@ SMAP
 SMB
 SMEP
 SMIs
+SMS
 SNMP
 SNS
 SOA
@@ -814,10 +823,12 @@ Scrapy
 Scratchbox
 ScrumMaster
 Seaborn
+SendGrid
 ServiceAccounts
 ServiceMesh
 Sharding
 SharedPreferences
+SignalR
 Slowloris
 SoC
 Solaris
@@ -896,6 +907,7 @@ Translog
 Trino
 TryHackMe
 Twiggle
+Twilio
 Twistlock
 UAF
 UART
@@ -937,6 +949,7 @@ VPN
 VRFs
 VSCode
 VTune
+Validator
 Veeva
 Veltzer
 VirtualBox
@@ -952,8 +965,11 @@ WSL
 Wakeup
 Wallclock
 Wayland
+WebAssembly
 WebFlux
 WebGL
+WebSocket
+WebSockets
 WebWorkers
 Werror
 Wi
@@ -1001,6 +1017,7 @@ args
 async
 atomics
 auditd
+auth
 autocomplete
 autofs
 automount
@@ -1009,10 +1026,12 @@ autotools
 awk
 backdoors
 backend
+backoff
 balancer
 balancers
 bbclass
 benchmarking
+biomes
 bitbucket
 bitfields
 bitwise
@@ -1260,6 +1279,7 @@ lcm
 ld
 ldconfig
 ldd
+leaderboard
 learnings
 lemmatization
 libba
@@ -1342,6 +1362,7 @@ ng
 nginx
 nostd
 npm
+npx
 numpy
 oauth
 objdump
@@ -1366,6 +1387,7 @@ performant
 pid
 pipelining
 pipenv
+platformer
 plt
 polymorphism
 popd
@@ -1479,6 +1501,7 @@ strace
 struct
 structs
 stylesheets
+subcommands
 subnets
 subnetting
 subobjects
@@ -1549,6 +1572,7 @@ unicast
 uniq
 unittest
 unlinted
+unlockables
 unmangled
 unmounting
 unpivot
@@ -1586,6 +1610,7 @@ weblogic
 webserver
 wic
 workpads
+workspaces
 worktree
 worktrees
 writev
@@ -1596,6 +1621,7 @@ xfs
 xloader
 xml
 xruns
+xyz
 xz
 yml
 yq

@@ -5,10 +5,10 @@ Learn how to use GitHub Copilot to develop Unity games, understanding component-
 
 ## Instructions
 1. Create a new Unity 2D project
-2. Use Copilot to implement a simple platformer game
-3. Learn Unity-specific patterns and best practices
-4. Implement player movement, enemies, collectibles, and UI
-5. Add game state management and scene transitions
+1. Use Copilot to implement a simple platformer game
+1. Learn Unity-specific patterns and best practices
+1. Implement player movement, enemies, collectibles, and UI
+1. Add game state management and scene transitions
 
 ## Prerequisites
 - Unity Hub installed (2022.3 LTS or later recommended)
@@ -22,25 +22,26 @@ Learn how to use GitHub Copilot to develop Unity games, understanding component-
 
 #### Step 1: Create the Project
 1. Open Unity Hub
-2. Create new project → 2D (Core) template
-3. Name it "PlatformerGame"
-4. Configure Visual Studio Code as external editor (Edit → Preferences → External Tools)
+1. Create new project -> 2D (Core) template
+1. Name it "PlatformerGame"
+1. Configure Visual Studio Code as external editor (Edit -> Preferences -> External Tools)
 
 #### Step 2: Setup Project Structure
 Create the following folder structure in Assets:
-```
+
+```txt
 Assets/
-├── Scripts/
-│   ├── Player/
-│   ├── Enemies/
-│   ├── Collectibles/
-│   ├── Managers/
-│   └── UI/
-├── Prefabs/
-├── Sprites/
-├── Animations/
-├── Scenes/
-└── Audio/
++-- Scripts/
+|   +-- Player/
+|   +-- Enemies/
+|   +-- Collectibles/
+|   +-- Managers/
+|   +-- UI/
++-- Prefabs/
++-- Sprites/
++-- Animations/
++-- Scenes/
++-- Audio/
 ```
 
 ### Part 2: Player Controller

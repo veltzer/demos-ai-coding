@@ -5,10 +5,10 @@ Learn how to use GitHub Copilot to develop modern PHP web applications, implemen
 
 ## Instructions
 1. Create a PHP REST API for a blog system
-2. Use Copilot to implement CRUD operations
-3. Learn PHP best practices and security patterns
-4. Implement JWT authentication
-5. Add advanced features like search, pagination, and caching
+1. Use Copilot to implement CRUD operations
+1. Learn PHP best practices and security patterns
+1. Implement JWT authentication
+1. Add advanced features like search, pagination, and caching
 
 ## Prerequisites
 - PHP 8.1 or later installed
@@ -46,24 +46,24 @@ composer require --dev squizlabs/php_codesniffer
 #### Step 2: Project Structure
 Create the following directory structure:
 
-```
+```txt
 blog-api/
-├── config/
-│   ├── database.php
-│   └── routes.php
-├── src/
-│   ├── Controllers/
-│   ├── Models/
-│   ├── Middleware/
-│   ├── Services/
-│   ├── Repositories/
-│   └── Validators/
-├── public/
-│   └── index.php
-├── tests/
-├── .env.example
-├── .gitignore
-└── composer.json
++-- config/
+|   +-- database.php
+|   +-- routes.php
++-- src/
+|   +-- Controllers/
+|   +-- Models/
+|   +-- Middleware/
+|   +-- Services/
+|   +-- Repositories/
+|   +-- Validators/
++-- public/
+|   +-- index.php
++-- tests/
++-- .env.example
++-- .gitignore
++-- composer.json
 ```
 
 #### Step 3: Environment Configuration

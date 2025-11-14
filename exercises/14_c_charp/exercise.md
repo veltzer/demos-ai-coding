@@ -5,10 +5,10 @@ Learn how to use GitHub Copilot to develop modern C# applications, leveraging la
 
 ## Instructions
 1. Create a new C# console application
-2. Use Copilot to implement a task management system
-3. Learn C# best practices and modern patterns
-4. Implement CRUD operations with file persistence
-5. Add advanced features like search, filtering, and scheduling
+1. Use Copilot to implement a task management system
+1. Learn C# best practices and modern patterns
+1. Implement CRUD operations with file persistence
+1. Add advanced features like search, filtering, and scheduling
 
 ## Prerequisites
 - .NET 8.0 SDK or later installed
