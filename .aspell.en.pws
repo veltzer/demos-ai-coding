@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1628 
+personal_ws-1.1 en 1658 
 AARRR
 ACL
 ACLs
@@ -219,6 +219,7 @@ DTB
 DTOR
 DTORs
 DTS
+DVWA
 DWH
 DaemonSet
 DaemonSets
@@ -254,6 +255,7 @@ Dhruv
 Dimensionality
 DocBook
 Dockerfile
+Dockerfiles
 Dojo
 Downcasting
 Dradis
@@ -368,6 +370,7 @@ HOWTO
 HSTS
 HTTPS
 HUDs
+HackTheBox
 HackThisSite
 Hapoalim
 HashMaps
@@ -380,6 +383,7 @@ HiveQL
 Hopfield
 HorizontalPodAutoscaler
 Hotspot
+HttpOnly
 Hudi
 Hyperparameter
 Hystrix
@@ -388,8 +392,10 @@ IAM
 IAR
 IASS
 ICMP
+IDE's
 IDEs
 IDF
+IDOR
 IEC
 IFC
 IGW
@@ -467,6 +473,7 @@ KVM
 Kanban
 Karau
 Karnaugh
+Kata
 Kconfig
 Keil
 Kibana
@@ -750,6 +757,7 @@ Recommender
 RecoverySystem
 RecyclerView
 RedHat
+Refactorings
 Reindex
 Reindexing
 Rekognition
@@ -757,6 +765,7 @@ Remoting
 ReplicaSet
 ReplicaSets
 Repo
+Reputational
 RestTemplate
 Rollup
 Runnable
@@ -814,6 +823,7 @@ SWD
 SYSV
 SaaS
 SageMaker
+SameSite
 Schemas
 SciPlay
 SciPy
@@ -909,6 +919,7 @@ TryHackMe
 Twiggle
 Twilio
 Twistlock
+TypeScript
 UAF
 UART
 UBI
@@ -1030,6 +1041,7 @@ backoff
 balancer
 balancers
 bbclass
+bcrypt
 benchmarking
 biomes
 bitbucket
@@ -1043,6 +1055,7 @@ bootchartd
 bootloader
 bootloaders
 bootup
+breakpoint
 bruteforce
 bss
 btrfs
@@ -1081,7 +1094,10 @@ codebases
 codecs
 conf
 config
+configmap
+configs
 configurability
+conftest
 connectionless
 const
 constcast
@@ -1153,6 +1169,7 @@ eBPF
 eXpress
 eXtreme
 edquota
+elasticache
 elasticsearch
 elif
 emption
@@ -1217,6 +1234,7 @@ growfs
 handoff
 hashSetOf
 hotplug
+hpa
 htop
 iSCSI
 icc
@@ -1259,6 +1277,7 @@ jq
 js
 kNN
 kasan
+kata
 kcov
 kdb
 kernelshark
@@ -1324,6 +1343,7 @@ microservice
 microservices
 middleware
 minification
+minikube
 misconfigurations
 mitigations
 mk
@@ -1357,6 +1377,7 @@ netfilter
 netfilters
 netlink
 netstat
+networkpolicy
 nftables
 ng
 nginx
@@ -1381,6 +1402,7 @@ packfiles
 pagefaults
 passwd
 pathspec
+pdb
 perceptron
 perf
 performant
@@ -1426,11 +1448,13 @@ qemu
 racoon
 ranlib
 rc
+rds
 readv
 realloc
 realtime
 rebase
 reentrancy
+refactorings
 reinterpretcast
 repo
 repos
@@ -1445,6 +1469,7 @@ rpcgen
 rr
 rspec
 rsyslog
+runbook
 runc
 runnable
 runtime
@@ -1476,6 +1501,7 @@ sharded
 sharding
 shbang
 shellcodes
+shortener
 shunit
 sigaction
 siginterrupt
@@ -1538,6 +1564,7 @@ tcsh
 templating
 templatized
 testability
+tf
 theming
 tid
 timerfd
@@ -1580,6 +1607,7 @@ uptime
 uring
 userspace
 valgrind
+validator
 validators
 variadic
 vectorization
@@ -1593,6 +1621,7 @@ vmdk
 vmsplice
 vmstat
 vold
+vpc
 vscode
 waitqueues
 wakelocks
@@ -1623,6 +1652,7 @@ xml
 xruns
 xyz
 xz
+yaml
 yml
 yq
 zpool
