@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flask-config
+data:
+  environment: "production"
+  log_level: "INFO"
+  workers: "4"

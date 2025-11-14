@@ -7,8 +7,8 @@ Learn how to practice Test-Driven Development using AI assistance. Understand th
 
 Test-Driven Development is a software development approach where you:
 1. **Red**: Write a failing test first
-2. **Green**: Write minimal code to make the test pass
-3. **Refactor**: Improve the code while keeping tests green
+1. **Green**: Write minimal code to make the test pass
+1. **Refactor**: Improve the code while keeping tests green
 
 With AI assistance, you can focus on writing clear test specifications, and let the AI help implement the functionality.
 
