@@ -1363,7 +1363,7 @@ async function testRAGSystem() {
   const multiHop = await contextualRAG.multiHopReasoning('What is semantic search used for?', 2);
   console.log(`Performed ${multiHop.hops.length} reasoning hops`);
 
-  console.log('\n✅ All RAG tests completed!');
+  console.log('\nAll RAG tests completed!');
 }
 
 testRAGSystem().catch(console.error);

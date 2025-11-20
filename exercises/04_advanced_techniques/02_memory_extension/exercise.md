@@ -975,7 +975,7 @@ async function testMemorySystem() {
     console.log(`  - ${s.memory.content} (similarity: ${s.similarity.toFixed(2)})`);
   });
 
-  console.log('\n✅ All tests completed!');
+  console.log('\nAll tests completed!');
 }
 
 testMemorySystem().catch(console.error);
