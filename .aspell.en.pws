@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1670 
+personal_ws-1.1 en 1676 
 AARRR
 ACL
 ACLs
@@ -684,8 +684,10 @@ Pentesters
 PersistentVolume
 PersistentVolumeClaims
 PersistentVolumes
+Personalization
 Ph
 PhpStorm
+Pinecone
 Pipewire
 Platformer
 PlatformerGame
@@ -721,6 +723,7 @@ Pytest
 QEMU's
 QL
 QLoRA
+Qdrant
 QoS
 QtTest
 Qwiklabs
@@ -982,6 +985,7 @@ WSL
 Wakeup
 Wallclock
 Wayland
+Weaviate
 WebAssembly
 WebFlux
 WebGL
@@ -1179,6 +1183,7 @@ edquota
 elasticache
 elasticsearch
 elif
+embeddings
 emption
 enum
 enums
@@ -1467,6 +1472,7 @@ reinterpretcast
 repo
 repos
 reproducibility
+reranking
 resolvers
 responders
 retainment

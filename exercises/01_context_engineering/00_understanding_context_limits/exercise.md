@@ -18,9 +18,9 @@ Context refers to all the information an AI assistant can "see" and use when gen
 ### What are Tokens?
 
 Tokens are the basic units AI models use to process text. Roughly:
-- 1 token ≈ 4 characters
-- 1 token ≈ 0.75 words
-- 100 tokens ≈ 75 words
+- 1 token =~ 4 characters
+- 1 token =~ 0.75 words
+- 100 tokens =~ 75 words
 
 Examples:
 ```txt
@@ -61,7 +61,7 @@ Create a Python script to estimate token usage:
 
 def estimate_tokens(text: str) -> int:
     """
-    Rough estimation: 1 token ≈ 4 characters
+    Rough estimation: 1 token =~ 4 characters
     More accurate would use tiktoken library
     """
     return len(text) // 4
@@ -83,9 +83,9 @@ def analyze_file(filepath: str):
 
     # Warn if large
     if tokens > 4000:
-        print("⚠️  Warning: This file is quite large for context")
+        print("Warning: This file is quite large for context")
     if tokens > 8000:
-        print("❌ Critical: This file may exceed some AI context limits")
+        print("Critical: This file may exceed some AI context limits")
 
 if __name__ == "__main__":
     import sys
@@ -223,12 +223,12 @@ def calculate_discount(price, customer_type):
 
 ### Strategy 1: Selective File Opening
 
-**Bad Practice** ❌
+**Bad Practice**
 ```txt
 Opening 20 files in your editor hoping AI uses them all
 ```
 
-**Good Practice** ✅
+**Good Practice**
 ```txt
 Open only 2-3 most relevant files:
 1. The file you're editing
@@ -238,14 +238,14 @@ Open only 2-3 most relevant files:
 
 ### Strategy 2: Code Comments as Context
 
-**Bad Practice** ❌
+**Bad Practice**
 ```python
 def process_data(data):
     # TODO: implement this
     pass
 ```
 
-**Good Practice** ✅
+**Good Practice**
 ```python
 def process_data(data):
     """
@@ -277,12 +277,12 @@ def process_data(data):
 
 For large refactoring tasks, break into chunks:
 
-**Bad Approach** ❌
+**Bad Approach**
 ```txt
 "Refactor this entire 2000-line file to use dependency injection"
 ```
 
-**Good Approach** ✅
+**Good Approach**
 ```txt
 Step 1: "Refactor the database access methods (lines 100-200)"
 Step 2: "Refactor the business logic methods (lines 300-450)"
@@ -474,7 +474,7 @@ async def create_task(
 
 ## Part 4: Context Anti-Patterns
 
-### Anti-Pattern 1: The Dump Truck 🚚
+### Anti-Pattern 1: The Dump Truck
 
 **Problem**: Pasting your entire codebase into chat
 
@@ -499,7 +499,7 @@ User: "I have a bug in payment processing. Here's the relevant code:
        What's wrong?"
 ```
 
-### Anti-Pattern 2: Context Amnesia 🧠
+### Anti-Pattern 2: Context Amnesia
 
 **Problem**: Not realizing AI forgets context between sessions
 
@@ -523,7 +523,7 @@ User: "Quick reminder - here's our users table:
        Now add a 'last_login' field"
 ```
 
-### Anti-Pattern 3: The Vague Request 🌫️
+### Anti-Pattern 3: The Vague Request
 
 **Problem**: Not providing any context
 
@@ -545,7 +545,7 @@ User: "Create a login function for our React app.
 AI: [Creates exactly what you need, first time]
 ```
 
-### Anti-Pattern 4: Context Pollution 🗑️
+### Anti-Pattern 4: Context Pollution
 
 **Problem**: Including irrelevant files or code
 
@@ -601,14 +601,14 @@ Session 2 (next week): "Update the config" [provides no context]
 
 2. **Iteration Count**
    - How many back-and-forth messages needed?
-   - Good context → fewer iterations
+   - Good context -> fewer iterations
 
 3. **Relevance Score**
    - Was the response on-target?
    - Did AI understand your constraints?
 
 4. **Context Size vs. Quality**
-   - More context ≠ better results
+   - More context != better results
    - Find your sweet spot
 
 ### Exercise 5.1: Context Effectiveness Experiment
@@ -758,18 +758,18 @@ Create your personal context management toolkit:
 **Structure**:
 ```
 .context/
-├── patterns/
-│   ├── repository.py
-│   ├── service.py
-│   └── api.py
-├── templates/
-│   ├── new_feature.md
-│   ├── bug_report.md
-│   └── refactoring.md
-├── examples/
-│   ├── good_request.md
-│   └── bad_request.md
-└── architecture.md
++-- patterns/
+|   +-- repository.py
+|   +-- service.py
+|   +-- api.py
++-- templates/
+|   +-- new_feature.md
+|   +-- bug_report.md
+|   +-- refactoring.md
++-- examples/
+|   +-- good_request.md
+|   +-- bad_request.md
++-- architecture.md
 ```
 
 ---
@@ -902,7 +902,7 @@ After completing this exercise, you should:
 
 ## Key Takeaways
 
-1. **More ≠ Better**: Optimal context beats maximum context
+1. **More != Better**: Optimal context beats maximum context
 2. **Be Selective**: Choose relevant context carefully
 3. **Structure Matters**: Well-organized context works better
 4. **Examples Help**: Good examples are worth 1000 words

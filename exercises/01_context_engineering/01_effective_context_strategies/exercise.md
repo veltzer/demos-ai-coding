@@ -22,27 +22,27 @@ Different tasks need different context levels:
 
 ```
 Level 1: IMMEDIATE CONTEXT (Always include)
-├── Current file/function
-├── Direct dependencies
-└── Error messages
++-- Current file/function
++-- Direct dependencies
++-- Error messages
 
 Level 2: ARCHITECTURAL CONTEXT (Include when needed)
-├── Project structure
-├── Design patterns
-├── Coding standards
-└── Technology stack
++-- Project structure
++-- Design patterns
++-- Coding standards
++-- Technology stack
 
 Level 3: DOMAIN CONTEXT (Include for complex logic)
-├── Business rules
-├── Data models
-├── Workflows
-└── User requirements
++-- Business rules
++-- Data models
++-- Workflows
++-- User requirements
 
 Level 4: HISTORICAL CONTEXT (Rarely include)
-├── Why decisions were made
-├── Previous implementations
-├── Known issues
-└── Migration history
++-- Why decisions were made
++-- Previous implementations
++-- Known issues
++-- Migration history
 ```
 
 ### Exercise 1.1: Context Layering Practice
@@ -52,7 +52,7 @@ For each scenario, determine which context layers to include:
 **Scenario A**: "Fix this bug where users can't log in"
 ```python
 # What context layers do you need?
-# Mark: ✓ or ✗
+# Mark: v or x
 
 [ ] Current login function
 [ ] Authentication service
@@ -67,7 +67,7 @@ For each scenario, determine which context layers to include:
 **Scenario B**: "Add a new payment method"
 ```python
 # What context layers do you need?
-# Mark: ✓ or ✗
+# Mark: v or x
 
 [ ] Current payment processing code
 [ ] Existing payment methods
@@ -82,7 +82,7 @@ For each scenario, determine which context layers to include:
 **Scenario C**: "Refactor this function for better performance"
 ```python
 # What context layers do you need?
-# Mark: ✓ or ✗
+# Mark: v or x
 
 [ ] The function itself
 [ ] Performance benchmarks
@@ -104,19 +104,19 @@ Structure context like a sandwich:
 
 ```
 TOP BUN: Goal/Question (What you want)
-├── Clear, specific question
-└── Expected outcome
++-- Clear, specific question
++-- Expected outcome
 
 FILLING: Context (What AI needs to know)
-├── Relevant code
-├── Related examples
-├── Constraints
-└── Requirements
++-- Relevant code
++-- Related examples
++-- Constraints
++-- Requirements
 
 BOTTOM BUN: Constraints (Important boundaries)
-├── What NOT to do
-├── Required patterns
-└── Performance/security needs
++-- What NOT to do
++-- Required patterns
++-- Performance/security needs
 ```
 
 **Example**:
@@ -334,15 +334,15 @@ Create a context map document:
 ## File Structure
 ```
 user_management/
-├── models.py          # User, Role models
-├── repositories.py    # UserRepository, RoleRepository
-├── services.py        # UserService
-├── api.py            # FastAPI endpoints
-└── validators.py     # Input validation
++-- models.py          # User, Role models
++-- repositories.py    # UserRepository, RoleRepository
++-- services.py        # UserService
++-- api.py            # FastAPI endpoints
++-- validators.py     # Input validation
 ```
 
 ## Key Relationships
-- API → Service → Repository → Model
+- API -> Service -> Repository -> Model
 - Validators used by API layer
 - Services handle business logic
 - Repositories handle data access
@@ -367,17 +367,17 @@ user_management/
 **Setup**: Create a small project structure:
 ```
 blog/
-├── models/
-│   ├── user.py
-│   └── post.py
-├── services/
-│   ├── user_service.py
-│   └── post_service.py
-├── api/
-│   ├── users.py
-│   └── posts.py
-└── tests/
-    └── test_posts.py
++-- models/
+|   +-- user.py
+|   +-- post.py
++-- services/
+|   +-- user_service.py
+|   +-- post_service.py
++-- api/
+|   +-- users.py
+|   +-- posts.py
++-- tests/
+    +-- test_posts.py
 ```
 
 **Task**: Add "post likes" feature
@@ -581,7 +581,7 @@ Create templates for your most common tasks:
 
 Remove unnecessary code from context:
 
-**Before** ❌ (700 tokens):
+**Before** (700 tokens):
 ```python
 class UserService:
     """
@@ -623,7 +623,7 @@ class UserService:
     # [20 more methods...]
 ```
 
-**After** ✅ (150 tokens):
+**After** (150 tokens):
 ```python
 class UserService:
     def __init__(self, repo: UserRepository, logger: Logger):
@@ -643,7 +643,7 @@ class UserService:
 
 Don't paste the same code multiple times:
 
-**Before** ❌:
+**Before**:
 ```python
 """
 Here's our authentication:
@@ -657,7 +657,7 @@ Here's where the error happens:
 """
 ```
 
-**After** ✅:
+**After**:
 ```python
 """
 Authentication/Authorization: auth.py (see lines 1-500)
@@ -702,7 +702,7 @@ class PaymentProcessor:
 
 Compress context by using summaries:
 
-**Before** ❌ (5000 tokens):
+**Before** (5000 tokens):
 ```python
 # [Full User model - 200 lines]
 # [Full Order model - 300 lines]
@@ -711,7 +711,7 @@ Compress context by using summaries:
 # [All their relationships and methods]
 ```
 
-**After** ✅ (500 tokens):
+**After** (500 tokens):
 ```python
 """
 Data Model Summary:
@@ -1074,19 +1074,19 @@ Exclude:
 **Structure**:
 ```
 .ai-context/
-├── README.md              # How to use this system
-├── base-context.md        # Always applicable
-├── profiles/
-│   ├── new-feature.md
-│   ├── bug-fix.md
-│   ├── refactoring.md
-│   └── learning.md
-├── examples/
-│   ├── good-request.md
-│   └── bad-request.md
-└── versions/
-    ├── v1-initial.md
-    └── v2-current.md
++-- README.md              # How to use this system
++-- base-context.md        # Always applicable
++-- profiles/
+|   +-- new-feature.md
+|   +-- bug-fix.md
+|   +-- refactoring.md
+|   +-- learning.md
++-- examples/
+|   +-- good-request.md
+|   +-- bad-request.md
++-- versions/
+    +-- v1-initial.md
+    +-- v2-current.md
 ```
 
 **Test**: Use your system for 5 different tasks and refine.
@@ -1220,7 +1220,7 @@ For each interaction:
 
 ## Part 9: Context Anti-Patterns (Advanced)
 
-### Anti-Pattern 5: The Kitchen Sink 🚰
+### Anti-Pattern 5: The Kitchen Sink
 
 **Problem**: Including "everything just in case"
 
@@ -1253,7 +1253,7 @@ That's it.
 """
 ```
 
-### Anti-Pattern 6: The Time Traveler ⏰
+### Anti-Pattern 6: The Time Traveler
 
 **Problem**: Providing outdated context
 
@@ -1278,7 +1278,7 @@ Task: Add password reset feature
 """
 ```
 
-### Anti-Pattern 7: The Mystery Novel 📚
+### Anti-Pattern 7: The Mystery Novel
 
 **Problem**: Making AI guess what you want
 
@@ -1310,7 +1310,7 @@ Actual: Always fails
 """
 ```
 
-### Anti-Pattern 8: The Assumption Trap 🪤
+### Anti-Pattern 8: The Assumption Trap
 
 **Problem**: Assuming AI remembers previous context
 
