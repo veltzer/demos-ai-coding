@@ -1,4 +1,4 @@
-personal_ws-1.1 en 1658 
+personal_ws-1.1 en 1670 
 AARRR
 ACL
 ACLs
@@ -19,6 +19,7 @@ APM
 ASLR
 ASM
 ASN
+AST
 ASan
 ATDD
 AVD
@@ -27,6 +28,7 @@ AVX
 AWR
 Accessors
 Ack
+Actionability
 ActiveMQ
 Actix
 Acyclic
@@ -476,6 +478,7 @@ Karnaugh
 Kata
 Kconfig
 Keil
+KeyError
 Kibana
 Kinesis
 Kmemleak
@@ -767,6 +770,7 @@ ReplicaSets
 Repo
 Reputational
 RestTemplate
+RoleRepository
 Rollup
 Runnable
 Runtime
@@ -942,6 +946,8 @@ UndefinedBehaviorSanitizer
 Unioning
 UnixWare
 Unsync
+UserRepository
+UserService
 VARCHAR
 VC
 VCS
@@ -1017,6 +1023,7 @@ allocators
 analytics
 anonymization
 antipatterns
+api
 apis
 ar
 architected
@@ -1200,6 +1207,7 @@ foreach
 formatters
 formjacking
 framebuffer
+frontend
 fs
 fsck
 fstab
@@ -1540,6 +1548,7 @@ subtyping
 sudo
 sudoers
 summarization
+summarizer
 superblocks
 suppressions
 surfaceflinger
@@ -1567,6 +1576,7 @@ testability
 tf
 theming
 tid
+tiktoken
 timerfd
 timeslices
 tmpfs
@@ -1606,6 +1616,7 @@ unpivot
 uptime
 uring
 userspace
+utils
 valgrind
 validator
 validators
@@ -1638,6 +1649,7 @@ webkit
 weblogic
 webserver
 wic
+wishlist
 workpads
 workspaces
 worktree

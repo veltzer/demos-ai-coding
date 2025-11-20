@@ -71,37 +71,37 @@ Summarize system structure and relationships.
 **Full Detail** (500 tokens):
 ```
 project/
-├── api/
-│   ├── __init__.py
-│   ├── main.py
-│   ├── dependencies.py
-│   ├── routes/
-│   │   ├── __init__.py
-│   │   ├── users.py
-│   │   ├── products.py
-│   │   ├── orders.py
-│   │   └── auth.py
-├── services/
-│   ├── __init__.py
-│   ├── user_service.py
-│   ├── product_service.py
-│   ├── order_service.py
-│   └── auth_service.py
-├── repositories/
-│   ├── __init__.py
-│   ├── base.py
-│   ├── user_repo.py
-│   ├── product_repo.py
-│   └── order_repo.py
-├── models/
-│   ├── __init__.py
-│   ├── user.py
-│   ├── product.py
-│   └── order.py
-└── tests/
-    ├── test_users.py
-    ├── test_products.py
-    └── test_orders.py
++-- api/
+|   +-- __init__.py
+|   +-- main.py
+|   +-- dependencies.py
+|   +-- routes/
+|   |   +-- __init__.py
+|   |   +-- users.py
+|   |   +-- products.py
+|   |   +-- orders.py
+|   |   +-- auth.py
++-- services/
+|   +-- __init__.py
+|   +-- user_service.py
+|   +-- product_service.py
+|   +-- order_service.py
+|   +-- auth_service.py
++-- repositories/
+|   +-- __init__.py
+|   +-- base.py
+|   +-- user_repo.py
+|   +-- product_repo.py
+|   +-- order_repo.py
++-- models/
+|   +-- __init__.py
+|   +-- user.py
+|   +-- product.py
+|   +-- order.py
++-- tests/
+    +-- test_users.py
+    +-- test_products.py
+    +-- test_orders.py
 
 [Plus descriptions of each file...]
 ```
@@ -109,10 +109,10 @@ project/
 **Summarized** (100 tokens):
 ```
 Architecture: 3-tier pattern
-- API layer (FastAPI routes) → Services → Repositories → DB
+- API layer (FastAPI routes) -> Services -> Repositories -> DB
 - Each resource: User, Product, Order
 - Each has: API endpoint + Service + Repository + Model + Tests
-- Dependencies flow: API → Service → Repo (injected)
+- Dependencies flow: API -> Service -> Repo (injected)
 ```
 
 ### Type 2: Code Functionality Summarization
@@ -279,16 +279,16 @@ class Order(Base):
 DATA MODELS:
 
 User: id, email, username, password_hash, name, timestamps
-  ├─> Orders (one-to-many)
-  └─> Addresses (one-to-many)
+  +-> Orders (one-to-many)
+  +-> Addresses (one-to-many)
 
 Order: id, user_id, total, status, timestamps
-  ├─> User (many-to-one)
-  ├─> OrderItems (one-to-many)
-  └─> Payment (one-to-one)
+  +-> User (many-to-one)
+  +-> OrderItems (one-to-many)
+  +-> Payment (one-to-one)
 
 Product: id, name, price, inventory, timestamps
-  └─> OrderItems (one-to-many)
+  +-> OrderItems (one-to-many)
 
 All use SQLAlchemy ORM with standard columns + relationships.
 For full schema: models/__init__.py
@@ -322,16 +322,16 @@ You have a complex authentication system. Practice each type:
 
 | Scenario | Summarize | Show Detail |
 |----------|-----------|-------------|
-| Establishing context | ✓ | |
-| Showing pattern to follow | | ✓ |
-| Multiple similar files | ✓ | |
-| Where bug occurs | | ✓ |
-| Architecture overview | ✓ | |
-| Code to be modified | | ✓ |
-| Unrelated dependencies | ✓ | |
-| Related examples | | ✓ |
-| Historical context | ✓ | |
-| Specific error location | | ✓ |
+| Establishing context | v | |
+| Showing pattern to follow | | v |
+| Multiple similar files | v | |
+| Where bug occurs | | v |
+| Architecture overview | v | |
+| Code to be modified | | v |
+| Unrelated dependencies | v | |
+| Related examples | | v |
+| Historical context | v | |
+| Specific error location | | v |
 
 ### Strategy: Hierarchical Context
 
@@ -344,7 +344,7 @@ LEVEL 1: HIGH-LEVEL SUMMARY
 E-commerce API with 3 main flows:
 - Authentication (JWT-based)
 - Product catalog (search, filter, categories)
-- Order processing (cart → checkout → payment)
+- Order processing (cart -> checkout -> payment)
 
 LEVEL 2: COMPONENT SUMMARY
 ===========================
@@ -529,14 +529,14 @@ Show relationships without implementation:
 DEPENDENCY TREE:
 
 API Endpoints
-  └─> Services
-       └─> Repositories
-            └─> Database Models
+  +-> Services
+       +-> Repositories
+            +-> Database Models
 
 Example flow: POST /users
-  └─> UserService.create()
-       └─> UserRepository.create()
-            └─> User model → database
+  +-> UserService.create()
+       +-> UserRepository.create()
+            +-> User model -> database
 
 All layers use dependency injection.
 Services inject repositories, APIs inject services.
@@ -876,11 +876,8 @@ Layer information from general to specific:
 
 ```
 LAYER 1: SYSTEM OVERVIEW (50 tokens)
-    ↓
 LAYER 2: DOMAIN BREAKDOWN (100 tokens)
-    ↓
 LAYER 3: COMPONENT DETAILS (200 tokens)
-    ↓
 LAYER 4: SPECIFIC CODE (500 tokens)
 ```
 
@@ -979,10 +976,10 @@ Test: Can someone understand the system by reading just Layer 1? Just Layers 1+2
 
 // COMPONENT TREE:
 // App
-//   ├─ Header (nav, user menu)
-//   ├─ Dashboard (products grid, filters, cart)
-//   ├─ Profile (user info, orders, addresses)
-//   └─ Settings (preferences, password, notifications)
+//   +- Header (nav, user menu)
+//   +- Dashboard (products grid, filters, cart)
+//   +- Profile (user info, orders, addresses)
+//   +- Settings (preferences, password, notifications)
 
 // FULL DETAIL (relevant component):
 const Dashboard = () => {
@@ -1070,7 +1067,7 @@ CREATE TABLE orders (
 # Monitoring: CloudWatch + Prometheus + Grafana
 # Logging: CloudWatch Logs, 30 day retention
 # Secrets: AWS Secrets Manager
-# CI/CD: GitHub Actions → ECR → ECS
+# CI/CD: GitHub Actions -> ECR -> ECS
 
 # FULL DETAIL (ECS task definition):
 {
@@ -1172,17 +1169,17 @@ Overall quality: __/100
 
 **Challenge**: Add "wishlist" feature to e-commerce site
 
-**Poor Approach** ❌:
+**Poor Approach**:
 ```
 [Paste entire codebase - 10,000 lines]
 "Add wishlist feature"
 ```
 
-**Good Approach** ✓:
+**Good Approach**:
 ```
 CONTEXT: E-commerce API Summary
 - 4 existing features: Products, Cart, Orders, Reviews
-- All follow: Model → Repository → Service → API pattern
+- All follow: Model -> Repository -> Service -> API pattern
 - Auth: JWT required for user-specific data
 
 EXAMPLE (Reviews - similar to wishlist):
@@ -1209,19 +1206,19 @@ NOW CREATE: Wishlist following same pattern
 
 **Challenge**: API returning 500 errors on /orders endpoint
 
-**Poor Approach** ❌:
+**Poor Approach**:
 ```
 [Paste all API code, services, repositories - 5,000 lines]
 "It's broken, fix it"
 ```
 
-**Good Approach** ✓:
+**Good Approach**:
 ```
 BUG: /orders endpoint 500 errors
 
 CONTEXT (summary):
 - FastAPI app, PostgreSQL DB
-- Orders flow: API → OrderService → OrderRepository → DB
+- Orders flow: API -> OrderService -> OrderRepository -> DB
 - Recent changes: Added inventory check before order creation
 
 ERROR:
@@ -1242,13 +1239,13 @@ QUESTION: Why is inventory_reserved_at null?
 
 **Challenge**: Review PR adding payment processing
 
-**Poor Approach** ❌:
+**Poor Approach**:
 ```
 [Paste all changed files - 800 lines]
 "Review this"
 ```
 
-**Good Approach** ✓:
+**Good Approach**:
 ```
 CODE REVIEW REQUEST
 
@@ -1269,10 +1266,10 @@ FULL CODE:
 [Paste API endpoint - 100 lines]
 
 Tests summary:
-- test_successful_payment ✓
-- test_declined_card ✓
-- test_network_error ✓
-- test_insufficient_funds ✓
+- test_successful_payment
+- test_declined_card
+- test_network_error
+- test_insufficient_funds
 [5 more test names...]
 ```
 
@@ -1300,23 +1297,23 @@ Create reusable assets:
 
 ```
 .context/
-├── summaries/
-│   ├── architecture.md       # System overview
-│   ├── api_endpoints.md       # All endpoints summary
-│   ├── data_models.md        # Schema summary
-│   ├── services.md           # Service layer summary
-│   ├── patterns.md           # Code patterns
-│   └── infrastructure.md     # Deployment summary
-├── templates/
-│   ├── new_feature.md        # Template for new features
-│   ├── bug_fix.md           # Template for bugs
-│   ├── code_review.md       # Template for reviews
-│   └── refactoring.md       # Template for refactoring
-├── tools/
-│   ├── summarize.py         # Generate summaries
-│   ├── extract_signatures.py
-│   └── analyze_structure.py
-└── README.md                # How to use this system
++-- summaries/
+|   +-- architecture.md       # System overview
+|   +-- api_endpoints.md       # All endpoints summary
+|   +-- data_models.md        # Schema summary
+|   +-- services.md           # Service layer summary
+|   +-- patterns.md           # Code patterns
+|   +-- infrastructure.md     # Deployment summary
++-- templates/
+|   +-- new_feature.md        # Template for new features
+|   +-- bug_fix.md           # Template for bugs
+|   +-- code_review.md       # Template for reviews
+|   +-- refactoring.md       # Template for refactoring
++-- tools/
+|   +-- summarize.py         # Generate summaries
+|   +-- extract_signatures.py
+|   +-- analyze_structure.py
++-- README.md                # How to use this system
 ```
 
 ### Automation Script
