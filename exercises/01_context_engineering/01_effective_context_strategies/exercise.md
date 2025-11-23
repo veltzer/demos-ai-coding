@@ -20,7 +20,7 @@ Effective context is:
 
 Different tasks need different context levels:
 
-```
+```txt
 Level 1: IMMEDIATE CONTEXT (Always include)
 +-- Current file/function
 +-- Direct dependencies
@@ -50,6 +50,7 @@ Level 4: HISTORICAL CONTEXT (Rarely include)
 For each scenario, determine which context layers to include:
 
 **Scenario A**: "Fix this bug where users can't log in"
+
 ```python
 # What context layers do you need?
 # Mark: v or x
@@ -65,6 +66,7 @@ For each scenario, determine which context layers to include:
 ```
 
 **Scenario B**: "Add a new payment method"
+
 ```python
 # What context layers do you need?
 # Mark: v or x
@@ -80,6 +82,7 @@ For each scenario, determine which context layers to include:
 ```
 
 **Scenario C**: "Refactor this function for better performance"
+
 ```python
 # What context layers do you need?
 # Mark: v or x
@@ -102,7 +105,7 @@ For each scenario, determine which context layers to include:
 
 Structure context like a sandwich:
 
-```
+```txt
 TOP BUN: Goal/Question (What you want)
 +-- Clear, specific question
 +-- Expected outcome
@@ -240,6 +243,7 @@ Choose a task and apply all three patterns:
 **Your Task**: Add a comment system to a blog application
 
 **Task A**: Use Sandwich Method
+
 ```python
 # Write your context using the sandwich structure
 # TOP BUN: Goal
@@ -248,12 +252,14 @@ Choose a task and apply all three patterns:
 ```
 
 **Task B**: Use Example-Driven
+
 ```python
 # Provide an example of a similar feature (e.g., likes system)
 # Then ask for comments system following the pattern
 ```
 
 **Task C**: Use Progressive Build
+
 ```python
 # Plan 4-5 messages that gradually build context
 # Message 1: [...]
@@ -332,7 +338,8 @@ Create a context map document:
 # Context Map: User Management Feature
 
 ## File Structure
-```
+
+```txt
 user_management/
 +-- models.py          # User, Role models
 +-- repositories.py    # UserRepository, RoleRepository
@@ -358,14 +365,14 @@ user_management/
 - Service layer for business logic
 - Dependency injection everywhere
 - Type hints on all functions
-```
 
 ### Exercise 3.1: Multi-File Context Practice
 
 **Scenario**: You're adding a new feature that touches multiple files.
 
 **Setup**: Create a small project structure:
-```
+
+```txt
 blog/
 +-- models/
 |   +-- user.py
@@ -385,6 +392,7 @@ blog/
 **Step 1**: Create a context map (use template above)
 
 **Step 2**: Determine which files need changes:
+
 ```python
 # Files to modify:
 # [ ] models/post.py - add like_count field
@@ -559,19 +567,19 @@ HELP ME:
 Create templates for your most common tasks:
 
 1. **Identify**: What are your 5 most common AI assistance requests?
-   - [ ] Task 1: _________________
-   - [ ] Task 2: _________________
-   - [ ] Task 3: _________________
-   - [ ] Task 4: _________________
-   - [ ] Task 5: _________________
+- [ ] Task 1: _________________
+- [ ] Task 2: _________________
+- [ ] Task 3: _________________
+- [ ] Task 4: _________________
+- [ ] Task 5: _________________
 
-2. **Template**: Create a context template for each
+1. **Template**: Create a context template for each
 
-3. **Test**: Use each template on a real task
+1. **Test**: Use each template on a real task
 
-4. **Refine**: Improve based on results
+1. **Refine**: Improve based on results
 
-5. **Library**: Save in a templates/ directory
+1. **Library**: Save in a templates/ directory
 
 ---
 
@@ -582,6 +590,7 @@ Create templates for your most common tasks:
 Remove unnecessary code from context:
 
 **Before** (700 tokens):
+
 ```python
 class UserService:
     """
@@ -624,6 +633,7 @@ class UserService:
 ```
 
 **After** (150 tokens):
+
 ```python
 class UserService:
     def __init__(self, repo: UserRepository, logger: Logger):
@@ -644,6 +654,7 @@ class UserService:
 Don't paste the same code multiple times:
 
 **Before**:
+
 ```python
 """
 Here's our authentication:
@@ -658,6 +669,7 @@ Here's where the error happens:
 ```
 
 **After**:
+
 ```python
 """
 Authentication/Authorization: auth.py (see lines 1-500)
@@ -703,6 +715,7 @@ class PaymentProcessor:
 Compress context by using summaries:
 
 **Before** (5000 tokens):
+
 ```python
 # [Full User model - 200 lines]
 # [Full Order model - 300 lines]
@@ -712,6 +725,7 @@ Compress context by using summaries:
 ```
 
 **After** (500 tokens):
+
 ```python
 """
 Data Model Summary:
@@ -736,6 +750,7 @@ For full details, see: models/__init__.py
 Take this verbose context and optimize it:
 
 **Original** (2000 tokens):
+
 ```python
 # [Paste a very verbose context with:
 #  - Excessive comments
@@ -772,6 +787,7 @@ Different tools need different context strategies:
 - Short context window
 
 **Optimal Context**:
+
 ```python
 # Copilot works best with:
 
@@ -812,6 +828,7 @@ class ProductRepository:
 - Good with complex requirements
 
 **Optimal Context**:
+
 ```python
 """
 Chat AI works best with:
@@ -847,6 +864,7 @@ EXPLICIT RELATIONSHIPS:
 - Context from project structure
 
 **Optimal Context**:
+
 ```python
 """
 Workspace-aware AI benefits from:
@@ -875,18 +893,21 @@ DOCUMENTATION:
 **Feature**: Add email notification to order processing
 
 **A. Using GitHub Copilot (inline)**:
+
 ```python
 # Set up context in current file for Copilot
 # What context do you provide?
 ```
 
 **B. Using Claude/ChatGPT**:
+
 ```python
 # Structure a chat prompt
 # What context do you provide?
 ```
 
 **C. Using Cursor (workspace-aware)**:
+
 ```python
 # Set up project for Cursor
 # What context do you provide?
@@ -1072,7 +1093,8 @@ Exclude:
 5. Documentation on when to use each
 
 **Structure**:
-```
+
+```txt
 .ai-context/
 +-- README.md              # How to use this system
 +-- base-context.md        # Always applicable
@@ -1097,7 +1119,8 @@ Exclude:
 
 ### Quality Metrics
 
-**1. Relevance Score**
+#### 1. Relevance Score
+
 ```python
 def calculate_relevance(context: str, task: str) -> float:
     """
@@ -1111,7 +1134,8 @@ def calculate_relevance(context: str, task: str) -> float:
     return relevant_items / total_items
 ```
 
-**2. Completeness Score**
+### 2. Completeness Score
+
 ```python
 def calculate_completeness(context: str, task: str) -> float:
     """
@@ -1125,7 +1149,8 @@ def calculate_completeness(context: str, task: str) -> float:
     return len(provided_items & required_items) / len(required_items)
 ```
 
-**3. Efficiency Score**
+### 3. Efficiency Score
+
 ```python
 def calculate_efficiency(context: str) -> float:
     """
@@ -1139,7 +1164,8 @@ def calculate_efficiency(context: str) -> float:
     return essential_tokens / total_tokens
 ```
 
-**4. Structure Score**
+### 4. Structure Score
+
 ```python
 def calculate_structure(context: str) -> float:
     """
@@ -1155,6 +1181,7 @@ def calculate_structure(context: str) -> float:
 ```
 
 **Overall Quality**:
+
 ```python
 def context_quality_score(context: str, task: str) -> float:
     """Overall context quality score (0-100)."""
@@ -1186,6 +1213,7 @@ For each interaction:
 5. Compare results
 
 **Template**:
+
 ```markdown
 ## Interaction 1
 
@@ -1201,7 +1229,7 @@ For each interaction:
 
 ### Weaknesses
 1. [Issue 1]
-2. [Issue 2]
+1. [Issue 2]
 
 ### Improved Context
 [Rewritten context]
@@ -1240,6 +1268,7 @@ Here's my entire project:
 ```
 
 **Fix**: Include only what's directly related
+
 ```python
 """
 I need help with the login function.
@@ -1269,6 +1298,7 @@ What should I do?
 ```
 
 **Fix**: Provide current state only
+
 ```python
 """
 Current authentication (as of today):
@@ -1325,6 +1355,7 @@ User: "But I told you yesterday!"
 ```
 
 **Fix**: Re-establish context
+
 ```python
 // Session 2 (Today)
 User: "Quick context: React app with navbar in src/components/Navbar.tsx
@@ -1341,6 +1372,7 @@ Task: Add a user menu dropdown
 Review these examples and identify the anti-pattern:
 
 **Example A**:
+
 ```python
 """
 I'm working on something and it's not working.
@@ -1352,6 +1384,7 @@ Anti-pattern: _______________
 Fix: _______________
 
 **Example B**:
+
 ```python
 """
 Remember that API we talked about last week?
@@ -1362,6 +1395,7 @@ Anti-pattern: _______________
 Fix: _______________
 
 **Example C**:
+
 ```python
 """
 Here's my code from 2019: [old code]
@@ -1398,21 +1432,21 @@ After completing this exercise, you should be able to:
 Apply these strategies to:
 
 1. **Daily Development**: Use templates for common tasks
-2. **Code Reviews**: Provide context for AI-assisted reviews
-3. **Debugging**: Structure bug reports for AI help
-4. **Learning**: Build context for exploring new concepts
-5. **Documentation**: Generate docs with proper context
-6. **Refactoring**: Large-scale refactoring with chunked context
+1. **Code Reviews**: Provide context for AI-assisted reviews
+1. **Debugging**: Structure bug reports for AI help
+1. **Learning**: Build context for exploring new concepts
+1. **Documentation**: Generate docs with proper context
+1. **Refactoring**: Large-scale refactoring with chunked context
 
 ## Context Engineering Principles
 
 ### The 5 C's of Effective Context
 
 1. **Clear**: Unambiguous goals and requirements
-2. **Complete**: All necessary information included
-3. **Concise**: No unnecessary information
-4. **Consistent**: Follow patterns and structures
-5. **Correct**: Accurate and up-to-date
+1. **Complete**: All necessary information included
+1. **Concise**: No unnecessary information
+1. **Consistent**: Follow patterns and structures
+1. **Correct**: Accurate and up-to-date
 
 ### The Context Golden Ratio
 
@@ -1430,20 +1464,20 @@ For optimal results:
 
 **Your Task**: Craft context that:
 1. Scores 90+ on quality metrics
-2. Uses appropriate patterns
-3. Achieves first-try success
-4. Stays under 1000 tokens
-5. Could be reused as a template
+1. Uses appropriate patterns
+1. Achieves first-try success
+1. Stays under 1000 tokens
+1. Could be reused as a template
 
 **Submit**: Your context, the AI's response, and self-evaluation
 
 ## Reflection
 
 1. How has your context engineering evolved?
-2. What patterns work best for your projects?
-3. Where do you still struggle?
-4. What will you implement first?
-5. How will you measure improvement?
+1. What patterns work best for your projects?
+1. Where do you still struggle?
+1. What will you implement first?
+1. How will you measure improvement?
 
 ## Further Learning
 
@@ -1456,12 +1490,12 @@ For optimal results:
 ## Key Takeaways
 
 1. **Structure matters more than size**
-2. **Examples beat explanations**
-3. **Progressive building beats big dumps**
-4. **Tools need different strategies**
-5. **Quality over quantity always**
-6. **Measure to improve**
-7. **Build systems, not one-offs**
-8. **Iterate on your patterns**
+1. **Examples beat explanations**
+1. **Progressive building beats big dumps**
+1. **Tools need different strategies**
+1. **Quality over quantity always**
+1. **Measure to improve**
+1. **Build systems, not one-offs**
+1. **Iterate on your patterns**
 
 Remember: Effective context engineering is about being a great communicator with AI, not about technical tricks. Clear, structured, relevant context gets results!

@@ -988,26 +988,26 @@ testMemorySystem().catch(console.error);
 ### 8.1 Memory Management
 
 1. **Regular Cleanup**: Implement automatic cleanup of old, unused memories
-2. **Compression**: Compress similar memories into summaries
-3. **Importance Scoring**: Keep only important memories when space is limited
-4. **Categorization**: Use clear, consistent categories
-5. **Metadata**: Always store context with memories
+1. **Compression**: Compress similar memories into summaries
+1. **Importance Scoring**: Keep only important memories when space is limited
+1. **Categorization**: Use clear, consistent categories
+1. **Metadata**: Always store context with memories
 
 ### 8.2 Privacy and Security
 
 1. **User Consent**: Always get permission before storing personal information
-2. **Encryption**: Encrypt sensitive memories at rest
-3. **Access Control**: Implement user-specific memory isolation
-4. **Data Retention**: Have clear policies on how long to keep memories
-5. **Export/Delete**: Allow users to export or delete their memories
+1. **Encryption**: Encrypt sensitive memories at rest
+1. **Access Control**: Implement user-specific memory isolation
+1. **Data Retention**: Have clear policies on how long to keep memories
+1. **Export/Delete**: Allow users to export or delete their memories
 
 ### 8.3 Performance
 
 1. **Indexing**: Index memories for fast retrieval
-2. **Caching**: Cache frequently accessed memories
-3. **Batch Operations**: Process multiple memories together
-4. **Async Operations**: Use async I/O for all storage operations
-5. **Pagination**: Implement pagination for large result sets
+1. **Caching**: Cache frequently accessed memories
+1. **Batch Operations**: Process multiple memories together
+1. **Async Operations**: Use async I/O for all storage operations
+1. **Pagination**: Implement pagination for large result sets
 
 ---
 
@@ -1029,10 +1029,10 @@ After completing this exercise, you should be able to:
 ## Real-World Applications
 
 1. **Personal AI Assistant**: Remembers your preferences, habits, and history
-2. **Project Management Bot**: Tracks decisions, errors, and solutions
-3. **Learning System**: Accumulates domain knowledge over time
-4. **Customer Service**: Remembers past interactions and preferences
-5. **Code Assistant**: Learns your coding style and patterns
+1. **Project Management Bot**: Tracks decisions, errors, and solutions
+1. **Learning System**: Accumulates domain knowledge over time
+1. **Customer Service**: Remembers past interactions and preferences
+1. **Code Assistant**: Learns your coding style and patterns
 
 ## Next Steps
 

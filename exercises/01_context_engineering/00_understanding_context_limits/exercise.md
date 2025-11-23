@@ -23,6 +23,7 @@ Tokens are the basic units AI models use to process text. Roughly:
 - 100 tokens =~ 75 words
 
 Examples:
+
 ```txt
 "Hello world" = 2 tokens
 "function calculateTotal() {" = 5 tokens
@@ -43,9 +44,9 @@ Different AI tools have different context windows:
 ### Why Limits Matter
 
 1. **Performance**: Larger contexts take longer to process
-2. **Cost**: More tokens = higher API costs
-3. **Focus**: Too much context dilutes relevance
-4. **Accuracy**: AI can lose track in very large contexts
+1. **Cost**: More tokens = higher API costs
+1. **Focus**: Too much context dilutes relevance
+1. **Accuracy**: AI can lose track in very large contexts
 
 ---
 
@@ -130,8 +131,8 @@ def function_{i}():
 generate_large_code()
 ```
 
-2. Try to ask Copilot to analyze or refactor this entire file
-3. Observe what happens:
+1. Try to ask Copilot to analyze or refactor this entire file
+1. Observe what happens:
    - Does it process the whole file?
    - Does it give an error?
    - Does it only process part of it?
@@ -147,7 +148,8 @@ Compare how different amounts of context affect responses.
 
 Create three scenarios:
 
-**Scenario A: Minimal Context**
+### Scenario A: Minimal Context
+
 ```python
 # Only show this function
 def calculate_discount(price, customer_type):
@@ -155,7 +157,8 @@ def calculate_discount(price, customer_type):
     pass
 ```
 
-**Scenario B: Medium Context**
+### Scenario B: Medium Context
+
 ```python
 # Show related code
 CUSTOMER_TYPES = {
@@ -173,7 +176,8 @@ def apply_seasonal_bonus(discount):
     return discount + 0.05
 ```
 
-**Scenario C: Maximum Context**
+#### Scenario C: Maximum Context
+
 ```python
 # Show entire module with database, logging, validation, etc.
 import logging
@@ -223,12 +227,14 @@ def calculate_discount(price, customer_type):
 
 ### Strategy 1: Selective File Opening
 
-**Bad Practice**
+### Bad Practice
+
 ```txt
 Opening 20 files in your editor hoping AI uses them all
 ```
 
-**Good Practice**
+### Good Practice
+
 ```txt
 Open only 2-3 most relevant files:
 1. The file you're editing
@@ -238,14 +244,16 @@ Open only 2-3 most relevant files:
 
 ### Strategy 2: Code Comments as Context
 
-**Bad Practice**
+### Bad Practice
+
 ```python
 def process_data(data):
     # TODO: implement this
     pass
 ```
 
-**Good Practice**
+### Good Practice
+
 ```python
 def process_data(data):
     """
@@ -277,12 +285,14 @@ def process_data(data):
 
 For large refactoring tasks, break into chunks:
 
-**Bad Approach**
+### Bad Approach
+
 ```txt
 "Refactor this entire 2000-line file to use dependency injection"
 ```
 
-**Good Approach**
+### Good Approach
+
 ```txt
 Step 1: "Refactor the database access methods (lines 100-200)"
 Step 2: "Refactor the business logic methods (lines 300-450)"
@@ -436,6 +446,7 @@ AI: [Gives complete, contextually perfect solution]
 ## Code Patterns
 
 ### Repository Pattern
+
 ```python
 class BaseRepository:
     def __init__(self, session: Session):
@@ -443,6 +454,7 @@ class BaseRepository:
 ```
 
 ### Service Pattern
+
 ```python
 class BaseService:
     def __init__(self, repo: Repository):
@@ -450,6 +462,7 @@ class BaseService:
 ```
 
 ### API Pattern
+
 ```python
 @router.post("/tasks")
 async def create_task(
@@ -460,10 +473,10 @@ async def create_task(
 ```
 
 ## Now implement: Comment system for tasks
-```
 
-2. Ask AI to implement the comment system
-3. Compare with asking without context primer
+```txt
+1. Ask AI to implement the comment system
+1. Compare with asking without context primer
 
 **Measure**:
 - How many iterations needed?
@@ -490,6 +503,7 @@ User: "Here's my entire project [pastes 10,000 lines]
 - Often gets truncated
 
 **Solution**: Be surgical
+
 ```txt
 User: "I have a bug in payment processing. Here's the relevant code:
        [Paste 50 lines of payment code]
@@ -515,6 +529,7 @@ AI: "I don't know your users table structure"
 ```
 
 **Solution**: Re-establish context or use persistent workspace
+
 ```txt
 Session 2:
 User: "Quick reminder - here's our users table:
@@ -537,6 +552,7 @@ AI: [Finally creates what you need]
 ```
 
 **Solution**: Front-load context
+
 ```txt
 User: "Create a login function for our React app.
        We use Firebase Auth.
@@ -559,6 +575,7 @@ AI: [Creates exactly what you need, first time]
 ```
 
 **Solution**: Only include what's needed
+
 ```txt
 # Asking about React component, include:
 - The component file
@@ -572,17 +589,20 @@ AI: [Creates exactly what you need, first time]
 Review these requests and identify the anti-pattern:
 
 **Request A**:
+
 ```txt
 "Fix my code [pastes 5000 lines with no indication of where the bug is]"
 ```
 
 **Request B**:
+
 ```txt
 Session 1: "Here's my config: [detailed setup]"
 Session 2 (next week): "Update the config" [provides no context]
 ```
 
 **Request C**:
+
 ```txt
 "Make it better" [no code, no context, no specifics]
 ```
@@ -599,15 +619,15 @@ Session 2 (next week): "Update the config" [provides no context]
    - Did AI give the right answer first try?
    - Track over time as you improve context
 
-2. **Iteration Count**
+1. **Iteration Count**
    - How many back-and-forth messages needed?
    - Good context -> fewer iterations
 
-3. **Relevance Score**
+1. **Relevance Score**
    - Was the response on-target?
    - Did AI understand your constraints?
 
-4. **Context Size vs. Quality**
+1. **Context Size vs. Quality**
    - More context != better results
    - Find your sweet spot
 
@@ -751,12 +771,13 @@ def calculate_score(tokens, types, examples, requirements):
 Create your personal context management toolkit:
 
 1. **Pattern Library**: Save common patterns in your project
-2. **Context Templates**: Create templates for common requests
-3. **Quick Reference**: Document your architecture/decisions
-4. **Example Repository**: Collect good examples of each pattern
+1. **Context Templates**: Create templates for common requests
+1. **Quick Reference**: Document your architecture/decisions
+1. **Example Repository**: Collect good examples of each pattern
 
 **Structure**:
-```
+
+```txt
 .context/
 +-- patterns/
 |   +-- repository.py
@@ -787,6 +808,7 @@ You have a 3000-line legacy file to refactor. How do you manage context?
 4. Keep running context of changes
 
 **Practice**:
+
 ```python
 # Step 1: Document current structure
 """
@@ -822,6 +844,7 @@ You're learning a new framework. How do you build context efficiently?
 4. Reference docs selectively
 
 **Practice**:
+
 ```txt
 User: "I'm learning FastAPI. Here's the basic example from docs:
        [paste official example]
@@ -844,13 +867,14 @@ Production bug, need quick context for AI assistance:
 4. Environment details
 
 **Practice**:
+
 ```txt
 User: "Production bug in payment processing:
 
 Error:
-```
+
+```txt
 KeyError: 'customer_id' in payment_processor.py line 145
-```
 
 Relevant code:
 [Paste payment_processor.py lines 140-160]
@@ -887,10 +911,10 @@ After completing this exercise, you should:
 ## Reflection Questions
 
 1. How much context is "too much" for your typical tasks?
-2. What types of context are most helpful for your work?
-3. How has understanding context limits changed your approach?
-4. What's your biggest context management challenge?
-5. How can you make context provision more systematic?
+1. What types of context are most helpful for your work?
+1. How has understanding context limits changed your approach?
+1. What's your biggest context management challenge?
+1. How can you make context provision more systematic?
 
 ## Further Learning
 
@@ -903,11 +927,11 @@ After completing this exercise, you should:
 ## Key Takeaways
 
 1. **More != Better**: Optimal context beats maximum context
-2. **Be Selective**: Choose relevant context carefully
-3. **Structure Matters**: Well-organized context works better
-4. **Examples Help**: Good examples are worth 1000 words
-5. **Iterate Intelligently**: Build context progressively
-6. **Track Results**: Measure what works for you
-7. **Create Systems**: Build reusable context patterns
+1. **Be Selective**: Choose relevant context carefully
+1. **Structure Matters**: Well-organized context works better
+1. **Examples Help**: Good examples are worth 1000 words
+1. **Iterate Intelligently**: Build context progressively
+1. **Track Results**: Measure what works for you
+1. **Create Systems**: Build reusable context patterns
 
 Remember: Context engineering is a skill that improves with practice. The goal is to give AI just enough information to be helpful, but not so much that it gets lost in the noise!

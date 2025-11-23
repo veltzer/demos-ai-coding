@@ -1177,21 +1177,25 @@ Add to your VS Code settings (`~/.config/mcp/settings.json` or `.vscode/settings
 After configuring, test these scenarios:
 
 1. **Index your project:**
+
 ```txt
 "Use the RAG service to index all files in the current directory"
 ```
 
-2. **Search for information:**
+1. **Search for information:**
+
 ```txt
 "Search the knowledge base for information about authentication"
 ```
 
-3. **Ask questions with context:**
+1. **Ask questions with context:**
+
 ```txt
 "Using the indexed documentation, explain how the user service works"
 ```
 
-4. **Get code examples:**
+1. **Get code examples:**
+
 ```txt
 "Find examples of error handling in the codebase"
 ```
@@ -1445,15 +1449,15 @@ After completing this exercise, you should be able to:
 ## Best Practices
 
 1. **Chunking Strategy**: Balance chunk size with context preservation
-2. **Embedding Quality**: Use appropriate embedding models for your domain
-3. **Hybrid Search**: Combine multiple retrieval methods
-4. **Source Attribution**: Always track and cite sources
-5. **Context Limits**: Respect token limits when building context
-6. **Caching**: Cache embeddings and frequent queries
-7. **Incremental Indexing**: Update index incrementally, not from scratch
-8. **Metadata**: Store rich metadata for filtering
-9. **Evaluation**: Regularly evaluate retrieval quality
-10. **User Feedback**: Incorporate feedback to improve ranking
+1. **Embedding Quality**: Use appropriate embedding models for your domain
+1. **Hybrid Search**: Combine multiple retrieval methods
+1. **Source Attribution**: Always track and cite sources
+1. **Context Limits**: Respect token limits when building context
+1. **Caching**: Cache embeddings and frequent queries
+1. **Incremental Indexing**: Update index incrementally, not from scratch
+1. **Metadata**: Store rich metadata for filtering
+1. **Evaluation**: Regularly evaluate retrieval quality
+1. **User Feedback**: Incorporate feedback to improve ranking
 
 ## Next Steps
 

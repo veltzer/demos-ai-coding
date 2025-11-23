@@ -17,6 +17,7 @@ You have limited tokens. Every project decision is:
 ### Real-World Example
 
 **Without Summarization** (2000 tokens):
+
 ```python
 # [Full UserRepository - 200 lines]
 # [Full ProductRepository - 200 lines]
@@ -29,6 +30,7 @@ You have limited tokens. Every project decision is:
 ```
 
 **With Summarization** (200 tokens):
+
 ```python
 """
 CONTEXT: Repository Pattern in Use
@@ -69,7 +71,8 @@ Should have: by_order(), by_status(), mark_delivered()
 Summarize system structure and relationships.
 
 **Full Detail** (500 tokens):
-```
+
+```txt
 project/
 +-- api/
 |   +-- __init__.py
@@ -107,7 +110,8 @@ project/
 ```
 
 **Summarized** (100 tokens):
-```
+
+```txt
 Architecture: 3-tier pattern
 - API layer (FastAPI routes) -> Services -> Repositories -> DB
 - Each resource: User, Product, Order
@@ -120,6 +124,7 @@ Architecture: 3-tier pattern
 Summarize what code does, not how.
 
 **Full Code** (300 tokens):
+
 ```python
 def process_payment(self, order_id: int, payment_data: dict) -> PaymentResult:
     """Process payment for an order."""
@@ -160,6 +165,7 @@ def process_payment(self, order_id: int, payment_data: dict) -> PaymentResult:
 ```
 
 **Summarized** (50 tokens):
+
 ```python
 def process_payment(order_id, payment_data) -> PaymentResult:
     """
@@ -174,6 +180,7 @@ def process_payment(order_id, payment_data) -> PaymentResult:
 Summarize repeated patterns across codebase.
 
 **Full Examples** (1000 tokens):
+
 ```python
 # Example 1: UserService
 class UserService:
@@ -213,6 +220,7 @@ class ProductService:
 ```
 
 **Summarized** (100 tokens):
+
 ```python
 """
 SERVICE PATTERN (used by all 5 services):
@@ -241,6 +249,7 @@ All services follow this: inject repo + logger, log before/after, catch/log erro
 Summarize models and their relationships.
 
 **Full Models** (600 tokens):
+
 ```python
 class User(Base):
     __tablename__ = "users"
@@ -274,6 +283,7 @@ class Order(Base):
 ```
 
 **Summarized** (100 tokens):
+
 ```python
 """
 DATA MODELS:
@@ -421,6 +431,7 @@ Working on: User profile update endpoint
 Show just function signatures with docstrings:
 
 **Full Implementation** (200 tokens):
+
 ```python
 class UserService:
     async def create_user(self, data: UserCreate) -> User:
@@ -441,6 +452,7 @@ class UserService:
 ```
 
 **Signature Summary** (50 tokens):
+
 ```python
 class UserService:
     async def create_user(self, data: UserCreate) -> User:
@@ -570,10 +582,10 @@ Patterns used:
 **Task**: Take a real project (yours or open source) and create summaries using each technique:
 
 1. **Signature Summary**: Main classes/functions
-2. **Example-Only**: Show one, summarize rest
-3. **Diff Summary**: Recent major change
-4. **Dependency Tree**: System relationships
-5. **Stats Summary**: Codebase metrics
+1. **Example-Only**: Show one, summarize rest
+1. **Diff Summary**: Recent major change
+1. **Dependency Tree**: System relationships
+1. **Stats Summary**: Codebase metrics
 
 **Compare**: Which technique works best for which situation?
 
@@ -747,9 +759,9 @@ def generate_context(template_type: str, **kwargs) -> str:
 **Task**: Create a toolkit for your project:
 
 1. **Project summarizer**: Stats + structure
-2. **File summarizer**: Extract signatures
-3. **Pattern detector**: Find repeated patterns
-4. **Context generator**: Template-based contexts
+1. **File summarizer**: Extract signatures
+1. **Pattern detector**: Find repeated patterns
+1. **Context generator**: Template-based contexts
 
 **Requirements**:
 - Should run in < 5 seconds
@@ -853,7 +865,8 @@ Architecture:
 **Bad Summary 1**: "We use microservices."
 
 **Bad Summary 2**:
-```
+
+```txt
 UserService: [200 lines]
 ProductService: [300 lines]
 OrderService: does order stuff
@@ -874,7 +887,7 @@ PaymentService: [250 lines]
 
 Layer information from general to specific:
 
-```
+```txt
 LAYER 1: SYSTEM OVERVIEW (50 tokens)
 LAYER 2: DOMAIN BREAKDOWN (100 tokens)
 LAYER 3: COMPONENT DETAILS (200 tokens)
@@ -1082,9 +1095,9 @@ CREATE TABLE orders (
 **Task**: Create summaries for each domain in your project:
 
 1. Frontend (if applicable)
-2. Backend/API
-3. Database schema
-4. Infrastructure/deployment
+1. Backend/API
+1. Database schema
+1. Infrastructure/deployment
 
 Requirements:
 - Each summary: Under 200 tokens
@@ -1097,14 +1110,16 @@ Requirements:
 
 ### Quality Metrics
 
-**1. Compression Ratio**
+#### 1. Compression Ratio
+
 ```python
 compression_ratio = original_tokens / summary_tokens
 # Good: 5:1 to 10:1
 # Excellent: 10:1 to 20:1
 ```
 
-**2. Information Retention**
+#### 2. Information Retention
+
 ```python
 # Can someone unfamiliar with the code answer these after reading summary?
 questions = [
@@ -1119,14 +1134,16 @@ retention_score = correct_answers / total_questions
 # Good: > 80%
 ```
 
-**3. Actionability**
+### 3. Actionability
+
 ```python
 # Can AI complete task with just the summary?
 actionable = can_generate_new_code_matching_patterns(summary)
 # Good: Yes for new features, No for bug fixes (need details)
 ```
 
-**4. Clarity**
+### 4. Clarity
+
 ```python
 # Is summary understandable without context?
 # No jargon, clear structure, logical flow
@@ -1170,13 +1187,15 @@ Overall quality: __/100
 **Challenge**: Add "wishlist" feature to e-commerce site
 
 **Poor Approach**:
-```
+
+```txt
 [Paste entire codebase - 10,000 lines]
 "Add wishlist feature"
 ```
 
 **Good Approach**:
-```
+
+```txt
 CONTEXT: E-commerce API Summary
 - 4 existing features: Products, Cart, Orders, Reviews
 - All follow: Model -> Repository -> Service -> API pattern
@@ -1207,13 +1226,15 @@ NOW CREATE: Wishlist following same pattern
 **Challenge**: API returning 500 errors on /orders endpoint
 
 **Poor Approach**:
-```
+
+```txt
 [Paste all API code, services, repositories - 5,000 lines]
 "It's broken, fix it"
 ```
 
 **Good Approach**:
-```
+
+```txt
 BUG: /orders endpoint 500 errors
 
 CONTEXT (summary):
@@ -1222,10 +1243,10 @@ CONTEXT (summary):
 - Recent changes: Added inventory check before order creation
 
 ERROR:
-```
+
+```txt
 SQLAlchemy.exc.IntegrityError: null value in column "inventory_reserved_at"
 violates not-null constraint
-```
 
 RELEVANT CODE (full detail):
 [Paste OrderService.create_order() - 50 lines]
@@ -1240,13 +1261,15 @@ QUESTION: Why is inventory_reserved_at null?
 **Challenge**: Review PR adding payment processing
 
 **Poor Approach**:
-```
+
+```txt
 [Paste all changed files - 800 lines]
 "Review this"
 ```
 
 **Good Approach**:
-```
+
+```txt
 CODE REVIEW REQUEST
 
 CONTEXT (summary):
@@ -1278,8 +1301,8 @@ Tests summary:
 **Task**: Choose 3 scenarios from your work:
 
 1. Adding a new feature
-2. Fixing a production bug
-3. Code review request
+1. Fixing a production bug
+1. Code review request
 
 For each:
 - Write context using summarization techniques
@@ -1295,7 +1318,7 @@ For each:
 
 Create reusable assets:
 
-```
+```txt
 .context/
 +-- summaries/
 |   +-- architecture.md       # System overview
@@ -1379,20 +1402,20 @@ if __name__ == "__main__":
    - Patterns
    - Infrastructure
 
-2. **Templates folder**: Create templates for common tasks
+1. **Templates folder**: Create templates for common tasks
    - New feature
    - Bug fix
    - Code review
    - Refactoring
 
-3. **Tools folder**: Create generation scripts
+1. **Tools folder**: Create generation scripts
    - Project summarizer
    - Context generator
    - Signature extractor
 
-4. **Documentation**: Write README explaining system
+1. **Documentation**: Write README explaining system
 
-5. **Test**: Use system for 5 different tasks, iterate based on results
+1. **Test**: Use system for 5 different tasks, iterate based on results
 
 ---
 
@@ -1414,12 +1437,12 @@ After completing this exercise, you should be able to:
 ## Key Principles
 
 1. **Summarize 80%, detail 20%** - Most context should be compressed
-2. **Hierarchy matters** - Layer from general to specific
-3. **Consistency is key** - Similar things need similar treatment
-4. **Patterns beat examples** - One pattern > five examples
-5. **Actionability test** - Can AI act on this summary?
-6. **Automate when possible** - Build tools, don't repeat work
-7. **Measure and iterate** - Track what works, improve constantly
+1. **Hierarchy matters** - Layer from general to specific
+1. **Consistency is key** - Similar things need similar treatment
+1. **Patterns beat examples** - One pattern > five examples
+1. **Actionability test** - Can AI act on this summary?
+1. **Automate when possible** - Build tools, don't repeat work
+1. **Measure and iterate** - Track what works, improve constantly
 
 ## Common Questions
 
