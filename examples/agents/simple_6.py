@@ -1,0 +1,151 @@
+#!/usr/bin/env python
+
+"""
+Stage 6: add a /clear command to reset the conversation.
+
+Same as stage 5, plus a /clear command that empties the message history so the
+customer can start a fresh booking without completing the current one. The
+command is handled locally and never reaches the API.
+
+The modules you need to install to make this work are `passpy` and `anthropic`
+"""
+
+import datetime
+import json
+
+import passpy
+import anthropic
+
+MODEL = "claude-opus-5"
+
+AGENT_SYSTEM = """
+You are a helpful airline ticket sales agent. Today's date is {today}.
+
+Your goal is to sell a ticket, which needs exactly three pieces of information:
+the departure city, the destination city, and the date of travel. Collect them
+over the course of the conversation, asking for whatever is still missing.
+
+For every user message, do all of these at once:
+
+1. Decide whether it is related to airline ticket sales: flight searches, fares
+   and pricing, booking, changes and cancellations, baggage, seating, check-in,
+   refunds, loyalty programs, and travel documents for a flight. Anything else
+   is off topic. Report this as `on_topic`.
+
+2. Report the booking details gathered so far in `departure_city`,
+   `destination_city` and `date`. Carry forward anything established earlier in
+   the conversation, and add whatever the latest message provides. Use an empty
+   string for anything still unknown. Resolve relative dates such as "next
+   Tuesday" against today's date and report the date as YYYY-MM-DD.
+
+3. If it is on topic, reply in `answer`. When details are still missing, ask for
+   them. When all three are known, confirm the booking back to the customer --
+   do not ask them to wait, the purchase happens immediately. You have no access
+   to a live booking system, so be clear about what the customer would need to
+   confirm with the airline directly. If it is off topic, set `answer` to an
+   empty string.
+"""
+
+REFUSAL = "Sorry, I only deal with airline ticket sales."
+
+REPLY_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "on_topic": {
+            "type": "boolean",
+            "description": "True if the message is about airline ticket sales.",
+        },
+        "departure_city": {
+            "type": "string",
+            "description": "City to depart from, or an empty string if unknown.",
+        },
+        "destination_city": {
+            "type": "string",
+            "description": "City to fly to, or an empty string if unknown.",
+        },
+        "date": {
+            "type": "string",
+            "description": "Date of travel as YYYY-MM-DD, or an empty string if unknown.",
+        },
+        "answer": {
+            "type": "string",
+            "description": "The reply if on topic, otherwise an empty string.",
+        },
+    },
+    "required": [
+        "on_topic",
+        "departure_city",
+        "destination_city",
+        "date",
+        "answer",
+    ],
+    "additionalProperties": False,
+}
+
+SLOTS = ("departure_city", "destination_city", "date")
+
+
+def ask(messages):
+    """Send the conversation and return the parsed structured reply."""
+    today = datetime.date.today().isoformat()
+    response = client.messages.create(
+        model=MODEL,
+        max_tokens=16000,
+        system=AGENT_SYSTEM.format(today=today),
+        output_config={"format": {"type": "json_schema", "schema": REPLY_SCHEMA}},
+        messages=messages,
+    )
+    text = "".join(b.text for b in response.content if b.type == "text")
+    return json.loads(text)
+
+
+def buy_ticket(departure_city, destination_city, date):
+    """'Buy' the ticket -- stands in for a real booking system."""
+    print("\n--- TICKET PURCHASED ---")
+    print(f"From: {departure_city}")
+    print(f"To:   {destination_city}")
+    print(f"Date: {date}")
+    print("------------------------")
+
+
+store = passpy.Store()
+api_key = store.get_key("keys/claude.ai")
+assert api_key is not None
+api_key = api_key.rstrip()
+client = anthropic.Anthropic(api_key=api_key)
+
+messages = []
+print(
+    "Ask me about airline tickets. Type '/clear' to start over, "
+    "or 'exit' or 'quit' (or Ctrl-D) to stop."
+)
+while True:
+    try:
+        question = input("\n> ").strip()
+    except (EOFError, KeyboardInterrupt):
+        print()
+        break
+    if not question:
+        continue
+    if question.lower() in ("exit", "quit"):
+        break
+    if question.lower() == "/clear":
+        messages = []
+        print("Context cleared.")
+        continue
+
+    messages.append({"role": "user", "content": question})
+    result = ask(messages)
+    if not result["on_topic"]:
+        # Keep the off-topic exchange out of the history entirely.
+        messages.pop()
+        print(REFUSAL)
+        continue
+
+    messages.append({"role": "assistant", "content": result["answer"]})
+    print(result["answer"])
+
+    if all(result[slot] for slot in SLOTS):
+        buy_ticket(*(result[slot] for slot in SLOTS))
+        # Start a fresh conversation so the next sale collects its own details.
+        messages = []
