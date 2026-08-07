@@ -1,3 +1,8 @@
+# The corrected counterpart to buggy/race_condition.py. The shared global is
+# kept so the diff against the buggy version is purely the added lock - that
+# contrast is the lesson, so `global` stays.
+# pylint: disable=missing-module-docstring,global-statement
+
 import threading
 import time
 
@@ -18,7 +23,7 @@ def test_race_condition_fixed():
     balance = 0
 
     threads = []
-    for i in range(10):
+    for _ in range(10):
         t = threading.Thread(target=deposit_fixed, args=(10,))
         threads.append(t)
         t.start()

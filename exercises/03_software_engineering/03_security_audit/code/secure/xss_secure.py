@@ -1,4 +1,6 @@
-from flask import Flask, request, render_template, escape
+"""XSS-safe counterpart to vulnerable/xss.py: escapes and sanitises user input."""
+
+from flask import Flask, request, render_template
 from markupsafe import Markup
 import bleach
 
@@ -47,6 +49,9 @@ def search():
     return render_template('search.html', query=query)
 
 # templates/search.html
+# Shown inline as a triple-quoted block so the exercise stays a single file;
+# in a real app this is a separate template.
+# pylint: disable-next=pointless-string-statement
 """
 <!DOCTYPE html>
 <html>

@@ -9,6 +9,11 @@ reports the question is off topic.
 
 The modules you need to install to make this work are `passpy` and `anthropic`
 """
+# These demos are deliberately flat single-file scripts: the driver code sits
+# at module level so the whole agent loop reads top to bottom. That makes a
+# helper's parameter shadow the module-level name it is called with.
+# pylint: disable=redefined-outer-name
+
 
 import json
 

@@ -15,7 +15,19 @@ rsconstruct clean outputs  # remove build artifacts
 
 Every `exercises/**/exercise.md` is rendered to HTML, PDF and DOCX under
 `out/pandoc.exercises/`, and checked with `rumdl` (markdown lint) and `zspell`
-(spelling). Configuration lives in `rsconstruct.toml` (shared across repos,
-do not edit here) and `rsconstruct.local.toml` (this repo's overrides).
+(spelling). All Python under `examples/` and `exercises/` is checked with
+`ruff`, `pylint` and `mypy`.
 
-Spelling exceptions go in `.zspell-words`; markdown rules in `.rumdl.toml`.
+Configuration lives in `rsconstruct.toml` (shared across repos, do not edit
+here) and `rsconstruct.local.toml` (this repo's overrides). Spelling
+exceptions go in `.zspell-words`, markdown rules in `.rumdl.toml`, and Python
+rules in `.pylintrc` / `.mypy.ini`.
+
+### Deliberately unlintable exercise code
+
+Some exercise files are *meant* to be bad: incomplete "before" snippets, code
+seeded with bugs, intentionally insecure handlers, and test-first stubs with
+empty bodies. Nothing is excluded from linting by path. Instead each such file
+carries an inline `# ruff: noqa` / `# pylint: disable` / `# mypy:` marker with
+a comment saying why, so the reason is visible to whoever is reading the
+exercise rather than buried in build config.

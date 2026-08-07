@@ -14,6 +14,10 @@
 # live-demos/ trees are demo material shown live, not published handouts.
 doc_dirs = ["exercises"]
 
+# Everywhere Python lives in this repo. Canonical omits examples/.
+# scripts/ is listed for the day it comes back; missing dirs are skipped.
+py_dirs = ["scripts", "examples", "exercises"]
+
 # ─── document generation (was: MD_HTM / MD_PDF / MD_DOCX) ────────────────────
 
 # The Makefile ran `markdown` (the Perl script) for html and pandoc for
@@ -49,18 +53,25 @@ src_dirs = "${doc_dirs}"
 
 # ─── python ──────────────────────────────────────────────────────────────────
 
-# The Makefile linted scripts/*.py (currently empty). The real Python in this
-# repo is exercise material under exercises/: intentionally buggy, insecure and
-# pre-refactoring code kept as teaching input. Linting it would fail by design,
-# so the Python processors stay pointed at scripts/ only.
+# The Makefile only linted scripts/*.py, which was always empty — so in
+# practice it never checked any Python at all. The real Python here is the
+# agent demos under examples/ and the exercise code under exercises/, and both
+# are now checked. Nothing is excluded by path: where a file is deliberately
+# unlintable (the incomplete "before" snippets in 01_refactoring_legacy, the
+# intentionally insecure code in 03_security_audit), the suppression lives in
+# the file itself as a comment marker, so the reason is visible to whoever is
+# reading the exercise rather than buried in build config.
+#
+# The canonical src_dirs list does not include examples/, so add it here.
+
 [processor.ruff]
-src_dirs = ["scripts"]
+src_dirs = "${py_dirs}"
 
 [processor.pylint]
-src_dirs = ["scripts"]
+src_dirs = "${py_dirs}"
 
 [processor.mypy]
-src_dirs = ["scripts"]
+src_dirs = "${py_dirs}"
 
 # ─── canonical processors that do not apply here ─────────────────────────────
 

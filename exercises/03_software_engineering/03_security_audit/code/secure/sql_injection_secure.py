@@ -1,7 +1,9 @@
-from flask import Flask, request, jsonify
+"""Parameterised-query counterpart to vulnerable/sql_injection.py."""
+
 import sqlite3
 import logging
 from typing import Optional
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 

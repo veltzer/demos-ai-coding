@@ -1,7 +1,9 @@
 # validators.py
+"""Validation logic extracted from before/user_manager.py."""
+
 class UserValidator:
     def validate_email(self, email: str) -> None:
-        if not '@' in email:
+        if '@' not in email:
             raise ValueError("Invalid email")
 
     def validate_password(self, password: str) -> None:

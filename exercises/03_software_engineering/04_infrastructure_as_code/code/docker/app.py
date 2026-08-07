@@ -1,5 +1,7 @@
-from flask import Flask, jsonify
+"""Minimal Flask app used as the payload for the Docker/IaC exercise."""
+
 import os
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 

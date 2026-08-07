@@ -1,7 +1,9 @@
 # DANGEROUS - Multiple authentication issues
+"""Intentionally broken authentication. Audit target - do not deploy."""
+
 import hashlib
-from flask import Flask, request, session
 import sqlite3
+from flask import Flask, request, session
 
 app = Flask(__name__)
 app.secret_key = "secret"  # Weak secret key!

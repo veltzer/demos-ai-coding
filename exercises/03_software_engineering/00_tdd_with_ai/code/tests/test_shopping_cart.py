@@ -1,3 +1,8 @@
+# Test suite for the TDD exercise. Run it with pytest from the code/
+# directory, where `src` is importable; pylint lints from the repo root
+# and cannot resolve that, and setup_method is standard pytest style.
+# pylint: disable=missing-module-docstring,import-error,attribute-defined-outside-init
+
 import pytest
 from src.shopping_cart import ShoppingCart, Product
 

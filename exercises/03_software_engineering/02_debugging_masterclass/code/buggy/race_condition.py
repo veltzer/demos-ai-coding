@@ -1,5 +1,10 @@
+# Demonstrates a data race on shared mutable state. Module-level `balance`
+# mutated via `global` is the whole point - the unsynchronised read-modify-write
+# is the bug the reader is asked to find, so pylint's objection is noted and
+# deliberately kept.
+# pylint: disable=missing-module-docstring,global-statement
+
 import threading
-import time
 
 balance = 0
 
@@ -20,7 +25,7 @@ def test_race_condition():
     balance = 0
 
     threads = []
-    for i in range(10):
+    for _ in range(10):
         t = threading.Thread(target=deposit, args=(10,))
         threads.append(t)
         t.start()

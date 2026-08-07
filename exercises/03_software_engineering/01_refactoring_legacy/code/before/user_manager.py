@@ -1,4 +1,14 @@
 # user_manager.py - A 500-line god class
+#
+# This is the "before" half of a refactoring exercise: a god class the reader
+# is asked to split into focused collaborators. It is an excerpt, not a
+# runnable module, so the six services it constructs are never imported. The
+# class doing too much is the lesson, not a defect to fix here.
+# ruff: noqa: F821
+# pylint: disable=undefined-variable,missing-module-docstring,missing-class-docstring
+# pylint: disable=missing-function-docstring,too-many-instance-attributes,too-few-public-methods
+
+
 class UserManager:
     def __init__(self):
         self.db = MySQLConnection()
@@ -10,7 +20,7 @@ class UserManager:
 
     def create_user(self, data):
         # Validate email
-        if not '@' in data['email']:
+        if '@' not in data['email']:
             raise ValueError("Invalid email")
 
         # Check if user exists
@@ -19,7 +29,8 @@ class UserManager:
             raise ValueError("User exists")
 
         # Hash password
-        import hashlib
+        # Buried mid-method rather than at the top - another smell to spot.
+        import hashlib  # pylint: disable=import-outside-toplevel
         hashed = hashlib.md5(data['password'].encode()).hexdigest()
         data['password'] = hashed
 
@@ -37,7 +48,9 @@ class UserManager:
         )
 
         # Create session
-        session_id = self.session_store.create(user_id)
+        # Assigned and then dropped on the floor - one of the smells the
+        # reader is meant to spot, so it is kept rather than cleaned up.
+        session_id = self.session_store.create(user_id)  # noqa: F841  # pylint: disable=unused-variable
 
         # Upload default avatar
         avatar_url = self.file_storage.upload_default_avatar(user_id)

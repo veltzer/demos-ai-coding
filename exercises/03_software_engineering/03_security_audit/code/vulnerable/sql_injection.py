@@ -1,6 +1,8 @@
 # DANGEROUS - DO NOT USE
-from flask import Flask, request
+"""Intentionally SQL-injectable Flask app. Audit target - do not deploy."""
+
 import sqlite3
+from flask import Flask, request
 
 app = Flask(__name__)
 

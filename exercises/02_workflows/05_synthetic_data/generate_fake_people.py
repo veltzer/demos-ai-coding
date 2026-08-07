@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
+"""Generates synthetic person records for the synthetic-data workflow exercise."""
+
 import argparse
 import csv
-import math
 import os
 import random
 import sys
@@ -18,7 +19,7 @@ try:
     import pyarrow as pa
     import pyarrow.parquet as pq
     HAVE_PARQUET = True
-except Exception:
+except ImportError:
     HAVE_PARQUET = False
 
 
@@ -125,8 +126,8 @@ def write_parquet(path: str, rows: Iterator[Dict[str, object]], chunk_size: int 
         }
         count = 0
         for row in rows:
-            for k in batch:
-                batch[k].append(row[k])
+            for k, col in batch.items():
+                col.append(row[k])
             count += 1
 
             if count % chunk_size == 0:
@@ -134,8 +135,8 @@ def write_parquet(path: str, rows: Iterator[Dict[str, object]], chunk_size: int 
                 if writer is None:
                     writer = pq.ParquetWriter(path, table.schema, compression="zstd")
                 writer.write_table(table)
-                for k in batch:
-                    batch[k].clear()
+                for col in batch.values():
+                    col.clear()
 
         if batch["name"]:
             table = pa.Table.from_pydict(batch, schema=schema)

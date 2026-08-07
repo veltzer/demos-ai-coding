@@ -1,4 +1,6 @@
 # buggy_app.py
+"""Application seeded with bugs for the debugging masterclass."""
+
 def calculate_discount(price, discount_percent):
     discount_amount = price * (discount_percent / 100)
     final_price = price - discount_amount

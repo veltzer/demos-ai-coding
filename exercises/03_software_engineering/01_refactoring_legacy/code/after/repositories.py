@@ -1,4 +1,6 @@
 # repositories.py
+"""Data-access layer extracted from before/user_manager.py."""
+
 class UserRepository:
     def __init__(self, db):
         self.db = db

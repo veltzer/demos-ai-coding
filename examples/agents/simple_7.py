@@ -10,6 +10,11 @@ reach a file the user did not ask for.
 
 The modules you need to install to make this work are `passpy` and `anthropic`
 """
+# These demos are deliberately flat single-file scripts: the driver code sits
+# at module level so the whole agent loop reads top to bottom. That makes a
+# helper's parameter shadow the module-level name it is called with.
+# pylint: disable=redefined-outer-name
+
 
 import datetime
 import json
@@ -197,7 +202,7 @@ assert api_key is not None
 api_key = api_key.rstrip()
 client = anthropic.Anthropic(api_key=api_key)
 
-messages = []
+messages: list[dict] = []
 print(
     "Ask me about airline tickets. Name a preferences file to have me read it. "
     "Type '/clear' to start over, or 'exit' or 'quit' (or Ctrl-D) to stop."

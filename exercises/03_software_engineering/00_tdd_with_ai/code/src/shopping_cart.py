@@ -1,4 +1,13 @@
 # Implement Product and ShoppingCart classes to pass the tests
+"""Shopping cart - the implementation grown test-first in the TDD exercise.
+
+Every method below is an intentionally empty stub: filling them in until the
+tests pass IS the exercise. mypy is therefore told not to object to the
+missing return statements here.
+"""
+# mypy: disable-error-code="empty-body"
+
+from typing import Optional
 
 class Product:
     def __init__(self, name: str, price: float):
@@ -27,7 +36,7 @@ class ShoppingCart:
         # Implement
         pass
 
-    def apply_discount(self, percentage: float = None, amount: float = None):
+    def apply_discount(self, percentage: Optional[float] = None, amount: Optional[float] = None):
         # Implement
         pass
 

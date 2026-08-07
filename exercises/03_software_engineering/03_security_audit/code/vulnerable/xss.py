@@ -1,4 +1,6 @@
-from flask import Flask, request, render_template_string
+"""Intentionally XSS-vulnerable Flask app. Audit target - do not deploy."""
+
+from flask import Flask, request
 
 app = Flask(__name__)
 

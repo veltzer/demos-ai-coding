@@ -1,4 +1,6 @@
 # buggy_app_fixed.py
+"""Corrected counterpart to buggy/buggy_app.py."""
+
 def calculate_discount(price, discount_percent):
     # Add validation
     if discount_percent is None:

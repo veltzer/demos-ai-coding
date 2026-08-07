@@ -1,3 +1,12 @@
+# This is the "before" half of a refactoring exercise: one long method the
+# reader is asked to break apart. It is an excerpt, not a runnable module, so
+# the collaborators it reaches for (db, stripe, email_service) are never
+# imported, and its length and branching are the point of the exercise.
+# ruff: noqa: F821
+# pylint: disable=undefined-variable,missing-module-docstring,missing-function-docstring
+# pylint: disable=too-many-branches,too-many-statements,too-many-locals,inconsistent-return-statements
+
+
 def process_order(order_data):
     # Validate order
     if not order_data.get('customer_id'):
