@@ -1,0 +1,36 @@
+# Markdown lint rules. Replaces the old .mdlrc / .mdl.style.rb (Ruby mdl) and
+# .markdownlint.json (node markdownlint) pair — rumdl does the job of both.
+#
+# The disabled set is the union of what those two files turned off, so the
+# migration off the Makefile does not change which markdown is considered
+# acceptable:
+#
+#   MD007  list indent      - was indent=4 in both; rumdl has no such option,
+#                             and the exercises mix 2- and 4-space nesting.
+#   MD022  headings blank   - excluded in .mdl.style.rb, null in .markdownlint.json
+#   MD024  duplicate heading- excluded in .mdl.style.rb, null in .markdownlint.json
+#   MD026  trailing punct   - excluded in .mdl.style.rb, null in .markdownlint.json
+#   MD031  fences blank     - excluded in .mdl.style.rb, null in .markdownlint.json
+#   MD032  lists blank      - excluded in .mdl.style.rb, null in .markdownlint.json
+#   MD033  inline html      - excluded in .mdl.style.rb, null in .markdownlint.json
+#   MD034  bare url         - excluded in .mdl.style.rb
+#   MD053  unused ref link  - null in .markdownlint.json
+#   MD058  tables blank     - null in .markdownlint.json
+[global]
+disable = [
+	"MD007",
+	"MD022",
+	"MD024",
+	"MD026",
+	"MD031",
+	"MD032",
+	"MD033",
+	"MD034",
+	"MD053",
+	"MD058",
+]
+
+# .markdownlint.json and .mdl.style.rb both set line_length 1000, i.e. "do not
+# wrap prose". Kept verbatim.
+[MD013]
+line_length = 1000

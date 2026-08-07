@@ -1,0 +1,72 @@
+# Repo-specific overlay. Deep-merged over the canonical rsconstruct.toml.
+#
+# This repo replaced a hand-written Makefile. What that Makefile did:
+#   - markdown -> html, pdf, docx for every exercises/**/*.md
+#   - aspell spell check, pure-ASCII check, mdl + markdownlint on the same files
+#   - pylint on scripts/*.py
+# The canonical config already covers the linting side (rumdl replaces
+# mdl/markdownlint, zspell replaces aspell, ruff/pylint/mypy cover Python).
+# What is left here is the document generation plus the scope narrowing that
+# keeps each processor pointed at the same files the Makefile handled.
+
+[vars]
+# The Makefile only ever built and checked exercises/. The examples/ and
+# live-demos/ trees are demo material shown live, not published handouts.
+doc_dirs = ["exercises"]
+
+# ─── document generation (was: MD_HTM / MD_PDF / MD_DOCX) ────────────────────
+
+# The Makefile ran `markdown` (the Perl script) for html and pandoc for
+# pdf/docx. pandoc handles all three, so one processor replaces both rules.
+# Output lands in out/pandoc.exercises/<category>/<name>/exercise.<fmt> rather
+# than the Makefile's out/exercises/<category>/<name>.<fmt>.
+#
+# xelatex rather than pandoc's default pdflatex: some exercises use box-drawing
+# characters for directory trees, check marks in decision tables, and ordinary
+# typographic punctuation (em dash, ≤, →). pdflatex is 8-bit only and dies on
+# all of it, which is why those two exercises never produced a PDF under the
+# Makefile. xelatex is Unicode-native and renders them as written.
+[processor.pandoc.exercises]
+src_dirs = "${doc_dirs}"
+formats = ["html", "pdf", "docx"]
+pdf_engine = "xelatex"
+
+# The Makefile also ran a pure-ASCII check (grep -P "[^\x00-\x7F]") on every
+# exercise. It existed to keep the pdflatex path working; with xelatex doing
+# the typesetting the constraint no longer buys anything, and it was rejecting
+# content the author wrote deliberately. Deliberately not carried over.
+
+# ─── markdown lint / spelling scope ──────────────────────────────────────────
+
+# Canonical points rumdl and zspell at a wider directory menu. Narrow both to
+# the exercises tree the Makefile actually checked, so migrating the build does
+# not turn into a repo-wide lint failure on day one.
+[processor.rumdl]
+src_dirs = "${doc_dirs}"
+
+[processor.zspell]
+src_dirs = "${doc_dirs}"
+
+# ─── python ──────────────────────────────────────────────────────────────────
+
+# The Makefile linted scripts/*.py (currently empty). The real Python in this
+# repo is exercise material under exercises/: intentionally buggy, insecure and
+# pre-refactoring code kept as teaching input. Linting it would fail by design,
+# so the Python processors stay pointed at scripts/ only.
+[processor.ruff]
+src_dirs = ["scripts"]
+
+[processor.pylint]
+src_dirs = ["scripts"]
+
+[processor.mypy]
+src_dirs = ["scripts"]
+
+# ─── canonical processors that do not apply here ─────────────────────────────
+
+# Canonical wires up scripts/check_md.py, a syllabus front-matter checker that
+# only some repos ship. This repo has no such script, so the processor matches
+# nothing at build time but still shows up as a missing tool in `rsconstruct
+# doctor`. Turn it off so doctor's output stays meaningful.
+[processor.script.check_md]
+enabled = false

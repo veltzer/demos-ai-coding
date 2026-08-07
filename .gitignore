@@ -119,6 +119,10 @@ node_modules/
 # scons
 .sconsign.dblite
 
+# rsconstruct
+/.rsconstruct/
+/.rumdl_cache/
+
 # DS_Store
 .DS_Store
 

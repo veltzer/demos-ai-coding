@@ -233,19 +233,19 @@ Edit VS Code settings (`.vscode/settings.json` or user settings):
 ## Part 4: Getting API Keys
 
 ### Brave Search API
-1. Go to [link](https://brave.com/search/api/)
+1. Go to [Brave Search API](https://brave.com/search/api/)
 1. Sign up for free tier (2,000 queries/month)
 1. Create an API key
 1. Add to your MCP config
 
 ### GitHub Personal Access Token
-1. Go to [link](https://github.com/settings/tokens)
+1. Go to [GitHub token settings](https://github.com/settings/tokens)
 1. Click "Generate new token (classic)"
 1. Select scopes: `repo`, `read:org`, `read:user`
 1. Copy token and add to MCP config
 
 ### Google Drive OAuth
-1. Go to [link](https://console.cloud.google.com/)
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 1. Create a new project
 1. Enable Google Drive API
 1. Create OAuth 2.0 credentials
@@ -253,7 +253,7 @@ Edit VS Code settings (`.vscode/settings.json` or user settings):
 1. Configure in MCP settings
 
 ### Slack Bot Token
-1. Go to [link](https://api.slack.com/apps)
+1. Go to [Slack app dashboard](https://api.slack.com/apps)
 1. Create a new app
 1. Add bot token scopes: `channels:read`, `chat:write`, `users:read`
 1. Install app to workspace
@@ -865,9 +865,9 @@ System: Research competitors:
 
 ### Official Resources
 
-- **MCP Specification:** [link](https://spec.modelcontextprotocol.io/)
-- **MCP SDK:** [link](https://github.com/modelcontextprotocol/sdk)
-- **Official Servers:** [link](https://github.com/modelcontextprotocol/servers)
+- **MCP Specification:** [MCP specification](https://spec.modelcontextprotocol.io/)
+- **MCP SDK:** [MCP SDK on GitHub](https://github.com/modelcontextprotocol/sdk)
+- **Official Servers:** [Official MCP servers on GitHub](https://github.com/modelcontextprotocol/servers)
 
 ### Community Resources
 

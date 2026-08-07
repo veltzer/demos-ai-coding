@@ -40,7 +40,7 @@ a skill is a durable capability the assistant carries between conversations.
 A skill lives in its own directory. The minimum is a single file named
 `SKILL.md`. More elaborate skills add scripts and reference material alongside it:
 
-```
+```text
 my-skill/
 ├── SKILL.md            # required: frontmatter + instructions
 ├── scripts/            # optional: helper scripts the skill can run
