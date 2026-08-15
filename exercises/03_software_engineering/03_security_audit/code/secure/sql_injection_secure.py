@@ -1,9 +1,9 @@
 """Parameterised-query counterpart to vulnerable/sql_injection.py."""
 
-import sqlite3
 import logging
-from typing import Optional
-from flask import Flask, request, jsonify
+import sqlite3
+
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -13,7 +13,7 @@ security_logger.setLevel(logging.WARNING)
 handler = logging.FileHandler('security.log')
 security_logger.addHandler(handler)
 
-def validate_user_id(user_id: str) -> Optional[int]:
+def validate_user_id(user_id: str) -> int | None:
     """Validate user ID is a positive integer."""
     try:
         uid = int(user_id)
@@ -58,7 +58,7 @@ def get_user():
 
     except sqlite3.Error as e:
         # Log error but don't expose details to user
-        logging.error(f"Database error: {e}")
+        logging.getLogger(__name__).error(f"Database error: {e}")
         return jsonify({'error': 'Internal server error'}), 500
 
     finally:

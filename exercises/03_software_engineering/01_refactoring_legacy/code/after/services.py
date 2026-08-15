@@ -22,4 +22,4 @@ class UserService:
     def create_user(self, data: dict) -> int:
         self.validator.validate_email(data['email'])
         # ... orchestrates the operations
-        pass  # pylint: disable=unnecessary-pass  # body elided in the sketch
+        # pylint: disable=unnecessary-pass  # body elided in the sketch

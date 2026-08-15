@@ -6,6 +6,7 @@
 import pytest
 from src.string_calculator import StringCalculator
 
+
 class TestStringCalculator:
     def setup_method(self):
         self.calc = StringCalculator()

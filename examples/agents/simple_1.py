@@ -6,8 +6,8 @@ Stage 1: issue one hardcoded prompt to anthropic and print the answer.
 The modules you need to install to make this work are `passpy` and `anthropic`
 """
 
-import passpy
 import anthropic
+import passpy
 
 MODEL = "claude-opus-5"
 

@@ -7,7 +7,7 @@ missing return statements here.
 """
 # mypy: disable-error-code="empty-body"
 
-from typing import Optional
+
 
 class Product:
     def __init__(self, name: str, price: float):
@@ -36,7 +36,7 @@ class ShoppingCart:
         # Implement
         pass
 
-    def apply_discount(self, percentage: Optional[float] = None, amount: Optional[float] = None):
+    def apply_discount(self, percentage: float | None = None, amount: float | None = None):
         # Implement
         pass
 

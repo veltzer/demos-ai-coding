@@ -7,6 +7,7 @@
 
 from app import app
 
+
 class TestSecurityHeaders:
     """Test security headers are present."""
 
@@ -68,4 +69,3 @@ class TestAuthentication:
     def test_session_timeout(self):
         """Test session expires after timeout."""
         # Test implementation
-        pass

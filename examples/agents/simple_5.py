@@ -19,8 +19,8 @@ The modules you need to install to make this work are `passpy` and `anthropic`
 import datetime
 import json
 
-import passpy
 import anthropic
+import passpy
 
 MODEL = "claude-opus-5"
 
@@ -93,7 +93,7 @@ SLOTS = ("departure_city", "destination_city", "date")
 
 def ask(messages):
     """Send the conversation and return the parsed structured reply."""
-    today = datetime.date.today().isoformat()
+    today = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
     response = client.messages.create(
         model=MODEL,
         max_tokens=16000,

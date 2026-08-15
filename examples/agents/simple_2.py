@@ -9,8 +9,8 @@ follow-up questions do not work yet.
 The modules you need to install to make this work are `passpy` and `anthropic`
 """
 
-import passpy
 import anthropic
+import passpy
 
 MODEL = "claude-opus-5"
 

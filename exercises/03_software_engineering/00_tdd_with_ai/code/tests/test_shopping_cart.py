@@ -4,7 +4,8 @@
 # pylint: disable=missing-module-docstring,import-error,attribute-defined-outside-init
 
 import pytest
-from src.shopping_cart import ShoppingCart, Product
+from src.shopping_cart import Product, ShoppingCart
+
 
 class TestShoppingCart:
     def setup_method(self):

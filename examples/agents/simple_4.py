@@ -17,8 +17,8 @@ The modules you need to install to make this work are `passpy` and `anthropic`
 
 import json
 
-import passpy
 import anthropic
+import passpy
 
 MODEL = "claude-opus-5"
 

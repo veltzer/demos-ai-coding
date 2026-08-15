@@ -6,7 +6,7 @@ import csv
 import os
 import random
 import sys
-from typing import Iterator, Dict, List, Optional
+from collections.abc import Iterator
 
 try:
     from faker import Faker
@@ -69,9 +69,9 @@ def sample_children(rng: random.Random, age: int, marital_status: str) -> int:
 def generate_people(
     n: int,
     locale: str,
-    seed: Optional[int],
+    seed: int | None,
     with_progress: bool = True
-) -> Iterator[Dict[str, object]]:
+) -> Iterator[dict[str, object]]:
     rng = random.Random(seed)
     fake = Faker(locale=locale)
     if seed is not None:
@@ -92,7 +92,7 @@ def generate_people(
             print(f"Generated {i+1}/{n} rows...", file=sys.stderr)
         yield person
 
-def write_csv(path: str, rows: Iterator[Dict[str, object]]) -> None:
+def write_csv(path: str, rows: Iterator[dict[str, object]]) -> None:
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
@@ -102,7 +102,7 @@ def write_csv(path: str, rows: Iterator[Dict[str, object]]) -> None:
         for row in rows:
             writer.writerow(row)
 
-def write_parquet(path: str, rows: Iterator[Dict[str, object]], chunk_size: int = 100_000) -> None:
+def write_parquet(path: str, rows: Iterator[dict[str, object]], chunk_size: int = 100_000) -> None:
     if not HAVE_PARQUET:
         print("Parquet support requires pyarrow. Install with: pip install pyarrow", file=sys.stderr)
         sys.exit(1)
@@ -117,7 +117,7 @@ def write_parquet(path: str, rows: Iterator[Dict[str, object]], chunk_size: int 
 
     writer = None
     try:
-        batch: Dict[str, List] = {
+        batch: dict[str, list] = {
             "name": [],
             "family_name": [],
             "marital_status": [],
@@ -128,7 +128,7 @@ def write_parquet(path: str, rows: Iterator[Dict[str, object]], chunk_size: int 
         for row in rows:
             for k, col in batch.items():
                 col.append(row[k])
-            count += 1
+            count += 1  # noqa: SIM113 - batch counter, not a sequence index
 
             if count % chunk_size == 0:
                 table = pa.Table.from_pydict(batch, schema=schema)

@@ -1,8 +1,8 @@
 """XSS-safe counterpart to vulnerable/xss.py: escapes and sanitises user input."""
 
-from flask import Flask, request, render_template
-from markupsafe import Markup
 import bleach
+from flask import Flask, render_template, request
+from markupsafe import Markup
 
 app = Flask(__name__)
 

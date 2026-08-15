@@ -25,9 +25,9 @@ import os
 import pathlib
 import re
 
+import anthropic
 import chromadb
 import passpy
-import anthropic
 
 MODEL = "claude-opus-5"
 
@@ -201,7 +201,7 @@ def read_preferences(filename, allowed):
 
 def ask(messages, allowed):
     """Run the turn to completion, servicing tool calls, and return the reply."""
-    today = datetime.date.today().isoformat()
+    today = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
     # Tools and structured output can't drive the same call, so let the model
     # finish its tool calls first, then ask for the structured reply.
     while True:
