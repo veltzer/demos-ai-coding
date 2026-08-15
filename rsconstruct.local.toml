@@ -81,3 +81,18 @@ src_dirs = "${py_dirs}"
 # doctor`. Turn it off so doctor's output stays meaningful.
 [processor.script.check_md]
 enabled = false
+
+# Runtime deps so CI installs what the examples/exercises import; without them
+# pylint reports import-error and mypy cannot find the modules.
+[dependencies]
+pip = [
+    "anthropic",
+    "bleach",
+    "chromadb",
+    "faker",
+    "flask",
+    "markupsafe",
+    "passpy",
+    "pyarrow",
+    "pytest",
+]
