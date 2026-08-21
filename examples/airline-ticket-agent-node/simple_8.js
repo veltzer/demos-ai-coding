@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 
 /*
- * Stage 7: let the model read a preferences file the user names.
+ * Stage 8: RAG -- ground the agent in the airline's documentation.
  *
- * If the user's message contains a filename, the model is offered a
- * `read_preferences` tool for that turn. The client -- not the model -- does
- * the reading, and only for a filename the user actually typed, so the model
- * cannot reach a file the user did not ask for.
+ * Every user question is first embedded and searched in the LanceDB database
+ * built by index_docs.js; the best matching documentation sections are
+ * attached to the question sent to the LLM, so answers about baggage, fares,
+ * refunds and the like come from our documents instead of the model's
+ * general knowledge.
  *
- * The module you need to install to make this work is `@anthropic-ai/sdk`.
+ * Run ./index_docs.js once before this. The modules you need to install are
+ * `@anthropic-ai/sdk`, `@lancedb/lancedb` and `@huggingface/transformers`.
  * The api key is read from pass(1) via `pass show keys/claude.ai`.
  */
 
@@ -16,8 +18,14 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import readline from "node:readline";
 import Anthropic from "@anthropic-ai/sdk";
+import * as lancedb from "@lancedb/lancedb";
+import { pipeline } from "@huggingface/transformers";
 
 const MODEL = "claude-opus-5";
+const DB_DIR = "./lancedb";
+const TABLE = "docs";
+const EMBEDDING_MODEL = "Xenova/all-MiniLM-L6-v2";
+const SEARCH_LIMIT = 3;
 
 const SYSTEM = `
 You are an airline ticket sales agent. Discuss things related to airline
@@ -34,6 +42,12 @@ tell the user the ticket was bought.
 
 If the user names a preferences file, read it with the read_preferences
 tool and take the preferences in it into account when selling the ticket.
+
+User questions arrive with excerpts from this airline's official
+documentation attached in a <documentation> tag. When the question touches
+policy matters (baggage, fares, check-in, refunds, seating, loyalty, travel
+documents and so on), base your answer on those excerpts rather than on
+general knowledge, and ignore them when they are not relevant.
 `.trim();
 
 const BUY_TOOL = {
@@ -115,11 +129,35 @@ const apiKey = execFileSync("pass", ["show", "keys/claude.ai"], {
 }).trimEnd();
 const client = new Anthropic({ apiKey });
 
+debug("agent", `loading embedding model ${EMBEDDING_MODEL}`);
+const embedder = await pipeline("feature-extraction", EMBEDDING_MODEL);
+const db = await lancedb.connect(DB_DIR);
+const table = await db.openTable(TABLE);
+
+// RAG: find the documentation sections closest to the question and wrap
+// them in a <documentation> tag to attach to the question itself.
+async function documentationFor(question) {
+  const output = await embedder(question, { pooling: "mean", normalize: true });
+  const hits = await table.search(Array.from(output.data)).limit(SEARCH_LIMIT).toArray();
+  debug(
+    "agent",
+    "vector db findings: " +
+      hits
+        .map((h) => `${h.filename}/${h.title} (${h._distance.toFixed(3)})`)
+        .join(", "),
+  );
+  const excerpts = hits
+    .map((h) => `<excerpt source="${h.filename}">\n${h.text}\n</excerpt>`)
+    .join("\n");
+  return `<documentation>\n${excerpts}\n</documentation>`;
+}
+
 // The whole conversation, shared by all turns; /clear empties it.
 let messages = [];
 
 async function handleUserTurn(question) {
-  messages.push({ role: "user", content: question });
+  const documentation = await documentationFor(question);
+  messages.push({ role: "user", content: `${documentation}\n\n${question}` });
   // Only a turn whose message names a file offers the read_preferences tool.
   const allowedFilenames = filenamesIn(question);
   const tools = allowedFilenames.length
