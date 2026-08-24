@@ -1,15 +1,5 @@
-# Canonical shared rsconstruct.toml — this file is IDENTICAL in every repo.
-#
-# Do not edit per-repo copies. Edit the canonical copy
-# (/home/mark/git/rsconstruct.canonical.toml) and sync it out.
-# Repo-specific configuration (dependencies, explicit generators, excludes,
-# one-off workarounds) lives in rsconstruct.local.toml, which rsconstruct
-# deep-merges over this file at load time.
-#
-# This file is a menu: src_dirs entries that don't exist in a given repo are
-# skipped (default behavior since 0.9.46), so a processor whose directories
-# are all absent simply matches no files there. The directory layout of each
-# repo decides which checks run.
+# rsconstruct configuration for this repository — shared defaults plus
+# repo-specific config (merged from the former rsconstruct.local.toml).
 
 # ─── analyzers ───────────────────────────────────────────────────────────────
 
@@ -37,81 +27,79 @@ dep_auto = [
 # ─── markdown ────────────────────────────────────────────────────────────────
 
 [processor.rumdl]
-src_dirs = ["src", "docs", "exercises", "notes", "marp"]
+src_dirs = "${doc_dirs}"
 
 [processor.zspell]
-src_dirs = ["src", "docs", "exercises", "notes", "marp", "syllabi", "out/generator"]
+src_dirs = "${doc_dirs}"
 
 # ─── python ──────────────────────────────────────────────────────────────────
 
 [processor.ruff]
-src_dirs = ["src", "scripts", "config", "tests", "exercises", "animations"]
+src_dirs = "${py_dirs}"
 
 [processor.pylint]
-src_dirs = ["src", "scripts", "config", "tests", "exercises", "animations"]
+src_dirs = "${py_dirs}"
 
 [processor.mypy]
-src_dirs = ["src", "scripts", "config", "tests", "exercises", "animations"]
-
-[processor.requirements]
-src_dirs = ["src", "scripts", "config", "tests", "animations"]
-
-[processor.pytest]
-src_dirs = ["tests"]
+src_dirs = "${py_dirs}"
 
 # ─── shell ───────────────────────────────────────────────────────────────────
 
 [processor.shellcheck]
-src_dirs = ["scripts", "src", "misc", "exercises", "docs", "config"]
+src_dirs = ["exercises"]
 args = ["--severity=error", "--shell=bash"]
-
-# ─── lua ─────────────────────────────────────────────────────────────────────
-
-[processor.luacheck]
-src_dirs = ["config", "print"]
 
 # ─── toml / yaml / json ──────────────────────────────────────────────────────
 
 [processor.taplo]
 src_dirs = ["."]
 
-[processor.iyamllint]
-src_dirs = ["yaml", "tracks"]
+# ─── merged from rsconstruct.local.toml ─────────────────────────────────────
 
-[processor.ijsonlint]
-src_dirs = ["json"]
+[vars]
+# The Makefile only ever built and checked exercises/. The examples/ and
+# live-demos/ trees are demo material shown live, not published handouts.
+doc_dirs = ["exercises"]
 
-# ─── web ─────────────────────────────────────────────────────────────────────
+# Everywhere Python lives in this repo. Canonical omits examples/.
+# scripts/ is listed for the day it comes back; missing dirs are skipped.
+py_dirs = ["scripts", "examples", "exercises"]
 
-[processor.stylelint]
-src_dirs = ["resources", "site-resources", "print"]
+# ─── document generation (was: MD_HTM / MD_PDF / MD_DOCX) ────────────────────
 
-[processor.htmlhint]
-src_dirs = ["src", "site-resources"]
+# The Makefile ran `markdown` (the Perl script) for html and pandoc for
+# pdf/docx. pandoc handles all three, so one processor replaces both rules.
+# Output lands in out/pandoc.exercises/<category>/<name>/exercise.<fmt> rather
+# than the Makefile's out/exercises/<category>/<name>.<fmt>.
+#
+# xelatex rather than pandoc's default pdflatex: some exercises use box-drawing
+# characters for directory trees, check marks in decision tables, and ordinary
+# typographic punctuation (em dash, ≤, →). pdflatex is 8-bit only and dies on
+# all of it, which is why those two exercises never produced a PDF under the
+# Makefile. xelatex is Unicode-native and renders them as written.
+[processor.pandoc.exercises]
+src_dirs = "${doc_dirs}"
+formats = ["html", "pdf", "docx"]
+pdf_engine = "xelatex"
 
-[processor.tidy]
-src_dirs = ["src", "blog"]
+# The Makefile also ran a pure-ASCII check (grep -P "[^\x00-\x7F]") on every
+# exercise. It existed to keep the pdflatex path working; with xelatex doing
+# the typesetting the constraint no longer buys anything, and it was rejecting
+# content the author wrote deliberately. Deliberately not carried over.
 
-[processor.eslint]
-src_dirs = ["site-resources", "shared", "config", "blog"]
-args = ["-c", "config/eslint.config.js"]
+# ─── markdown lint / spelling scope ──────────────────────────────────────────
 
-# ─── teaching content ────────────────────────────────────────────────────────
-
-[processor.tags]
-src_dirs = ["syllabi", "out/generator"]
-required_fields = ["tags", "level", "category", "audience"]
-required_field_groups = [["duration_hours"], ["duration_hours_long", "duration_hours_short"]]
-
-[processor.terms]
-src_dirs = ["syllabi", "out/generator"]
-
-[processor.pandoc.syllabi]
-src_dirs = ["syllabi"]
-formats = ["pdf", "html", "docx"]
-
-[processor.script.check_md]
-command = "scripts/check_md.py"
-src_extensions = [".md"]
-src_dirs = ["syllabi", "marp", "out/generator"]
-batch = true
+# Runtime deps so CI installs what the examples/exercises import; without them
+# pylint reports import-error and mypy cannot find the modules.
+[dependencies]
+pip = [
+    "anthropic",
+    "bleach",
+    "chromadb",
+    "faker",
+    "flask",
+    "markupsafe",
+    "passpy",
+    "pyarrow",
+    "pytest",
+]
