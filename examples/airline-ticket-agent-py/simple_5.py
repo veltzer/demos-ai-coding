@@ -93,7 +93,7 @@ SLOTS = ("departure_city", "destination_city", "date")
 
 def ask(messages):
     """Send the conversation and return the parsed structured reply."""
-    today = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+    today = datetime.datetime.now(datetime.UTC).date().isoformat()
     response = client.messages.create(
         model=MODEL,
         max_tokens=16000,

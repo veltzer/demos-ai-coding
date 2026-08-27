@@ -147,7 +147,7 @@ def read_preferences(filename, allowed):
 
 def ask(messages, allowed):
     """Run the turn to completion, servicing tool calls, and return the reply."""
-    today = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+    today = datetime.datetime.now(datetime.UTC).date().isoformat()
     # Tools and structured output can't drive the same call, so let the model
     # finish its tool calls first, then ask for the structured reply.
     while True:
