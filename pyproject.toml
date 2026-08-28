@@ -26,3 +26,11 @@ package = false
 mypy_path = "src:python:scripts"
 explicit_package_bases = true
 namespace_packages = true
+
+# pyarrow ships no py.typed marker; without stubs installed mypy fails
+# the import as untyped.
+[[tool.mypy.overrides]]
+module = [
+    "pyarrow.*",
+]
+ignore_missing_imports = true
