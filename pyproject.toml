@@ -13,6 +13,7 @@ dependencies = [
     "faker",
     "flask",
     "markupsafe",
+    "mcp",
     "passpy",
     "pyarrow",
     "pytest",
