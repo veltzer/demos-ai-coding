@@ -22,6 +22,10 @@ dependencies = [
 [dependency-groups]
 dev = [
     "mypy",
+    # uv-managed venvs ship without pip, but `rsconstruct doctor` verifies
+    # installed packages through the `pip` on PATH; without this it silently
+    # checks the system interpreter instead of this venv.
+    "pip",
     "pylint",
     "pytest",
     "ruff",
