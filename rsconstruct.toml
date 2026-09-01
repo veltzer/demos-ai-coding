@@ -1,5 +1,4 @@
-# rsconstruct configuration for this repository — shared defaults plus
-# repo-specific config (merged from the former rsconstruct.local.toml).
+# rsconstruct build configuration for this repository.
 
 [analyzer.markdown]
 
@@ -33,7 +32,7 @@ args = ["--severity=error", "--shell=bash"]
 [processor.taplo]
 src_dirs = ["."]
 
-# ─── merged from rsconstruct.local.toml ─────────────────────────────────────
+# ─── repo-specific configuration ────────────────────────────────────────────
 
 [vars]
 # The Makefile only ever built and checked exercises/. The examples/ and
