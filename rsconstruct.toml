@@ -5,7 +5,8 @@
 [analyzer.python]
 
 [processor.rumdl]
-src_dirs = "${doc_dirs}"
+src_dirs = ["examples", "exercises", "live-demos/agents"]
+src_files = ["CLAUDE.md", "README.md"]
 
 [processor.zspell]
 src_dirs = "${doc_dirs}"
@@ -25,7 +26,6 @@ src_dirs = "${py_dirs}"
 
 [processor.shellcheck]
 src_dirs = ["exercises"]
-args = ["--severity=error", "--shell=bash"]
 
 # ─── toml / yaml / json ──────────────────────────────────────────────────────
 
@@ -70,3 +70,24 @@ pdf_engine = "xelatex"
 # lint the GitHub Actions workflow files with actionlint
 [processor.actionlint]
 src_dirs = [".github/workflows"]
+
+# ─── yaml ────────────────────────────────────────────────────────────────────
+
+[processor.yamllint]
+src_dirs = ["exercises/03_software_engineering/04_infrastructure_as_code/code"]
+
+# ─── docker ──────────────────────────────────────────────────────────────────
+
+[processor.hadolint]
+src_dirs = ["exercises/03_software_engineering/04_infrastructure_as_code/code/docker"]
+
+# ─── json ────────────────────────────────────────────────────────────────────
+
+[processor.ijsonlint]
+src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniques/01_your_own_mcp_server"]
+
+# ─── javascript ──────────────────────────────────────────────────────────────
+
+[processor.eslint]
+src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniques/01_your_own_mcp_server"]
+args = ["-c", ".eslint.config.js"]

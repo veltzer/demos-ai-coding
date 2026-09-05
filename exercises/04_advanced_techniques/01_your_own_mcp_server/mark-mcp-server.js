@@ -37,10 +37,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 
 // Handle tool calls
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  const { name, arguments: args } = request.params;
+  const { name } = request.params;
 
   switch (name) {
-    case "get_random_fact":
+    case "get_random_fact": {
       const facts = [
         "Mark Veltzer wrote a book about political philosophy",
 	"Mark Veltzer maintained GNU grep for several years",
@@ -55,6 +55,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           },
         ],
       };
+    }
 
     default:
       throw new Error(`Unknown tool: ${name}`);

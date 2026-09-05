@@ -76,7 +76,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
   switch (name) {
-    case "add":
+    case "add": {
       const sum = args.a + args.b;
       return {
         content: [
@@ -86,8 +86,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           },
         ],
       };
+    }
 
-    case "multiply":
+    case "multiply": {
       const product = args.a * args.b;
       return {
         content: [
@@ -97,8 +98,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           },
         ],
       };
+    }
 
-    case "get_random_fact":
+    case "get_random_fact": {
       const facts = [
         "Zero is the only number that is neither positive nor negative.",
         "The number 9 is considered a magic number because when you multiply any number by 9, the digits of the result always add up to 9.",
@@ -115,6 +117,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           },
         ],
       };
+    }
 
     default:
       throw new Error(`Unknown tool: ${name}`);

@@ -35,18 +35,18 @@ test_mcp_request() {
     local expected_pattern="$2"
     local test_name="$3"
 
-    echo "Testing: $test_name"
+    echo "Testing: ${test_name}"
 
     # Send request to MCP service and capture response
-    response=$(echo "$request" | timeout 5s node math-mcp-service.js 2>/dev/null || true)
+    response=$(echo "${request}" | timeout 5s node math-mcp-service.js 2>/dev/null || true)
 
-    if echo "$response" | grep -q "$expected_pattern"; then
-        echo "✅ $test_name - PASSED"
+    if echo "${response}" | grep -q "${expected_pattern}"; then
+        echo "✅ ${test_name} - PASSED"
         return 0
     else
-        echo "❌ $test_name - FAILED"
-        echo "Expected pattern: $expected_pattern"
-        echo "Got response: $response"
+        echo "❌ ${test_name} - FAILED"
+        echo "Expected pattern: ${expected_pattern}"
+        echo "Got response: ${response}"
         return 1
     fi
 }
@@ -54,25 +54,25 @@ test_mcp_request() {
 # Test 1: List Tools
 echo "1. Testing tool listing..."
 list_tools_request='{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}'
-test_mcp_request "$list_tools_request" "add" "List Tools"
+test_mcp_request "${list_tools_request}" "add" "List Tools"
 echo ""
 
 # Test 2: Add Tool
 echo "2. Testing add tool..."
 add_request='{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "add", "arguments": {"a": 5, "b": 3}}}'
-test_mcp_request "$add_request" "5 + 3 = 8" "Add Tool"
+test_mcp_request "${add_request}" "5 + 3 = 8" "Add Tool"
 echo ""
 
 # Test 3: Multiply Tool
 echo "3. Testing multiply tool..."
 multiply_request='{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "multiply", "arguments": {"a": 4, "b": 7}}}'
-test_mcp_request "$multiply_request" "4 × 7 = 28" "Multiply Tool"
+test_mcp_request "${multiply_request}" "4 × 7 = 28" "Multiply Tool"
 echo ""
 
 # Test 4: Random Fact Tool
 echo "4. Testing random fact tool..."
 fact_request='{"jsonrpc": "2.0", "id": 4, "method": "tools/call", "params": {"name": "get_random_fact", "arguments": {}}}'
-test_mcp_request "$fact_request" "Math Fact:" "Random Fact Tool"
+test_mcp_request "${fact_request}" "Math Fact:" "Random Fact Tool"
 echo ""
 
 echo "================================"

@@ -57,7 +57,7 @@ The orchestrator never writes code itself. It just **dispatches** and **integrat
 Tell the class:
 
 > "We're going to build a small command-line tool that converts a JSON file into a CSV file. Sounds easy. Let's do it the *grown-up* way: research a good library first, then write the code, then have someone independent review it."
-
+>
 > "I'll do all three with one agent, but the agent is going to delegate to specialists for each phase. I (the human) am going to act like a project manager who only talks to the orchestrator."
 
 ### Step 2 — Kick off with an explicit orchestration request (4 min)
@@ -117,7 +117,7 @@ Narrate as it runs:
 Point at the diagram. Trace the actual flow that just happened:
 
 > "The orchestrator made four delegations. It never wrote a line of code itself. It never read PyPI itself. Its job was *routing and integration*."
-
+>
 > "The researcher knew nothing about coding standards. The coder knew nothing about reviewing. The reviewer knew nothing about library selection. Each one had a clean job."
 
 ### Step 5 — The big lesson (3 min)
@@ -126,7 +126,7 @@ Step back. This is the closing message of the entire course:
 > "An agent is an LLM with tools and a loop."
 > "A multi-agent system is **agents giving each other jobs.**"
 > "And just like with humans: clear roles, clear handoffs, and someone in charge of integration. That's the whole game."
-
+>
 > "What we just built is a tiny version of how real agentic products work — code review bots, research assistants, customer-support pipelines. Same shape. More agents. More tools. Same loop."
 
 ### Step 6 — Open the floor (5 min+)

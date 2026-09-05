@@ -23,7 +23,7 @@ COPY --from=builder /root/.local /home/appuser/.local
 COPY --chown=appuser:appuser app.py .
 
 # Set user
-USER appuser
+USER 1000
 
 # Environment
 ENV PATH=/home/appuser/.local/bin:$PATH
@@ -35,7 +35,7 @@ EXPOSE 5000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:5000/health')"
+    CMD ["python", "-c", "import requests; requests.get('http://localhost:5000/health')"]
 
 # Run with gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "app:app"]
