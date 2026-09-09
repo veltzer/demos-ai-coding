@@ -41,7 +41,7 @@ doc_dirs = ["exercises"]
 
 # Everywhere Python lives in this repo. Canonical omits examples/.
 # scripts/ is listed for the day it comes back; missing dirs are skipped.
-py_dirs = ["scripts", "examples", "exercises"]
+py_dirs = ["examples", "exercises"]
 
 # ─── document generation (was: MD_HTM / MD_PDF / MD_DOCX) ────────────────────
 
