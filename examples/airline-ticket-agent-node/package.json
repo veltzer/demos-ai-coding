@@ -15,5 +15,10 @@
     "@anthropic-ai/sdk": "^0.120.0",
     "@huggingface/transformers": "^4.2.0",
     "@lancedb/lancedb": "^0.37.1"
+  },
+  "//overrides": "Temporary pins for Dependabot: drop the sharp override once @huggingface/transformers depends on sharp >=0.35.4, and the adm-zip override once onnxruntime-node depends on adm-zip >=0.6.1.",
+  "overrides": {
+    "sharp": "^0.35.4",
+    "adm-zip": "^0.6.1"
   }
 }
