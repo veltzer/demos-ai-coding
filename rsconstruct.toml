@@ -20,8 +20,6 @@ src_dirs = "${doc_dirs}"
 [processor.ruff]
 src_dirs = "${py_dirs}"
 
-[processor.pylint]
-src_dirs = "${py_dirs}"
 
 [processor.mypy]
 src_dirs = "${py_dirs}"
