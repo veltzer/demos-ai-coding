@@ -90,6 +90,6 @@ src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniq
 
 # ─── javascript ──────────────────────────────────────────────────────────────
 
-[processor.eslint]
+[processor.oxlint]
 src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniques/01_your_own_mcp_server"]
-args = ["-c", ".eslint.config.js"]
+args = ["-c", ".oxlintrc.json"]
