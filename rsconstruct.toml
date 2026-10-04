@@ -8,30 +8,30 @@ reject_dot_src_dirs = true
 
 [analyzer.python]
 
-[processor.rumdl]
+[processor.checker.rumdl]
 src_dirs = ["examples", "exercises", "live-demos/agents"]
 src_files = ["CLAUDE.md", "README.md"]
 
-[processor.zspell]
+[processor.checker.zspell]
 src_dirs = "${doc_dirs}"
 
 # ─── python ──────────────────────────────────────────────────────────────────
 
-[processor.ruff]
+[processor.checker.ruff]
 src_dirs = "${py_dirs}"
 
 
-[processor.mypy]
+[processor.checker.mypy]
 src_dirs = "${py_dirs}"
 
 # ─── shell ───────────────────────────────────────────────────────────────────
 
-[processor.shellcheck]
+[processor.checker.shellcheck]
 src_dirs = ["exercises"]
 
 # ─── toml / yaml / json ──────────────────────────────────────────────────────
 
-[processor.taplo]
+[processor.checker.taplo]
 src_files = [".rumdl.toml", "pyproject.toml", "rsconstruct.toml"]
 
 # ─── repo-specific configuration ────────────────────────────────────────────
@@ -49,7 +49,7 @@ py_dirs = ["examples", "exercises"]
 
 # The Makefile ran `markdown` (the Perl script) for html and pandoc for
 # pdf/docx. pandoc handles all three, so one processor replaces both rules.
-# Output lands in out/pandoc.exercises/<category>/<name>/exercise.<fmt> rather
+# Output lands in out/processor.generator.pandoc.exercises/<category>/<name>/exercise.<fmt> rather
 # than the Makefile's out/exercises/<category>/<name>.<fmt>.
 #
 # xelatex rather than pandoc's default pdflatex: some exercises use box-drawing
@@ -57,7 +57,7 @@ py_dirs = ["examples", "exercises"]
 # typographic punctuation (em dash, ≤, →). pdflatex is 8-bit only and dies on
 # all of it, which is why those two exercises never produced a PDF under the
 # Makefile. xelatex is Unicode-native and renders them as written.
-[processor.pandoc.exercises]
+[processor.generator.pandoc.exercises]
 src_dirs = "${doc_dirs}"
 formats = ["html", "pdf", "docx"]
 pdf_engine = "xelatex"
@@ -70,26 +70,26 @@ pdf_engine = "xelatex"
 # ─── markdown lint / spelling scope ──────────────────────────────────────────
 
 # lint the GitHub Actions workflow files with actionlint
-[processor.actionlint]
+[processor.checker.actionlint]
 src_dirs = [".github/workflows"]
 
 # ─── yaml ────────────────────────────────────────────────────────────────────
 
-[processor.yamllint]
+[processor.checker.yamllint]
 src_dirs = ["exercises/03_software_engineering/04_infrastructure_as_code/code"]
 
 # ─── docker ──────────────────────────────────────────────────────────────────
 
-[processor.hadolint]
+[processor.checker.hadolint]
 src_dirs = ["exercises/03_software_engineering/04_infrastructure_as_code/code/docker"]
 
 # ─── json ────────────────────────────────────────────────────────────────────
 
-[processor.ijsonlint]
+[processor.checker.ijsonlint]
 src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniques/01_your_own_mcp_server"]
 
 # ─── javascript ──────────────────────────────────────────────────────────────
 
-[processor.oxlint]
+[processor.checker.oxlint]
 src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniques/01_your_own_mcp_server"]
 args = ["-c", ".oxlintrc.json"]

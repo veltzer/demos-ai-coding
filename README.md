@@ -14,7 +14,7 @@ rsconstruct clean outputs  # remove build artifacts
 ```
 
 Every `exercises/**/exercise.md` is rendered to HTML, PDF and DOCX under
-`out/pandoc.exercises/`, and checked with `rumdl` (markdown lint) and `zspell`
+`out/processor.generator.pandoc.exercises/`, and checked with `rumdl` (markdown lint) and `zspell`
 (spelling). All Python under `examples/` and `exercises/` is checked with
 `ruff`, `pylint` and `mypy`.
 
