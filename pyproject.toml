@@ -24,7 +24,6 @@ dev = [
     "pip",
     "pytest",
     "ruff",
-    "yamllint",
 ]
 
 [tool.uv]

@@ -75,7 +75,7 @@ src_dirs = [".github/workflows"]
 
 # ─── yaml ────────────────────────────────────────────────────────────────────
 
-[processor.checker.yamllint]
+[processor.checker.iyamllint]
 src_dirs = ["exercises/03_software_engineering/04_infrastructure_as_code/code"]
 
 # ─── docker ──────────────────────────────────────────────────────────────────
