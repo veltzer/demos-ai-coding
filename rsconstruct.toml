@@ -21,7 +21,7 @@ src_dirs = "${doc_dirs}"
 src_dirs = "${py_dirs}"
 
 
-[processor.checker.mypy]
+[processor.checker.pyrefly]
 src_dirs = "${py_dirs}"
 
 # ─── shell ───────────────────────────────────────────────────────────────────

@@ -84,7 +84,7 @@ def generate_people(
         age = sample_age(rng)
         marital_status = choose_marital_status(rng, age)
         children = sample_children(rng, age, marital_status)
-        person = {
+        person: dict[str, object] = {
             "name": fake.first_name(),
             "family_name": fake.last_name(),
             "marital_status": marital_status,

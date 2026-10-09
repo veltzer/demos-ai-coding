@@ -5,9 +5,9 @@
 The method body is an intentionally empty stub: implementing it until the
 tests pass IS the exercise.
 """
-# mypy: disable-error-code="empty-body"
+# pyrefly: ignore-errors[bad-return]
 
 class StringCalculator:
     def add(self, numbers: str) -> int:
         # Implement this method to pass all tests
-        pass
+        return 0

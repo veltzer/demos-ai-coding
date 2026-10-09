@@ -5,7 +5,7 @@
 # Several tests are intentionally left as stubs for the reader to complete.
 # pylint: disable=missing-module-docstring,import-error,unnecessary-pass
 
-from app import app
+from app import app  # type: ignore[import-not-found] # pyrefly: ignore[missing-import]
 
 
 class TestSecurityHeaders:
