@@ -26,7 +26,7 @@ src_dirs = "${py_dirs}"
 
 # ─── shell ───────────────────────────────────────────────────────────────────
 
-[processor.checker.shellcheck]
+[processor.checker.ishellcheck]
 src_dirs = ["exercises"]
 
 # ─── toml / yaml / json ──────────────────────────────────────────────────────
