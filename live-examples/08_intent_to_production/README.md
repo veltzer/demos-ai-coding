@@ -2,7 +2,7 @@
 
 ```bash
 ./run.sh            # interactive: pauses after every phase
-./run.sh --yes      # unattended dry run
+./run.sh --yes      # unattended dry run (nobody signs off the preview, so the deploy may refuse)
 PREVIEW_PORT=8087 PROD_PORT=8088 ./run.sh
 ```
 
@@ -33,7 +33,8 @@ for the change in changes/cheat-code/":
 |---|-------|--------|------------------------|
 | 1 | Spec | `spec.md` | its outline; no code changed |
 | 2 | Plan | `plan.md` | draws the checklist |
-| 3 | Implement | code, `docs/architecture.md` | one session per plan phase, boxes tick live; old tests still pass; a **preview server** to try the cheat |
+| 3 | Implement | code, `docs/architecture.md` | one session per plan phase, boxes tick live; old tests still pass |
+| - | Preview (you) | `preview.md` | a **preview server**: try the cheat against the plan's preview list, then type your verdict, which is recorded as the sign-off |
 | 4 | Unit tests | `tests/` | whole suite; any code the tests forced to change |
 | 5 | System test | `tests/system/`, `test-report.md` | the real server over HTTP |
 | 6 | Lint | clean code | ruff before and after, config untouched, no `# noqa` |
@@ -58,7 +59,9 @@ the scoreboard shows time and cost per phase.
   correct or veto each one before the next phase.
 - **The intent hides a design problem.** "Nobody can steal twice, even by
   hand" on a server that keeps no state: the spec has to work out how
-  (in rehearsal: from the mark counts on the board). Look at how
+  (counting marks on the board is not enough, and the rehearsal reviewer
+  showed why with a forged request). `CLAUDE.md` documents the platform's
+  `TICTACTOE_SECRET` for signing what the browser sends back. Look at how
   `spec.md` solves it, and whether the review agrees.
 - **"Must not change" is a requirement too.** Hard must still never lose to
   fair play. The existing exhaustive test guards it, and the new tests
@@ -66,6 +69,12 @@ the scoreboard shows time and cost per phase.
 - **Separate phases find different things.** Unit tests catch rule bugs,
   the system test catches wiring, lint catches style, and a reviewer who
   did not write the code catches what the author cannot see.
+- **A person is one of the gates.** The AI cannot see the page, so the
+  plan lists what only a browser shows, you check it at the preview, and
+  your answer is committed as `preview.md`. Without that sign-off, the
+  rehearsal's reviewer raised a major ("nothing has ever run `app.js`"),
+  and the deploy session hit the gate and **refused to tick the finding
+  to get through**: it stopped and asked a human. Worth telling.
 - **The deploy is code, not trust.** `ops/deploy.sh` reruns every gate
   (tests, ruff, no open blocker or major in any `changes/*/review.md`)
   before production is touched, and rolls back if the smoke test fails.

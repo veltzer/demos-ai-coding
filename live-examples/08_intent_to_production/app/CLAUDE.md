@@ -18,6 +18,11 @@ and do that phase only.
   duplicate a rule in JavaScript.
 - The server keeps no state between requests. Everything it needs to judge
   a move arrives with the request, and it trusts nothing that does.
+- Secrets: production starts the server with `TICTACTOE_SECRET`, a random
+  key that `ops/deploy.sh` makes once and keeps across releases. Data the
+  server must trust when the browser sends it back can be signed with
+  `hmac` and this key. Where the variable is unset (development, tests),
+  use a random key made at start-up. Never log or send the key.
 - Everything that ships lives in the package `tictactoe/`. The deploy copies
   only that folder.
 - `GET /health` answers `200 ok`. The deploy depends on it.

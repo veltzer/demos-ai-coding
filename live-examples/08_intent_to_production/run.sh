@@ -58,6 +58,7 @@ fi
 make_workdir "${HERE}"
 APP="${WORKDIR}/app"
 copy_app "${HERE}/app" "${APP}"
+git -C "${APP}" branch baseline
 
 PREVIEW_PID=""
 stop_preview() {
@@ -109,6 +110,28 @@ run_tests() {
 		bad "$1: $(tail -n 1 <<<"${out}")"
 		grep -E '^(FAILED|ERROR)' <<<"${out}" | head -n 10 | sed 's/^/      /' || true
 	fi
+}
+
+# sign_off <verdict>: the person's preview result, recorded where the review
+# will read it. An unattended run says so instead of pretending someone looked.
+sign_off() {
+	local who="${USER:-the presenter}" result="$1"
+	if [[ "${YES:-0}" == 1 ]]; then
+		who="nobody: unattended run (run.sh --yes)"
+		result="not checked"
+	elif [[ "${result}" == yes ]]; then
+		result="passed every check in the plan's preview list"
+	fi
+	cat >"${APP}/${CHANGE}/preview.md" <<-EOF
+		# Preview sign-off
+
+		- Date: $(date '+%Y-%m-%d %H:%M')
+		- Checked by: ${who}
+		- What: the page at a preview server, against \`## For the preview\` in \`plan.md\`
+		- Result: ${result}
+	EOF
+	snapshot "${APP}" 3-preview
+	show_path "the sign-off, for the reviewer" "${APP}/${CHANGE}/preview.md"
 }
 
 findings() {
@@ -198,19 +221,23 @@ if check "GET /health on the preview server" curl -fsS --max-time 1 "http://127.
 	echo
 	say "Start a game against Hard, click into the page and type: ↑ ↑ ↓ ↓ ← → ← → B A"
 	say "It runs. Is it right? Nothing new has been tested yet - that is the next phase."
-	pause "when done playing (stops the preview)"
+	echo
+	sed -n '/^## For the preview/,$p' "${APP}/${CHANGE}/plan.md" | sed 's/^/    /'
+	echo
+	verdict="$(ask "Did the page pass that list? [enter] yes, or type what was wrong:" "yes")"
 else
 	tail -n 15 "${WORKDIR}/preview.log" | sed 's/^/      /'
 	say "The next phases test it and should find out why."
-	pause "to continue"
+	verdict="the preview server did not start: $(tail -n 1 "${WORKDIR}/preview.log")"
 fi
 stop_preview
+sign_off "${verdict}"
 
 # ── 4. unit tests ────────────────────────────────────────────────────────────
 phase 4-unit-tests "Phase 4: unit tests" "$(prompt_for "4 (Unit tests)")" "${EDIT_TOOLS[@]}"
 echo
 run_tests "whole suite"
-git -C "${APP}" diff --stat "${IMPLEMENTED}" 4-unit-tests | sed 's/^/    /'
+git -C "${APP}" diff --stat 3-preview 4-unit-tests | sed 's/^/    /'
 say "(any tictactoe/ lines above are code the tests forced to change: bugs caught early)"
 pause "to test the running system"
 

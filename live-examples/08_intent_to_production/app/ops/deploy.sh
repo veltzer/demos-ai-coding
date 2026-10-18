@@ -16,6 +16,9 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 PROD_DIR="${PROD_DIR:-$(dirname "${REPO}")/production}"
 PROD_PORT="${PROD_PORT:-8088}"
 PID_FILE="${PROD_DIR}/server.pid"
+# One random key for the life of production, handed to every release as
+# TICTACTOE_SECRET (see CLAUDE.md). Made once, never printed.
+SECRET_FILE="${PROD_DIR}/secret"
 URL="http://127.0.0.1:${PROD_PORT}"
 
 step() { printf '\n==> %s\n' "$*"; }
@@ -46,7 +49,7 @@ stop_server() {
 start_server() {
 	(
 		cd "${PROD_DIR}/current"
-		setsid nohup python3 -m tictactoe --host 127.0.0.1 --port "${PROD_PORT}" \
+		TICTACTOE_SECRET="$(cat "${SECRET_FILE}")" setsid nohup python3 -m tictactoe --host 127.0.0.1 --port "${PROD_PORT}" \
 			>>"${PROD_DIR}/server.log" 2>&1 </dev/null &
 		echo $! >"${PID_FILE}"
 	)
@@ -102,6 +105,11 @@ for change in changes/*/; do
 done
 
 step "Release"
+if [[ ! -f "${SECRET_FILE}" ]]; then
+	mkdir -p "${PROD_DIR}"
+	(umask 077 && python3 -c 'import secrets; print(secrets.token_hex(32))' >"${SECRET_FILE}")
+	echo "created the production secret"
+fi
 id="$(date +%Y%m%d-%H%M%S)"
 release="${PROD_DIR}/releases/${id}"
 [[ -e "${release}" ]] && fail "release ${id} already exists, try again in a second"

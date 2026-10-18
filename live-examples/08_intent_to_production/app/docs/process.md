@@ -11,6 +11,7 @@ memory, so write each artifact for a reader who was not there. Below,
 | 1 | Spec | `<change>/intent.md`, the code, `docs/` | `<change>/spec.md` |
 | 2 | Plan | `<change>/spec.md`, the code | `<change>/plan.md` |
 | 3 | Implement | `<change>/plan.md`, `<change>/spec.md` | code, `docs/architecture.md` |
+| - | Preview (a person) | `## For the preview` in `plan.md` | `<change>/preview.md` |
 | 4 | Unit tests | `<change>/spec.md`, the code | `tests/` |
 | 5 | System test | `<change>/spec.md`, the code | `tests/system/`, `<change>/test-report.md` |
 | 6 | Lint | the code | clean ruff |
@@ -37,9 +38,14 @@ Turn `spec.md` into `plan.md`, an implementation plan. No code. The first
 line is `# Plan: <title>`. Then 2 to 4 phases, each a heading
 `## Phase N: <name>` followed only by task lines `- [ ] <task>`, 3 to 6
 tasks each. Each phase ends with a task that verifies it by running
-something, and leaves the game working. Writing new tests is phase 4 of
-this process, not part of this plan, but the existing tests must keep
-passing after every phase.
+something, and leaves the game working. Verification uses what every
+session has: `python3` (the tests, a throwaway script, a server started
+with `--port 0` and driven with `urllib`) and `ruff`. No browser and no
+other tools: how the page looks and feels is checked by a person at the
+preview after phase 3, so list those checks under a final heading
+`## For the preview` as plain bullets, not boxes. Writing new tests is
+phase 4 of this process, not part of this plan, but the existing tests
+must keep passing after every phase.
 
 ## 3. Implement
 
@@ -47,7 +53,16 @@ Implement the first phase of `plan.md` that still has unchecked boxes, and
 only that phase. Tick each box (`- [ ]` to `- [x]`) as soon as its task is
 done, one edit per task. Follow `spec.md`. If you must depart from it,
 update `spec.md` so the two agree. Keep `docs/architecture.md` true. Do not
-write new tests yet, but run the existing ones.
+write new tests yet, but run the existing ones. If a verify task asks for
+something you cannot run, do the part you can, tick it, and add what is
+left to `## For the preview`.
+
+## Preview (done by a person)
+
+A person runs the change on a preview server, goes through
+`## For the preview`, and records the result in `preview.md`: who, when,
+and what passed or failed. That file is the sign-off for everything only a
+browser can show. Later phases read it; they do not repeat those checks.
 
 ## 4. Unit tests
 
@@ -78,8 +93,11 @@ Act as a reviewer who did not write this change. Read the intent, the spec,
 the diff of the change (`git diff` against the commit before its spec) and
 the code around it. Look for: bugs; gaps between intent, spec, code and
 `docs/architecture.md`; rules that are not tested; security (the server
-faces the internet and trusts no request); and accessibility. Do not change
-any code. Write `review.md`: one line per finding,
+faces the internet and trusts no request); and accessibility. The browser
+checks belong to `preview.md`: a problem it reports is a finding, but how
+much a sign-off is worth (who looked, how closely) is for whoever releases
+to judge, so say it in the verdict, not as a finding. Do not change any
+code. Write `review.md`: one line per finding,
 
 ```markdown
 - [ ] **blocker|major|minor** `path:line`: what is wrong, and why it matters

@@ -17,10 +17,11 @@ That is the only way in. The script:
    `ruff format --check`. Every change folder (`changes/*/`) must have a
    `review.md` with no unticked blocker or major finding. Any failure stops
    the deploy before production is touched.
-2. **Release.** It copies `tictactoe/` to `production/releases/<id>/` and
-   records the git commit it came from.
+2. **Release.** On the first deploy it makes the production secret
+   (`production/secret`, kept across releases). It copies `tictactoe/` to
+   `production/releases/<id>/` and records the git commit it came from.
 3. **Switch.** It stops the running release, points `current` at the new
-   one and starts it.
+   one and starts it with `TICTACTOE_SECRET` set.
 4. **Smoke test.** It waits for `/health` and loads the page. If either
    fails, it rolls back to the previous release and exits non-zero.
 
