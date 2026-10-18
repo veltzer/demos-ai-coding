@@ -1,0 +1,16 @@
+date,category,amount,note
+2026-08-04,food,33.00,groceries
+2026-09-01,Rent,1200.00,september rent
+2026-09-02,food,45.20,groceries
+2026-09-03,transport,25.50,train pass
+2026-09-05,Food,12.80,lunch
+2026-09-08,fun,60.00,concert tickets
+2026-09-09,Fun,-60.00,concert cancelled - refund
+2026-09-11, FOOD ,30.00,dinner
+2026-09-14,books,39.90,novel
+2026-09-17,Transport,14.50,taxi
+2026-09-20,food,-8.00,returned spoiled milk
+2026-09-22,Books,0.10,bookmark
+2026-09-25,health,19.99,pharmacy
+2026-08-01,Rent,1200.00,august rent
+2026-08-19,fun,15.00,cinema
