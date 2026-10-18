@@ -90,28 +90,47 @@ copy_app() {
 	git -C "$2" -c user.name=demo -c user.email=demo@example.invalid commit -qm baseline
 }
 
+# show_prompt <dir> <prompt-file> [extra claude args...]: the prompt as a
+# readable box, with notes for the options the audience should know about.
+show_prompt() {
+	local dir="$1" file="$2" box_notes=() arg prev=""
+	shift 2
+	for arg in "$@"; do
+		case "${prev}" in
+		--system-prompt) box_notes+=("system prompt: ${arg}") ;;
+		--tools) [[ -z "${arg}" ]] && box_notes+=("no tools: it can only answer from the prompt") ;;
+		*) ;;
+		esac
+		case "${arg}" in
+		--continue | --resume) box_notes+=("continues the same conversation as before") ;;
+		*) ;;
+		esac
+		prev="${arg}"
+	done
+	python3 "${LIB_DIR}/prompt_box.py" "Prompt to Claude, working in $(basename "${dir}")/" "${file}" "${box_notes[@]}"
+}
+
 # run_claude <dir> <stats-file> <prompt> [extra claude args...]
 # Runs a headless session inside <dir> and renders it live. A prompt of
-# "@<file>" is fed on stdin instead, for prompts too big for one argument. Only project
-# settings are loaded so the presenter's personal CLAUDE.md, memory and hooks
-# do not leak into the demo. claude's stderr (auth notices and the like) goes
-# to <stats>.stderr to keep the stage clean.
+# "@<file>" is read from that file, for prompts too big for one argument.
+# Only project settings are loaded so the presenter's personal CLAUDE.md,
+# memory and hooks do not leak into the demo. claude's stderr (auth notices
+# and the like) goes to <stats>.stderr to keep the stage clean.
 run_claude() {
 	local dir="$1" stats="$2" prompt="$3"
 	shift 3
-	local model_args=() prompt_args=() input=/dev/null
+	local model_args=() input
 	[[ -n "${MODEL:-}" ]] && model_args=(--model "${MODEL}")
 	if [[ "${prompt}" == @* ]]; then
 		input="${prompt#@}"
-		printf '%s$ claude -p < %s%s  %s(%s characters)%s\n' "${BOLD}" "$(basename "${input}")" "${RESET}" \
-			"${DIM}" "$(wc -c <"${input}")" "${RESET}"
 	else
-		prompt_args=("${prompt}")
-		printf '%s$ claude -p %q%s\n' "${BOLD}" "${prompt}" "${RESET}"
+		input="${stats%.json}.prompt"
+		printf '%s\n' "${prompt}" >"${input}"
 	fi
+	show_prompt "${dir}" "${input}" "$@"
 	(
 		cd "${dir}" || exit
-		claude -p "${prompt_args[@]}" \
+		claude -p \
 			--output-format stream-json --verbose \
 			--setting-sources project \
 			--permission-mode acceptEdits \
