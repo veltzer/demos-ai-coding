@@ -13,6 +13,7 @@ Scripted live demos of where AI coding works better. Each folder has a
 | `05_hooks_beat_instructions/` | a CLAUDE.md rule vs a hook that enforces it, over several runs |
 | `06_look_into_the_data_tool/` | a SQL query from the schema alone vs with access to the data |
 | `07_choosing_the_right_model/` | one task on Haiku, Sonnet and Opus: score, time and cost |
+| `08_intent_to_production/` | a cheat hack for a live browser game: intent, spec, plan, code, tests, lint, review, deploy |
 
 ```bash
 cd 01_importance_of_documentation && ./run.sh          # interactive: pauses so you can talk

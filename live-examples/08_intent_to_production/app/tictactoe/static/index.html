@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tic-tac-toe</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main>
+    <h1>Tic-tac-toe</h1>
+
+    <form id="options" aria-label="Game options">
+      <label>Play against
+        <select id="mode">
+          <option value="computer">the computer</option>
+          <option value="friend">a friend</option>
+        </select>
+      </label>
+      <label id="level-label">Level
+        <select id="level">
+          <option value="easy">Easy</option>
+          <option value="hard" selected>Hard</option>
+        </select>
+      </label>
+      <button type="button" id="new-game">New game</button>
+    </form>
+
+    <p id="status" role="status" aria-live="polite"></p>
+
+    <div id="board" role="group" aria-label="Board"></div>
+
+    <table id="score" aria-label="Score">
+      <tr><th>X wins</th><th>O wins</th><th>Draws</th></tr>
+      <tr><td id="score-x">0</td><td id="score-o">0</td><td id="score-draw">0</td></tr>
+    </table>
+
+    <p class="hint">Click or tap a square. Keyboard: arrow keys to move, Enter or Space to play.</p>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>
