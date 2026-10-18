@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Render `claude -p --output-format stream-json --verbose` as a live,
 audience-readable log: one line per tool call, the assistant's prose dimmed,
-a green line whenever an edit ticks a "- [x]" box in a markdown file, and a
+a green line whenever an edit ticks a "- [x]" box in a markdown file, a red
+line when a tool call is refused (a hook block, a permission denial), and a
 footer with time, turns, tokens and cost.
 
 Usage: claude -p ... | stream.py [--stats FILE]
 --stats writes {"seconds", "turns", "cost", "input_tokens", "output_tokens",
-"result"} as JSON for the scoreboard; "result" is the final answer text. Tokens are summed over every model the session
+"result", "commands", "session_id"} as JSON for the scoreboard; "result" is
+the final answer text and "commands" every Bash command the session ran. Tokens are summed over every model the session
 used; input_tokens counts cached reads too, since the model still reads them.
 """
 
@@ -15,7 +17,7 @@ import os
 import re
 import sys
 
-DIM, BOLD, CYAN, GREEN, RESET = "\033[2m", "\033[1m", "\033[36m", "\033[32m", "\033[0m"
+DIM, BOLD, CYAN, GREEN, RED, RESET = "\033[2m", "\033[1m", "\033[36m", "\033[32m", "\033[31m", "\033[0m"
 TICKED = re.compile(r"^\s*[-*]\s+\[[xX]\]\s+(.*)$", re.MULTILINE)
 BOX = re.compile(r"^\s*[-*]\s+\[[ xX]\]\s+(.*?)\s*$")
 WIDTH = 100
@@ -57,6 +59,7 @@ def ticks(tool, args):
 
 def main():
     stats_file = sys.argv[sys.argv.index("--stats") + 1] if "--stats" in sys.argv else None
+    commands = []
     for raw in sys.stdin:
         try:
             event = json.loads(raw)
@@ -70,9 +73,19 @@ def main():
                         print(f"  {DIM}{line}{RESET}")
                 elif block.get("type") == "tool_use":
                     args = block.get("input", {})
+                    if block["name"] == "Bash":
+                        commands.append(args.get("command", ""))
                     print(f"  {CYAN}⏺ {block['name']}{RESET} {describe(block['name'], args)}")
                     for task in ticks(block["name"], args):
                         print(f"  {GREEN}{BOLD}  ✔ {short(task, WIDTH - 6)}{RESET}")
+        elif kind == "user":
+            for block in event.get("message", {}).get("content", []):
+                if isinstance(block, dict) and block.get("type") == "tool_result" and block.get("is_error"):
+                    content = block.get("content", "")
+                    if isinstance(content, list):
+                        content = " ".join(c.get("text", "") for c in content if isinstance(c, dict))
+                    if "hook" in content.lower() or "denied" in content.lower() or "blocked" in content.lower():
+                        print(f"  {RED}{BOLD}  ✘ {short(content, WIDTH - 6)}{RESET}")
         elif kind == "result":
             seconds = event.get("duration_ms", 0) / 1000
             turns = event.get("num_turns", 0)
@@ -87,7 +100,8 @@ def main():
                 with open(stats_file, "w", encoding="utf-8") as f:
                     json.dump({"seconds": seconds, "turns": turns, "cost": cost,
                                "input_tokens": tokens_in, "output_tokens": tokens_out,
-                               "result": event.get("result", "")}, f)
+                               "result": event.get("result", ""), "commands": commands,
+                               "session_id": event.get("session_id", "")}, f)
         sys.stdout.flush()
 
 

@@ -10,6 +10,7 @@ Scripted live demos of where AI coding works better. Each folder has a
 | `02_how_to_make_a_plan/` | a checkbox plan carried out phase by phase, boxes ticked live |
 | `03_importance_of_planning/` | plan first vs just do it, and the tokens spent fixing the bad guesses |
 | `04_the_utility_of_a_rag/` | private knowledge: no RAG vs RAG vs the whole wiki in the prompt |
+| `05_hooks_beat_instructions/` | a CLAUDE.md rule vs a hook that enforces it, over several runs |
 
 ```bash
 cd 01_importance_of_documentation && ./run.sh          # interactive: pauses so you can talk
@@ -23,5 +24,5 @@ The folders here never change. Set `WORKDIR=` to put the copies elsewhere. The d
 so your personal `~/.claude` instructions, memory and hooks stay out of them.
 
 `lib/` is shared: `common.sh` (pauses, copies, running claude), `stream.py`
-(live view of the session), `scoreboard.py` (time/tokens/cost table) and
+(live view of the session, including ticked boxes and blocked tool calls), `scoreboard.py` (time/tokens/cost table) and
 `checklist.py` (draws a checkbox plan).
