@@ -97,6 +97,7 @@ show_prompt() {
 	shift 2
 	for arg in "$@"; do
 		case "${prev}" in
+		--model) box_notes+=("model: ${arg}") ;;
 		--system-prompt) box_notes+=("system prompt: ${arg}") ;;
 		--tools) [[ -z "${arg}" ]] && box_notes+=("no tools: it can only answer from the prompt") ;;
 		*) ;;

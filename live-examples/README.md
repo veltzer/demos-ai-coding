@@ -11,6 +11,8 @@ Scripted live demos of where AI coding works better. Each folder has a
 | `03_importance_of_planning/` | plan first vs just do it, and the tokens spent fixing the bad guesses |
 | `04_the_utility_of_a_rag/` | private knowledge: no RAG vs RAG vs the whole wiki in the prompt |
 | `05_hooks_beat_instructions/` | a CLAUDE.md rule vs a hook that enforces it, over several runs |
+| `06_look_into_the_data_tool/` | a SQL query from the schema alone vs with access to the data |
+| `07_choosing_the_right_model/` | one task on Haiku, Sonnet and Opus: score, time and cost |
 
 ```bash
 cd 01_importance_of_documentation && ./run.sh          # interactive: pauses so you can talk
