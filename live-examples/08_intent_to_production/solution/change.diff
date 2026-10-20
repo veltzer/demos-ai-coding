@@ -1,0 +1,1977 @@
+diff --git a/docs/architecture.md b/docs/architecture.md
+index 64da3e8..05d21b7 100644
+--- a/docs/architecture.md
++++ b/docs/architecture.md
+@@ -4,10 +4,11 @@
+ browser (static/)                          server (Python, stdlib)
+ ┌───────────────────────┐  POST /api/move  ┌────────────────────────────┐
+ │ index.html  app.js    │ ───────────────▶ │ server.py  handle_move()   │
+-│ draws, sends clicks,  │    whole board   │   ├─ game.py  rules        │
+-│ keeps the score       │ ◀─────────────── │   └─ ai.py    computer     │
++│ draws, sends clicks,  │    whole board   │   ├─ game.py     rules     │
++│ keeps the score       │    + game token  │   ├─ ai.py       computer  │
++│                       │ ◀─────────────── │   └─ signing.py  token     │
+ └───────────────────────┘   new board +    └────────────────────────────┘
+-                            outcome
++                            outcome + token
+ ```
+ 
+ The rules live in Python only. The browser never decides whether a move is
+@@ -17,9 +18,10 @@ legal or who won: it shows what the server answers.
+ 
+ | File | Job |
+ |------|-----|
+-| `game.py` | The rules. A board is a list of 9 cells, row by row, each `"X"`, `"O"` or `""`. X moves first, so `turn()` follows from the counts. `validate()` checks a board from outside, `play()` returns a new board (never changes its input) or raises `IllegalMoveError`, `outcome()` says `playing`, `won` (with winner and line) or `draw`. |
+-| `ai.py` | The computer. `choose_move(board, level)`: **hard** is negamax over the full game tree, cached, lowest cell among equals, so it is deterministic and never loses; **easy** takes a winning move if it sees one, otherwise plays at random. |
+-| `server.py` | `ThreadingHTTPServer`. Serves a fixed map of assets (no request path reaches the file system), `/health`, and the move API. Keeps no state. |
++| `game.py` | The rules. A board is a list of 9 cells, row by row, each `"X"`, `"O"` or `""`. X moves first, so `turn(board, steals=0)` follows from the counts: with `steals` steals used in the game (0 or 1), X is to move when X count − O count == `steals`. `check_cells(board)` checks only a board's shape and cells, `validate(board, steals=0)` checks a whole board from outside (`check_cells`, then X − O must be `steals` or `steals + 1`), `play(board, cell, steals=0)` returns a new board (never changes its input) or raises `IllegalMoveError`, `steal(board, cell, steals)` returns a new board with the O on `cell` turned into an X (once per game, on X's turn, only an O), `outcome()` says `playing`, `won` (with winner and line) or `draw`. With `steals=0` everything is the plain game. |
++| `ai.py` | The computer. `choose_move(board, level, rng=None, *, steals=0)`: **hard** is negamax over the full game tree, cached (per board and `steals`), lowest cell among equals, so it is deterministic and never loses; **easy** takes a winning move if it sees one, otherwise plays at random. `steals` is passed on to every rule call, so the search knows whose turn it is after a steal. |
++| `signing.py` | The game token. The key is `TICTACTOE_SECRET` when set and not empty, otherwise 32 random bytes made at start-up; it is the only module that reads `os.environ`, and the key never leaves it. `sign(board, level, steals)` returns `"<s>.<mac>"`, the HMAC-SHA256 (lowercase hex) of `tictactoe-game-v1|<level>|<s>|<cells>`, cells written `X`, `O` or `-`. `verify(token, board, level)` returns `s`, or raises `IllegalMoveError("the game token does not match this game")`; it compares with `hmac.compare_digest`. |
++| `server.py` | `ThreadingHTTPServer`. Serves a fixed map of assets (no request path reaches the file system), `/health`, and the move API (`handle_move`, with `check_mode` for mode and level and `check_steal_request` for requests that carry a token or a steal). Keeps no state: what it must trust it signs with `signing.py`. Logs one line per successful steal. |
+ | `__main__.py` | `python3 -m tictactoe [--host] [--port]`; prints the URL it listens on. |
+ | `static/` | `index.html`, `style.css`, `app.js`. No build step, no libraries. |
+ 
+@@ -28,7 +30,8 @@ legal or who won: it shows what the server answers.
+ `POST /api/move`, a JSON body of at most 1024 bytes:
+ 
+ ```json
+-{"board": ["X", "", "", "", "O", "", "", "", ""], "cell": 2, "mode": "computer", "level": "hard"}
++{"board": ["X", "", "", "", "O", "", "", "", ""], "cell": 2, "mode": "computer", "level": "hard",
++ "game": "0.<64 hex>"}
+ ```
+ 
+ - `mode` is `computer` (default) or `friend`; `level` is `easy` or `hard`
+@@ -37,36 +40,150 @@ legal or who won: it shows what the server answers.
+   to move.
+ - The server plays `cell` for whoever is to move, then, against the
+   computer and if the game goes on, the computer's reply as O.
++- `game` (optional) is the token from the previous answer. `steal`
++  (optional, instead of `cell`) is a cell holding an O that the player
++  turns into an X, as their move: once per game, only against the computer,
++  and only together with a `game` token. A `game` token in `friend` mode
++  is refused: friend mode never hands one out. A field sent as `null`
++  counts as not sent.
+ 
+ Answer `200`:
+ 
+ ```json
+ {"board": ["X", "", "X", "", "O", "", "", "", "O"], "status": "playing",
+- "winner": null, "line": null, "turn": "X", "computer_move": 8}
++ "winner": null, "line": null, "turn": "X", "computer_move": 8,
++ "game": "0.<64 hex>", "stealable": [4, 8], "steal_used": false, "assisted": false}
+ ```
+ 
+ `status` is `playing`, `won` or `draw`; `line` is the three winning cells;
+ `turn` is `null` once the game is over; `computer_move` is `null` when the
+-computer did not move.
++computer did not move. `game` is the token for the new position (below) or
++`null`; `stealable` lists the O cells when the answer's token has `s = 0`,
++the game is playing and X is to move, else `[]`; `steal_used` is `true`
++once the game has used its steal; `assisted` is `true` for a win by X with
++`steal_used`. The page uses these as given and works out none of them.
++
++### The game token, and why the server stays stateless
++
++To allow one steal per game without remembering games, the server signs
++each position it hands out (`signing.py`): the token `"<s>.<mac>"` binds
++the board, the level and `s`, the steals used so far. It is handed out
++only in `computer` mode while the game is `playing`: with the request's
++`s` (or `1` after a steal) when the request carried a valid token, with
++`s = 0` when the request had no token and an empty board (a new game), and
++otherwise `game` is `null` (a hand-made mid-game board plays as before but
++can never steal). A steal needs an `s = 0` token; after it every token in
++that game has `s = 1`, and forging one needs the key. An old token stays
++valid, so a player can go back to an earlier position of the same game
++and steal there: a branch, which still has at most one steal.
++
++**Turn after a steal.** A steal changes a mark without adding one, so with
++`s` steals used X is to move when X − O == `s`, and a valid board has
++X − O equal to `s` or `s + 1`. With `s = 0` this is the plain rule.
++
++**Without `game` and `steal`** a request goes through exactly the old
++checks and gets the old answer, plus the four new fields.
+ 
+ Errors: `400 {"error": "..."}` for any bad input (bad JSON, impossible
+ board, taken square, game over, unknown mode or level), `411` without a
+ `Content-Length`, `413` for a body over 1024 bytes, `404` for other paths,
+-`405` for `GET /api/move`.
++`405` for `GET /api/move`. A request with `game` or `steal` is checked in
++this order: the body, the board's shape and cells, mode, level; then
++
++| Case | Message |
++|------|---------|
++| `game` in `friend` mode | `the game token is only for games against the computer` |
++| `game` does not verify for this `board` and `level` | `the game token does not match this game` |
++| both `cell` and `steal` | `send either cell or steal, not both` |
++| `steal` in `friend` mode | `you can only steal from the computer` |
++| `steal` without `game` | `a steal needs the game token from the last answer` |
++| X − O outside `s`..`s + 1` | `X moves first and the players alternate` |
++| not X to move under `s`, against the computer | `against the computer you play X` |
++| `steal` with an `s = 1` token | `you have already stolen a square in this game` |
++| `steal` not a whole number 0–8 | `steal must be a whole number from 0 to 8` |
++| the game is over | `the game is over` |
++| the cell is not an O | `you can only steal one of the computer's squares` |
++
++A normal move with a token then gets `play`'s usual errors.
++
++**Log.** After each successful steal the server writes one line through
++`log_message` (stderr), `steal level=hard cell=4 status=won assisted=true`,
++and nothing else: no token, no key, no board.
+ 
+ ## The page
+ 
+ `app.js` holds the current answer from the server and the score (X wins, O
+-wins, draws, until the page is reloaded). Each click or Enter/Space on a
++wins, draws, and wins with help, until the page is reloaded). Each click or Enter/Space on a
+ square sends one move. The board is one tab stop: arrow keys, Home and End
+ move between squares (roving `tabindex`), and every square has an
+ `aria-label` such as "Row 1, column 3, X, winning". The status line is an
+ `aria-live` region. Changing mode or level starts a new game.
+ 
++`app.js` keeps the whole last answer, including `game`, `stealable`,
++`steal_used` and `assisted`; a new game starts with `game: null`. Every
++move request sends the last answer's `game` token back, and leaves it out
++while it is `null` (the first move of a game, friend mode, a game that has
++ended). An error, such as "the game token does not match this game" after a
++development restart, shows in the status line, and New game recovers.
++
++`index.html` also holds the cheat panel under the status line (`#cheat`: the
++"Steal a square" button `#steal` with `aria-pressed`, and the text
++`#cheat-text`) and a fourth score column "With help" (`#score-help-head`,
++`#score-help`). All of them carry `hidden`, and `style.css` makes `hidden`
++win over every display rule, so until the cheat is unlocked the page looks
++and reads exactly as before. `style.css` styles them: a dashed frame on
++`.cell.stealable` (shape, not colour alone), a steal button at least 44 px
++tall, and tighter score cells once the fourth column shows, so it fits
++320 px.
++
++### The cheat code
++
++- **Recognising it.** A `keydown` listener on `document` keeps the last 10
++  keys and compares them with `ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft
++  ArrowRight ArrowLeft ArrowRight b a` (B and A in either case), so extra
++  keys before the code do not matter. It ignores keys with Ctrl, Alt or
++  Meta, auto-repeat, and keys typed in a `<select>`. The board's own arrow
++  handling is unchanged: typing the code on the board only moves the focus.
++  The code is plain in `app.js`: it is shared on purpose.
++- **Locking per game.** The code unlocks only in `computer` mode while the
++  game is `playing`; otherwise it does nothing at all. New game, a mode
++  change or a level change locks it again and clears the keys. The server
++  does not know about the code; it only judges steals.
++- **Unlocking** shows the panel and the "With help" column and announces
++  "Cheat unlocked! Once this game, you may steal one of the computer's
++  squares." in the status line. Such messages (`notice` in `app.js`) stay
++  until the next answer from the server, then the usual text returns.
++- **The panel.** The button is `aria-disabled="true"` (still focusable)
++  while the answer's `stealable` is empty, and the text says why: "No O to
++  steal yet", "Steal used" once `steal_used`, or "Game over" once a game
++  without a steal has ended. Otherwise it says "Press
++  Steal, then choose an O. Esc cancels."
++- **Steal mode.** The button (click, Enter, Space) turns it on only when
++  `stealable` is not empty: `aria-pressed="true"`, the status says "Steal:
++  choose one of the computer's squares.", and the focus moves to the lowest
++  stealable square (roving `tabindex`). Only the squares in `stealable` are
++  then `aria-disabled="false"`, with class `stealable` and ", can be stolen"
++  in their label; every other square does nothing. Choosing one sends
++  `{board, steal, mode, level, game}`. Steal mode ends with the answer (or
++  an error), or with Esc or a second press of the button, which puts the
++  focus back on the button. Outside steal mode an O does nothing, as before.
++- **After a steal.** While the game goes on, the status says "You stole row
++  R, column C.". An answer with `assisted: true` shows "You won... with a
++  little help" and adds 1 to "With help", not to "X wins"; O wins and draws
++  count as before. The column stays visible until the page is reloaded.
++  `app.js` uses `stealable`, `steal_used` and `assisted` as the server sends
++  them and works out no rule.
++
+ ## Tests
+ 
+-- `tests/test_game.py`, `tests/test_ai.py`, `tests/test_server.py`: unit
+-  tests. `test_hard_never_loses` plays Hard against every possible opponent,
+-  as X and as O.
+-- `tests/system/test_http.py`: starts `python3 -m tictactoe --port 0` as a
+-  process and tests it over HTTP: health, assets, 404s, whole games, errors.
++- `tests/test_game.py`, `tests/test_ai.py`, `tests/test_server.py`,
++  `tests/test_signing.py`: unit tests. `test_hard_never_loses` plays Hard
++  against every possible opponent, as X and as O.
++- `tests/system/client.py`: `serve()` starts `python3 -m tictactoe --port 0`
++  as a process (optionally with a `TICTACTOE_SECRET` and a log file), waits
++  for `/health` and always stops it; `post()` sends a JSON body.
++- `tests/system/test_http.py`: tests the server over HTTP: health, assets,
++  404s, whole games, errors.
++- `tests/system/test_cheat.py`: the steal over HTTP with a known secret:
++  whole games with a steal, every refusal, the token across restarts, the
++  log line, and the old game unchanged.
+diff --git a/tests/system/client.py b/tests/system/client.py
+new file mode 100644
+index 0000000..7626143
+--- /dev/null
++++ b/tests/system/client.py
+@@ -0,0 +1,73 @@
++"""Start the real server as production does, and talk to it over HTTP."""
++
++import json
++import os
++import subprocess
++import sys
++import time
++import urllib.error
++import urllib.request
++from collections.abc import Iterator
++from contextlib import contextmanager
++from pathlib import Path
++from typing import IO
++
++ROOT = Path(__file__).resolve().parents[2]
++
++
++@contextmanager
++def serve(*, secret: str | None = None, log: IO[str] | None = None) -> Iterator[str]:
++    """Run `python3 -m tictactoe --port 0` and yield its base URL; always stop it.
++
++    `secret` is passed as TICTACTOE_SECRET (unset when None); the server's
++    stderr, where it logs, goes to `log` when given.
++    """
++    env = {k: v for k, v in os.environ.items() if k != "TICTACTOE_SECRET"}
++    if secret is not None:
++        env["TICTACTOE_SECRET"] = secret
++    process = subprocess.Popen(
++        [sys.executable, "-m", "tictactoe", "--port", "0"],
++        cwd=ROOT,
++        env=env,
++        stdout=subprocess.PIPE,
++        stderr=log,
++        text=True,
++    )
++    try:
++        assert process.stdout is not None
++        base = process.stdout.readline().split(" on ", 1)[1].strip().rstrip("/")
++        deadline = time.monotonic() + 5
++        while True:
++            try:
++                urllib.request.urlopen(f"{base}/health", timeout=1).close()
++                break
++            except OSError:
++                if time.monotonic() > deadline:
++                    raise
++                time.sleep(0.05)
++        yield base
++    finally:
++        process.terminate()
++        try:
++            process.wait(timeout=5)
++        except subprocess.TimeoutExpired:
++            process.kill()
++            process.wait()
++
++
++def get(url: str) -> tuple[int, str, str]:
++    try:
++        with urllib.request.urlopen(url, timeout=2) as response:
++            return response.status, response.headers["Content-Type"], response.read().decode()
++    except urllib.error.HTTPError as error:
++        return error.code, error.headers["Content-Type"], error.read().decode()
++
++
++def post(url: str, body: object) -> tuple[int, dict]:
++    data = json.dumps(body).encode()
++    request = urllib.request.Request(url, data, {"Content-Type": "application/json"})
++    try:
++        with urllib.request.urlopen(request, timeout=2) as response:
++            return response.status, json.load(response)
++    except urllib.error.HTTPError as error:
++        return error.code, json.load(error)
+diff --git a/tests/system/test_cheat.py b/tests/system/test_cheat.py
+new file mode 100644
+index 0000000..c615e5b
+--- /dev/null
++++ b/tests/system/test_cheat.py
+@@ -0,0 +1,296 @@
++"""The cheat code's steal, played over HTTP against the real server.
++
++The server runs with a known TICTACTOE_SECRET, as production does, and its
++log is kept so the tests can read what it prints.
++"""
++
++from collections.abc import Iterator
++from pathlib import Path
++
++import pytest
++
++from .client import post, serve
++
++SECRET = "system-test-secret-0123456789abcdef"
++EMPTY = [""] * 9
++NEW_FIELDS = ("game", "stealable", "steal_used", "assisted")
++
++
++@pytest.fixture(scope="module")
++def server(tmp_path_factory: pytest.TempPathFactory) -> Iterator[tuple[str, Path]]:
++    log = tmp_path_factory.mktemp("server") / "server.log"
++    with log.open("w") as stream, serve(secret=SECRET, log=stream) as base:
++        yield base, log
++
++
++@pytest.fixture
++def url(server: tuple[str, Path]) -> str:
++    return server[0]
++
++
++def move(url: str, **body: object) -> dict:
++    """A move that must succeed; returns the answer."""
++    code, answer = post(f"{url}/api/move", body)
++    assert code == 200, answer
++    return answer
++
++
++def refused(url: str, **body: object) -> str:
++    """A move that must be refused with 400; returns the error message."""
++    code, answer = post(f"{url}/api/move", body)
++    assert code == 400, answer
++    return answer["error"]
++
++
++def hard_opening(url: str) -> dict:
++    """X 0, O 4, X 8, O 1 against Hard: stealing 4 wins, stealing 1 does not."""
++    first = move(url, board=EMPTY, cell=0, level="hard")
++    answer = move(url, board=first["board"], cell=8, level="hard", game=first["game"])
++    assert answer["board"] == ["X", "O", "", "", "O", "", "", "", "X"]
++    assert answer["stealable"] == [1, 4]
++    return answer
++
++
++# --- The steal, end to end ---------------------------------------------------
++
++
++def test_the_first_move_of_a_game_gets_a_token(url: str) -> None:
++    answer = move(url, board=EMPTY, cell=0, level="hard")
++    assert answer["game"].startswith("0.")
++    assert answer["board"][answer["computer_move"]] == "O"
++    assert answer["stealable"] == [answer["computer_move"]]
++    assert (answer["steal_used"], answer["assisted"]) == (False, False)
++
++
++def test_a_steal_that_wins_at_once_is_an_assisted_win(url: str) -> None:
++    before = hard_opening(url)
++    answer = move(url, board=before["board"], steal=4, level="hard", game=before["game"])
++    assert answer == {
++        "board": ["X", "O", "", "", "X", "", "", "", "X"],
++        "status": "won",
++        "winner": "X",
++        "line": [0, 4, 8],
++        "turn": None,
++        "computer_move": None,
++        "game": None,
++        "stealable": [],
++        "steal_used": True,
++        "assisted": True,
++    }
++
++
++def test_a_steal_is_the_players_move_and_the_computer_replies(url: str) -> None:
++    before = hard_opening(url)
++    answer = move(url, board=before["board"], steal=1, level="hard", game=before["game"])
++    assert answer["board"] == ["X", "X", "O", "", "O", "", "", "", "X"]
++    assert answer["computer_move"] == 2
++    assert (answer["status"], answer["turn"]) == ("playing", "X")
++    assert answer["game"].startswith("1.")
++    assert answer["stealable"] == []
++    assert (answer["steal_used"], answer["assisted"]) == (True, False)
++
++
++def test_after_a_steal_the_game_plays_on_to_its_end(url: str) -> None:
++    before = hard_opening(url)
++    answer = move(url, board=before["board"], steal=1, level="hard", game=before["game"])
++    while answer["status"] == "playing":
++        assert answer["steal_used"] is True
++        assert answer["stealable"] == []
++        assert answer["game"].startswith("1.")
++        cell = answer["board"].index("")
++        answer = move(url, board=answer["board"], cell=cell, level="hard", game=answer["game"])
++    assert answer["game"] is None
++    assert answer["steal_used"] is True
++    assert answer["assisted"] is (answer["winner"] == "X")
++
++
++@pytest.mark.parametrize("seed_cell", [0, 4, 8])
++def test_a_steal_works_at_easy(url: str, seed_cell: int) -> None:
++    answer = move(url, board=EMPTY, cell=seed_cell, level="easy")
++    assert answer["stealable"]
++    target = answer["stealable"][0]
++    after = move(url, board=answer["board"], steal=target, level="easy", game=answer["game"])
++    assert after["board"][target] == "X"
++    assert after["steal_used"] is True
++    if after["status"] == "playing":
++        assert after["game"].startswith("1.")
++        assert after["board"][after["computer_move"]] == "O"
++    assert after["assisted"] is (after["winner"] == "X")
++
++
++def test_the_stealable_squares_are_the_os_on_the_players_turn(url: str) -> None:
++    answer = move(url, board=EMPTY, cell=0, level="hard")
++    while answer["status"] == "playing":
++        assert answer["stealable"] == [i for i, c in enumerate(answer["board"]) if c == "O"]
++        cell = answer["board"].index("")
++        answer = move(url, board=answer["board"], cell=cell, level="hard", game=answer["game"])
++    assert answer["stealable"] == []
++    assert answer["game"] is None
++
++
++# --- Nobody can steal twice, even by hand ------------------------------------
++
++
++def test_a_second_steal_is_refused(url: str) -> None:
++    before = hard_opening(url)
++    after = move(url, board=before["board"], steal=1, level="hard", game=before["game"])
++    error = refused(url, board=after["board"], steal=4, level="hard", game=after["game"])
++    assert error == "you have already stolen a square in this game"
++
++
++def test_a_steal_needs_a_token(url: str) -> None:
++    before = hard_opening(url)
++    error = refused(url, board=before["board"], steal=4, level="hard")
++    assert error == "a steal needs the game token from the last answer"
++
++
++def test_a_stolen_board_without_its_token_is_refused(url: str) -> None:
++    before = hard_opening(url)
++    after = move(url, board=before["board"], steal=1, level="hard", game=before["game"])
++    # X - O == 1 on X's turn: only an s = 1 token makes that board legal.
++    cell = after["board"].index("")
++    assert refused(url, board=after["board"], cell=cell, level="hard") == (
++        "against the computer you play X"
++    )
++
++
++def test_the_token_is_bound_to_the_board(url: str) -> None:
++    before = hard_opening(url)
++    other = ["X", "O", "", "", "O", "", "", "X", ""]
++    error = refused(url, board=other, steal=4, level="hard", game=before["game"])
++    assert error == "the game token does not match this game"
++
++
++def test_the_token_is_bound_to_the_level(url: str) -> None:
++    before = hard_opening(url)
++    error = refused(url, board=before["board"], steal=4, level="easy", game=before["game"])
++    assert error == "the game token does not match this game"
++
++
++def test_editing_the_steal_count_breaks_the_token(url: str) -> None:
++    before = hard_opening(url)
++    after = move(url, board=before["board"], steal=1, level="hard", game=before["game"])
++    reset = "0" + after["game"][1:]
++    error = refused(url, board=after["board"], steal=4, level="hard", game=reset)
++    assert error == "the game token does not match this game"
++    raised = "1" + before["game"][1:]
++    error = refused(url, board=before["board"], cell=2, level="hard", game=raised)
++    assert error == "the game token does not match this game"
++
++
++@pytest.mark.parametrize(
++    "token",
++    ["", "0", "0.", "2." + "0" * 64, "0." + "0" * 64, "0." + "A" * 64, 0, True, ["0."], {}],
++)
++def test_a_malformed_or_forged_token_is_refused(url: str, token: object) -> None:
++    before = hard_opening(url)
++    error = refused(url, board=before["board"], steal=4, level="hard", game=token)
++    assert error == "the game token does not match this game"
++
++
++def test_a_hand_made_mid_game_board_gets_no_token(url: str) -> None:
++    board = ["X", "O", "", "", "", "", "", "", ""]
++    answer = move(url, board=board, cell=8, level="hard")
++    assert answer["status"] == "playing"
++    assert (answer["game"], answer["stealable"], answer["steal_used"]) == (None, [], False)
++
++
++def test_a_token_survives_a_restart_with_the_same_secret(url: str) -> None:
++    before = hard_opening(url)
++    with serve(secret=SECRET) as again:
++        answer = move(again, board=before["board"], steal=4, level="hard", game=before["game"])
++        assert answer["assisted"] is True
++    with serve(secret="another-secret") as other:
++        error = refused(other, board=before["board"], steal=4, level="hard", game=before["game"])
++        assert error == "the game token does not match this game"
++
++
++# --- The other refusals ------------------------------------------------------
++
++
++def test_no_steal_between_friends(url: str) -> None:
++    board = ["X", "O", "", "", "", "", "", "", ""]
++    error = refused(url, board=board, steal=1, mode="friend")
++    assert error == "you can only steal from the computer"
++
++
++def test_a_friend_game_refuses_a_computer_games_token(url: str) -> None:
++    before = hard_opening(url)
++    after = move(url, board=before["board"], steal=1, level="hard", game=before["game"])
++    cell = after["board"].index("")
++    error = refused(url, board=after["board"], cell=cell, mode="friend", game=after["game"])
++    assert error == "the game token is only for games against the computer"
++
++
++def test_cell_and_steal_together_are_refused(url: str) -> None:
++    before = hard_opening(url)
++    error = refused(url, board=before["board"], cell=2, steal=4, level="hard", game=before["game"])
++    assert error == "send either cell or steal, not both"
++
++
++@pytest.mark.parametrize(
++    ("cell", "message"),
++    [
++        (2, "you can only steal one of the computer's squares"),
++        (0, "you can only steal one of the computer's squares"),
++        (9, "steal must be a whole number from 0 to 8"),
++        (-1, "steal must be a whole number from 0 to 8"),
++        (True, "steal must be a whole number from 0 to 8"),
++        ("4", "steal must be a whole number from 0 to 8"),
++        (4.0, "steal must be a whole number from 0 to 8"),
++    ],
++)
++def test_only_an_o_can_be_stolen(url: str, cell: object, message: str) -> None:
++    before = hard_opening(url)
++    assert refused(url, board=before["board"], steal=cell, level="hard", game=before["game"]) == (
++        message
++    )
++
++
++# --- The old game, unchanged -------------------------------------------------
++
++
++def test_a_friend_game_gets_no_token(url: str) -> None:
++    answer = move(url, board=EMPTY, cell=0, mode="friend")
++    assert {k: answer[k] for k in NEW_FIELDS} == {
++        "game": None,
++        "stealable": [],
++        "steal_used": False,
++        "assisted": False,
++    }
++
++
++def test_a_tokenless_game_against_hard_still_never_lets_x_win(url: str) -> None:
++    # Every opening for X, played to the end without tokens and without steals.
++    for first in range(9):
++        board, answer = EMPTY, {"status": "playing"}
++        cell = first
++        while answer["status"] == "playing":
++            answer = move(url, board=board, cell=cell, level="hard")
++            board = answer["board"]
++            cell = board.index("") if "" in board else None
++        assert answer["winner"] != "X"
++        assert answer["assisted"] is False
++
++
++def test_tokenless_errors_are_todays(url: str) -> None:
++    assert refused(url, board=["X"] + [""] * 8, cell=1) == "against the computer you play X"
++    assert refused(url, board=["O"] + [""] * 8, cell=1) == "X moves first and the players alternate"
++    assert refused(url, board=EMPTY, cell=0, level="nightmare") == (
++        "level must be one of: easy, hard"
++    )
++
++
++# --- What the server prints --------------------------------------------------
++
++
++def test_a_steal_is_logged_without_the_key_or_any_token(server: tuple[str, Path]) -> None:
++    url, log = server
++    before = hard_opening(url)
++    after = move(url, board=before["board"], steal=4, level="hard", game=before["game"])
++    assert after["status"] == "won"
++    text = log.read_text()
++    assert "steal level=hard cell=4 status=won assisted=true" in text
++    assert SECRET not in text
++    for token in (before["game"], before["game"][2:]):
++        assert token not in text
+diff --git a/tests/system/test_http.py b/tests/system/test_http.py
+index b733dcc..5c81876 100644
+--- a/tests/system/test_http.py
++++ b/tests/system/test_http.py
+@@ -1,61 +1,16 @@
+ """The real server, started as production starts it, tested over HTTP."""
+ 
+-import json
+-import subprocess
+-import sys
+-import time
+-import urllib.error
+-import urllib.request
+ from collections.abc import Iterator
+-from pathlib import Path
+ 
+ import pytest
+ 
+-ROOT = Path(__file__).resolve().parents[2]
++from .client import get, post, serve
+ 
+ 
+ @pytest.fixture(scope="module")
+ def url() -> Iterator[str]:
+-    process = subprocess.Popen(
+-        [sys.executable, "-m", "tictactoe", "--port", "0"],
+-        cwd=ROOT,
+-        stdout=subprocess.PIPE,
+-        text=True,
+-    )
+-    try:
+-        assert process.stdout is not None
+-        base = process.stdout.readline().split(" on ", 1)[1].strip().rstrip("/")
+-        deadline = time.monotonic() + 5
+-        while True:
+-            try:
+-                urllib.request.urlopen(f"{base}/health", timeout=1).close()
+-                break
+-            except OSError:
+-                if time.monotonic() > deadline:
+-                    raise
+-                time.sleep(0.05)
++    with serve() as base:
+         yield base
+-    finally:
+-        process.terminate()
+-        process.wait(timeout=5)
+-
+-
+-def get(url: str) -> tuple[int, str, str]:
+-    try:
+-        with urllib.request.urlopen(url, timeout=2) as response:
+-            return response.status, response.headers["Content-Type"], response.read().decode()
+-    except urllib.error.HTTPError as error:
+-        return error.code, error.headers["Content-Type"], error.read().decode()
+-
+-
+-def post(url: str, body: object) -> tuple[int, dict]:
+-    data = json.dumps(body).encode()
+-    request = urllib.request.Request(url, data, {"Content-Type": "application/json"})
+-    try:
+-        with urllib.request.urlopen(request, timeout=2) as response:
+-            return response.status, json.load(response)
+-    except urllib.error.HTTPError as error:
+-        return error.code, json.load(error)
+ 
+ 
+ def test_health(url: str) -> None:
+diff --git a/tests/test_ai.py b/tests/test_ai.py
+index f6bd9b8..92f9ffd 100644
+--- a/tests/test_ai.py
++++ b/tests/test_ai.py
+@@ -1,4 +1,5 @@
+ import random
++from functools import cache
+ 
+ import pytest
+ 
+@@ -60,3 +61,73 @@ def test_unknown_level_is_rejected() -> None:
+ def test_no_move_when_the_game_is_over() -> None:
+     with pytest.raises(game.IllegalMoveError, match="over"):
+         ai.choose_move(["X", "X", "X", "O", "O", "", "", "", ""], "hard")
++
++
++# After a steal (changes/cheat-code/spec.md, rule 7)
++
++AFTER_STEAL = ["X", "X", "", "", "O", "", "", "", "X"]  # O to move, one steal used
++
++
++@pytest.mark.parametrize("level", ai.LEVELS)
++def test_after_a_steal_the_computer_plays_as_o(level: str) -> None:
++    move = ai.choose_move(AFTER_STEAL, level, random.Random(1), steals=1)
++    assert move in game.legal_moves(AFTER_STEAL)
++    after = game.play(AFTER_STEAL, move, steals=1)
++    assert after[move] == "O"
++
++
++def test_hard_blocks_after_a_steal() -> None:
++    assert ai.choose_move(AFTER_STEAL, "hard", steals=1) == 2
++
++
++@pytest.mark.parametrize("level", ai.LEVELS)
++def test_the_computer_takes_a_win_after_a_steal(level: str) -> None:
++    cells = ["X", "X", "", "O", "O", "", "X", "X", ""]  # O wins at 5
++    assert game.turn(cells, steals=1) == "O"
++    assert ai.choose_move(cells, level, random.Random(1), steals=1) == 5
++
++
++def test_easy_plays_whole_games_after_a_steal() -> None:
++    rng = random.Random(3)
++    for _ in range(100):
++        cells = list(AFTER_STEAL)
++        while game.outcome(cells).status == "playing":
++            cells = game.play(cells, ai.choose_move(cells, "easy", rng, steals=1), steals=1)
++        assert cells.count("X") - cells.count("O") in (1, 2)
++
++
++@cache
++def reference_value(cells: tuple[str, ...]) -> int:
++    """Today's negamax, written out with today's turn rule (X when the counts are equal)."""
++    result = game.outcome(list(cells))
++    if result.status == "won":
++        return -(ai.WIN - (9 - cells.count("")))
++    if result.status == "draw":
++        return 0
++    me = "X" if cells.count("X") == cells.count("O") else "O"
++    return max(
++        -reference_value((*cells[:i], me, *cells[i + 1 :])) for i, c in enumerate(cells) if not c
++    )
++
++
++def reference_move(cells: list[str]) -> int:
++    me = "X" if cells.count("X") == cells.count("O") else "O"
++    moves = [i for i, c in enumerate(cells) if not c]
++    return max(moves, key=lambda i: (-reference_value((*cells[:i], me, *cells[i + 1 :])), -i))
++
++
++@pytest.mark.parametrize("computer", game.MARKS)
++def test_hard_without_a_steal_plays_todays_moves(computer: str) -> None:
++    seen, todo = 0, [game.new_board()]
++    while todo:
++        cells = todo.pop()
++        if game.outcome(cells).status != "playing":
++            continue
++        if game.turn(cells) == computer:
++            assert ai.choose_move(cells, "hard") == reference_move(cells)
++            assert ai.choose_move(cells, "hard", steals=0) == reference_move(cells)
++            seen += 1
++            todo.append(game.play(cells, reference_move(cells)))
++        else:
++            todo.extend(game.play(cells, move) for move in game.legal_moves(cells))
++    assert seen > 50
+diff --git a/tests/test_game.py b/tests/test_game.py
+index 5b9543e..b3f56eb 100644
+--- a/tests/test_game.py
++++ b/tests/test_game.py
+@@ -69,3 +69,111 @@ def test_no_legal_moves_once_won() -> None:
+ def test_validate_rejects_impossible_boards(bad: object) -> None:
+     with pytest.raises(game.IllegalMoveError):
+         game.validate(bad)
++
++
++# The cheat code's steal (changes/cheat-code/spec.md, rules 1, 2, 4 and 5)
++
++
++def test_turn_after_a_steal_is_x_when_x_leads_by_one() -> None:
++    assert game.turn(board("XX. .O. ..X"), steals=1) == "O"
++    assert game.turn(board("XXO .O. ..X"), steals=1) == "X"
++    assert game.turn(game.new_board(), steals=1) == "O"
++
++
++@pytest.mark.parametrize(
++    ("text", "mark"),
++    [("... ... ...", "X"), ("X.. ... ...", "O"), ("XO. ... ...", "X"), ("XOX OX. ...", "O")],
++)
++def test_without_a_steal_turn_and_validate_are_unchanged(text: str, mark: str) -> None:
++    cells = board(text)
++    assert game.turn(cells, steals=0) == game.turn(cells) == mark
++    assert game.validate(cells, steals=0) == game.validate(cells) == cells
++
++
++def test_validate_after_a_steal_accepts_x_one_or_two_ahead() -> None:
++    assert game.validate(board("XX. .O. ..."), steals=1) == board("XX. .O. ...")
++    assert game.validate(board("XX. .O. ..X"), steals=1) == board("XX. .O. ..X")
++
++
++@pytest.mark.parametrize("text", ["XO. ... ...", "XXX X.. O..", "... ... ..."])
++def test_validate_after_a_steal_rejects_other_counts(text: str) -> None:
++    with pytest.raises(game.IllegalMoveError, match="alternate"):
++        game.validate(board(text), steals=1)
++
++
++@pytest.mark.parametrize(
++    "bad", [None, "X........", [""] * 8, [""] * 10, ["x", *[""] * 8], [None] * 9]
++)
++def test_check_cells_rejects_bad_shapes_and_cells(bad: object) -> None:
++    with pytest.raises(game.IllegalMoveError):
++        game.check_cells(bad)
++
++
++def test_check_cells_does_not_check_the_counts() -> None:
++    cells = board("XXX X.. ...")
++    copy = game.check_cells(cells)
++    assert copy == cells
++    assert copy is not cells
++
++
++def test_play_after_a_steal_uses_the_steal_turn_rule() -> None:
++    assert game.play(board("XX. .O. ..X"), 2, steals=1) == board("XXO .O. ..X")
++    assert game.play(board("XXO .O. ..X"), 3, steals=1) == board("XXO XO. ..X")
++
++
++def test_steal_turns_an_o_into_an_x() -> None:
++    before = board("XO. .O. ..X")
++    after = game.steal(before, 1, 0)
++    assert after == board("XX. .O. ..X")
++    assert before == board("XO. .O. ..X"), "steal must not change its input"
++    assert game.turn(after, steals=1) == "O", "the steal is X's move"
++
++
++def test_a_steal_can_win_at_once() -> None:
++    after = game.steal(board("XO. .O. ..X"), 4, 0)
++    result = game.outcome(after)
++    assert (result.status, result.winner, result.line) == ("won", "X", (0, 4, 8))
++
++
++def test_a_steal_never_adds_a_mark() -> None:
++    before = board("XO. .O. ..X")
++    after = game.steal(before, 1, 0)
++    assert after.count("") == before.count("")
++
++
++def test_only_one_steal_per_game() -> None:
++    with pytest.raises(game.IllegalMoveError, match="already stolen"):
++        game.steal(board("XXO .O. ..X"), 2, 1)
++
++
++@pytest.mark.parametrize("cell", [-1, 9, "4", 4.0, True, False, None])
++def test_steal_rejects_cells_that_are_not_squares(cell: object) -> None:
++    with pytest.raises(game.IllegalMoveError, match="steal must be a whole number from 0 to 8"):
++        game.steal(board("XO. .O. ..X"), cell, 0)
++
++
++@pytest.mark.parametrize("cell", [0, 2, 8])
++def test_steal_only_takes_the_computers_squares(cell: int) -> None:
++    with pytest.raises(game.IllegalMoveError, match="one of the computer's squares"):
++        game.steal(board("XO. .O. ..X"), cell, 0)
++
++
++def test_steal_rejects_a_finished_game() -> None:
++    with pytest.raises(game.IllegalMoveError, match="the game is over"):
++        game.steal(board("XX. OOO X.."), 3, 0)
++
++
++def test_steal_only_on_xs_turn() -> None:
++    with pytest.raises(game.IllegalMoveError, match="you play X"):
++        game.steal(board("XO. X.. ..."), 1, 0)
++
++
++def test_steal_checks_in_the_specs_order() -> None:
++    # already stolen comes before a bad cell, a bad cell before game over,
++    # game over before "not an O"
++    with pytest.raises(game.IllegalMoveError, match="already stolen"):
++        game.steal(board("XO. ... ..."), "x", 1)
++    with pytest.raises(game.IllegalMoveError, match="whole number"):
++        game.steal(board("XX. OOO X.."), 9, 0)
++    with pytest.raises(game.IllegalMoveError, match="over"):
++        game.steal(board("XX. OOO X.."), 0, 0)
+diff --git a/tests/test_server.py b/tests/test_server.py
+index 6e81461..f68cec6 100644
+--- a/tests/test_server.py
++++ b/tests/test_server.py
+@@ -1,6 +1,6 @@
+ import pytest
+ 
+-from tictactoe import game, server
++from tictactoe import game, server, signing
+ 
+ EMPTY = [""] * 9
+ 
+@@ -47,3 +47,332 @@ def test_the_computer_can_win() -> None:
+ def test_bad_requests_are_rejected(request_body: object, message: str) -> None:
+     with pytest.raises(game.IllegalMoveError, match=message):
+         server.handle_move(request_body)
++
++
++# The cheat code's steal (changes/cheat-code/spec.md)
++
++NEW_FIELDS = {"game", "stealable", "steal_used", "assisted"}
++OLD_FIELDS = {"board", "status", "winner", "line", "turn", "computer_move"}
++MISMATCH = "the game token does not match this game"
++
++
++def board(text: str) -> list[str]:
++    """A board from 9 characters, row by row: "X", "O" or "." for empty."""
++    return ["" if c == "." else c for c in text.replace(" ", "")]
++
++
++def move(cells: list[str], level: str = "hard", **fields: object) -> dict:
++    return server.handle_move({"board": cells, "mode": "computer", "level": level, **fields})
++
++
++def the_spec_game() -> dict:
++    """The spec's example up to X's choice: X 0, O 4, X 8, O 1, with a token."""
++    first = move(EMPTY, cell=0)
++    return move(first["board"], cell=8, game=first["game"])
++
++
++def test_the_first_move_of_a_new_game_gets_a_token() -> None:
++    answer = move(EMPTY, cell=0)
++    assert answer["board"] == board("X.. .O. ...")
++    assert answer["game"].startswith("0.")
++    assert (answer["stealable"], answer["steal_used"], answer["assisted"]) == ([4], False, False)
++
++
++def test_sending_the_token_back_chains_the_game() -> None:
++    answer = the_spec_game()
++    assert answer["board"] == board("XO. .O. ..X")
++    assert answer["game"].startswith("0.")
++    assert answer["stealable"] == [1, 4]
++
++
++def test_a_steal_that_wins_ends_the_game_assisted() -> None:
++    before = the_spec_game()
++    answer = move(before["board"], steal=4, game=before["game"])
++    assert answer == {
++        "board": board("XO. .X. ..X"),
++        "status": "won",
++        "winner": "X",
++        "line": [0, 4, 8],
++        "turn": None,
++        "computer_move": None,
++        "game": None,
++        "stealable": [],
++        "steal_used": True,
++        "assisted": True,
++    }
++
++
++def test_a_steal_that_does_not_win_gets_the_computers_reply() -> None:
++    before = the_spec_game()
++    answer = move(before["board"], steal=1, game=before["game"])
++    assert answer["board"] == board("XXO .O. ..X")
++    assert (answer["status"], answer["turn"], answer["computer_move"]) == ("playing", "X", 2)
++    assert answer["game"].startswith("1.")
++    assert (answer["stealable"], answer["steal_used"], answer["assisted"]) == ([], True, False)
++
++
++def test_a_second_steal_is_refused() -> None:
++    before = the_spec_game()
++    after = move(before["board"], steal=1, game=before["game"])
++    with pytest.raises(game.IllegalMoveError, match="already stolen"):
++        move(after["board"], steal=4, game=after["game"])
++
++
++def test_the_game_goes_on_after_a_steal_and_stays_stolen() -> None:
++    before = the_spec_game()
++    after = move(before["board"], steal=1, game=before["game"])
++    nxt = move(after["board"], cell=3, game=after["game"])
++    assert nxt["board"][3] == "X"
++    assert nxt["game"] is None or nxt["game"].startswith("1.")
++    assert (nxt["stealable"], nxt["steal_used"]) == ([], True)
++    if nxt["status"] == "playing":
++        with pytest.raises(game.IllegalMoveError, match="already stolen"):
++            move(nxt["board"], steal=nxt["board"].index("O"), game=nxt["game"])
++
++
++def test_the_board_after_a_steal_needs_its_token() -> None:
++    before = the_spec_game()
++    after = move(before["board"], steal=1, game=before["game"])
++    # without the token, X one ahead on X's turn is today's error
++    with pytest.raises(game.IllegalMoveError, match="you play X"):
++        move(after["board"], cell=3)
++    # an s = 0 token cannot be made for it without the key
++    zero = "0" + after["game"][1:]
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        move(after["board"], steal=4, game=zero)
++
++
++def test_a_steal_works_at_easy() -> None:
++    first = move(EMPTY, "easy", cell=0)
++    o_cell = first["board"].index("O")
++    answer = move(first["board"], "easy", steal=o_cell, game=first["game"])
++    assert answer["board"][o_cell] == "X"
++    assert answer["steal_used"] is True
++    assert answer["game"] is None or answer["game"].startswith("1.")
++
++
++def test_a_later_win_after_a_steal_is_assisted() -> None:
++    cells = board("XX. OO. X..")
++    answer = move(cells, cell=2, game=signing.sign(cells, "hard", 1))
++    assert (answer["status"], answer["winner"]) == ("won", "X")
++    assert (answer["assisted"], answer["steal_used"], answer["game"]) == (True, True, None)
++
++
++def test_a_win_without_a_steal_is_not_assisted() -> None:
++    cells = board("XX. OO. ...")
++    answer = move(cells, cell=2, game=signing.sign(cells, "hard", 0))
++    assert (answer["status"], answer["winner"]) == ("won", "X")
++    assert (answer["assisted"], answer["steal_used"]) == (False, False)
++
++
++def test_a_computer_win_after_a_steal_is_a_normal_o_win() -> None:
++    cells = board("X.. OO. XX.")
++    answer = move(cells, cell=1, game=signing.sign(cells, "hard", 1))
++    assert (answer["status"], answer["winner"], answer["computer_move"]) == ("won", "O", 5)
++    assert (answer["assisted"], answer["steal_used"], answer["game"]) == (False, True, None)
++
++
++def test_a_draw_after_a_steal_is_a_normal_draw() -> None:
++    cells = board("XOX XO. OX.")
++    answer = move(cells, cell=8, game=signing.sign(cells, "hard", 1))
++    assert (answer["status"], answer["computer_move"]) == ("draw", 5)
++    assert (answer["assisted"], answer["steal_used"], answer["game"]) == (False, True, None)
++
++
++def test_every_steal_path_against_hard_has_at_most_one_steal() -> None:
++    # Walk every game a player can play against Hard through the API, trying
++    # every move and every steal, and check the rules on every answer.
++    todo = [(EMPTY, None, False)]
++    finished = 0
++    while todo:
++        cells, token, stolen = todo.pop()
++        options = [{"cell": c} for c in game.legal_moves(cells)]
++        options += [{"steal": c} for c in range(9) if cells[c] == "O"]
++        for option in options:
++            fields = {"game": token} if token else {}
++            if "steal" in option and stolen:
++                with pytest.raises(game.IllegalMoveError, match="already stolen"):
++                    move(cells, **option, **fields)
++                continue
++            answer = move(cells, **option, **fields)
++            used = stolen or "steal" in option
++            assert answer["steal_used"] is used
++            assert answer["assisted"] is (used and answer["winner"] == "X")
++            if answer["status"] != "playing":
++                assert (answer["game"], answer["stealable"]) == (None, [])
++                finished += 1
++                continue
++            assert answer["game"].startswith("1." if used else "0.")
++            o_cells = [i for i, c in enumerate(answer["board"]) if c == "O"]
++            assert answer["stealable"] == ([] if used else o_cells)
++            todo.append((answer["board"], answer["game"], used))
++    assert finished > 100
++
++
++def test_replaying_an_older_token_branches_the_game() -> None:
++    # Open questions 3: accepted, and the branch still has one steal at most
++    first = move(EMPTY, cell=0)
++    second = move(first["board"], cell=8, game=first["game"])
++    move(second["board"], steal=1, game=second["game"])
++    branch = move(first["board"], steal=4, game=first["game"])
++    assert branch["steal_used"] is True
++    if branch["status"] == "playing":
++        with pytest.raises(game.IllegalMoveError, match="already stolen"):
++            move(branch["board"], steal=branch["board"].index("O"), game=branch["game"])
++
++
++def test_a_hand_made_board_without_a_token_cannot_steal() -> None:
++    cells = board("XO. ... ...")
++    answer = move(cells, cell=8)
++    assert (answer["game"], answer["stealable"], answer["steal_used"]) == (None, [], False)
++    with pytest.raises(game.IllegalMoveError, match="needs the game token"):
++        move(answer["board"], steal=1)
++
++
++def test_a_friend_game_gets_the_new_fields_and_never_a_token() -> None:
++    answer = server.handle_move({"board": EMPTY, "cell": 4, "mode": "friend"})
++    assert {k: answer[k] for k in NEW_FIELDS} == {
++        "game": None,
++        "stealable": [],
++        "steal_used": False,
++        "assisted": False,
++    }
++
++
++def test_no_steal_against_a_friend() -> None:
++    request = {"board": board("XO. ... ..."), "steal": 1, "mode": "friend"}
++    with pytest.raises(game.IllegalMoveError, match="only steal from the computer"):
++        server.handle_move(request)
++
++
++FRIEND_TOKEN = "the game token is only for games against the computer"
++
++
++@pytest.mark.parametrize(
++    ("cells", "steals", "fields"),
++    [
++        # review finding: a computer game's after-steal token used to be
++        # honoured in friend mode, and the answer said steal_used: true
++        ("XXO .O. ..X", 1, {"cell": 3}),
++        ("XO. ... ...", 0, {"cell": 2}),
++        ("XO. ... ...", 0, {"steal": 1}),
++        ("XO. ... ...", None, {"cell": 2, "game": "bad"}),
++    ],
++)
++def test_a_friend_game_refuses_a_token(cells: str, steals: int | None, fields: dict) -> None:
++    grid = board(cells)
++    if steals is not None:
++        fields = {**fields, "game": signing.sign(grid, "hard", steals)}
++    request = {"board": grid, "mode": "friend", **fields}
++    with pytest.raises(game.IllegalMoveError, match=f"^{FRIEND_TOKEN}$"):
++        server.handle_move(request)
++
++
++@pytest.mark.parametrize(
++    "request_body",
++    [
++        {"board": EMPTY, "cell": 0, "mode": "computer", "level": "hard"},
++        {"board": board("XO. ... ..."), "cell": 8, "mode": "computer"},
++        {"board": board("XX. OO. ..."), "cell": 2},
++        {"board": EMPTY, "cell": 4, "mode": "friend"},
++        {"board": board("X.. ... ..."), "cell": 4, "mode": "friend"},
++    ],
++)
++def test_without_a_token_only_the_four_fields_are_added(request_body: dict) -> None:
++    answer = server.handle_move(request_body)
++    assert set(answer) == OLD_FIELDS | NEW_FIELDS
++    # a field sent as null counts as not sent
++    assert server.handle_move({**request_body, "game": None, "steal": None}) == answer
++
++
++@pytest.mark.parametrize(
++    ("request_body", "message"),
++    [
++        ({"board": EMPTY, "cell": 0, "game": None, "steal": None, "mode": "x"}, "mode"),
++        ({"board": board("X.. ... ..."), "cell": 1, "game": None}, "you play X"),
++        ({"board": board("XX. ... ..."), "cell": 1, "steal": None}, "alternate"),
++        ({"board": EMPTY, "cell": 9, "game": None}, "cell"),
++    ],
++)
++def test_without_a_token_the_old_errors_stay(request_body: dict, message: str) -> None:
++    with pytest.raises(game.IllegalMoveError, match=message):
++        server.handle_move(request_body)
++
++
++def test_every_request_with_a_token_is_checked() -> None:
++    cells = board("XO. ... ...")
++    token = signing.sign(cells, "hard", 0)
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        move(board("XO. ... ..X"), cell=7, game=token)
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        move(cells, "easy", cell=4, game=token)
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        move(cells, cell=4, game="")
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        move(cells, cell=4, game=["0", token[2:]])
++    assert move(cells, cell=4, game=token)["game"].startswith("0.")
++
++
++def test_a_hand_edited_board_breaks_the_token() -> None:
++    before = the_spec_game()
++    edited = list(before["board"])
++    edited[1] = ""
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        move(edited, steal=4, game=before["game"])
++
++
++@pytest.mark.parametrize(
++    ("cells", "steals", "fields", "message"),
++    [
++        # each error of the spec's table
++        ("XO. ... ...", 0, {"cell": 2, "steal": 1}, "send either cell or steal, not both"),
++        ("XO. ... ...", None, {"steal": 1}, "a steal needs the game token from the last answer"),
++        ("XXO .O. ..X", 1, {"steal": 4}, "you have already stolen a square in this game"),
++        ("XO. ... ...", 0, {"steal": True}, "steal must be a whole number from 0 to 8"),
++        ("XO. ... ...", 0, {"steal": 9}, "steal must be a whole number from 0 to 8"),
++        ("XO. ... ...", 0, {"steal": "1"}, "steal must be a whole number from 0 to 8"),
++        ("XX. OOO X..", 0, {"steal": 3}, "the game is over"),
++        ("XO. ... ...", 0, {"steal": 0}, "you can only steal one of the computer's squares"),
++        ("XO. ... ...", 0, {"steal": 2}, "you can only steal one of the computer's squares"),
++        # the board check uses the token's steal count
++        ("XX. ... ...", 0, {"cell": 2}, "X moves first and the players alternate"),
++        ("XO. ... ...", 1, {"cell": 2}, "X moves first and the players alternate"),
++        ("X.. ... ...", 0, {"steal": 1}, "against the computer you play X"),
++        ("XX. O.. X..", 1, {"cell": 2}, "against the computer you play X"),
++    ],
++)
++def test_steal_errors(cells: str, steals: int | None, fields: dict, message: str) -> None:
++    grid = board(cells)
++    if steals is not None:
++        fields = {**fields, "game": signing.sign(grid, "hard", steals)}
++    with pytest.raises(game.IllegalMoveError, match=f"^{message}$"):
++        move(grid, **fields)
++
++
++@pytest.mark.parametrize(
++    ("request_body", "message"),
++    [
++        # today's checks come first
++        ({"board": [""] * 8, "steal": 1, "game": "bad"}, "board must be"),
++        ({"board": EMPTY, "steal": 1, "game": "bad", "mode": "online"}, "mode"),
++        ({"board": EMPTY, "steal": 1, "game": "bad", "level": "impossible"}, "level"),
++        # then a token in friend mode, then the token, then the table in order
++        ({"board": board("XO. ... ..."), "cell": 2, "game": "bad", "mode": "friend"}, "only for"),
++        ({"board": board("XO. ... ..."), "cell": 2, "steal": 1, "game": "bad"}, MISMATCH),
++        ({"board": board("XO. ... ..."), "cell": 2, "steal": 1, "mode": "friend"}, "not both"),
++        ({"board": board("XO. ... ..."), "steal": 1, "mode": "friend"}, "from the computer"),
++        ({"board": board("XO. ... ..."), "steal": "x"}, "needs the game token"),
++    ],
++)
++def test_steal_errors_come_in_the_specs_order(request_body: dict, message: str) -> None:
++    with pytest.raises(game.IllegalMoveError, match=message):
++        server.handle_move(request_body)
++
++
++def test_already_stolen_comes_before_a_bad_cell_and_a_bad_cell_before_game_over() -> None:
++    cells = board("XXO .O. ..X")
++    with pytest.raises(game.IllegalMoveError, match="already stolen"):
++        move(cells, steal="x", game=signing.sign(cells, "hard", 1))
++    over = board("XX. OOO X..")
++    with pytest.raises(game.IllegalMoveError, match="whole number"):
++        move(over, steal=9, game=signing.sign(over, "hard", 0))
+diff --git a/tests/test_signing.py b/tests/test_signing.py
+new file mode 100644
+index 0000000..0eb0a3f
+--- /dev/null
++++ b/tests/test_signing.py
+@@ -0,0 +1,132 @@
++import hashlib
++import hmac
++import importlib
++from collections.abc import Iterator
++
++import pytest
++
++from tictactoe import game, signing
++
++BOARD = ["X", "", "", "", "O", "", "", "", ""]
++MISMATCH = "the game token does not match this game"
++
++
++@pytest.fixture
++def reload_signing(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
++    """Let a test reload signing under its own environment, then restore a fresh key."""
++    yield
++    monkeypatch.delenv("TICTACTOE_SECRET", raising=False)
++    importlib.reload(signing)
++
++
++@pytest.mark.parametrize("steals", [0, 1])
++def test_a_token_verifies_for_its_own_position(steals: int) -> None:
++    token = signing.sign(BOARD, "hard", steals)
++    assert signing.verify(token, BOARD, "hard") == steals
++
++
++def test_the_token_format() -> None:
++    token = signing.sign(BOARD, "easy", 0)
++    prefix, mac = token.split(".")
++    assert prefix == "0"
++    assert len(mac) == 64
++    assert mac == mac.lower()
++    int(mac, 16)
++
++
++def test_the_token_signs_the_documented_message(
++    monkeypatch: pytest.MonkeyPatch, reload_signing: None
++) -> None:
++    monkeypatch.setenv("TICTACTOE_SECRET", "a test key")
++    importlib.reload(signing)
++    message = b"tictactoe-game-v1|hard|1|X---O----"
++    mac = hmac.new(b"a test key", message, hashlib.sha256).hexdigest()
++    assert signing.sign(BOARD, "hard", 1) == f"1.{mac}"
++
++
++def test_tokens_survive_a_restart_with_the_same_secret(
++    monkeypatch: pytest.MonkeyPatch, reload_signing: None
++) -> None:
++    monkeypatch.setenv("TICTACTOE_SECRET", "kept across releases")
++    importlib.reload(signing)
++    token = signing.sign(BOARD, "hard", 0)
++    importlib.reload(signing)
++    assert signing.verify(token, BOARD, "hard") == 0
++
++
++@pytest.mark.parametrize("secret", [None, ""])
++def test_without_a_secret_each_start_makes_a_new_random_key(
++    monkeypatch: pytest.MonkeyPatch, reload_signing: None, secret: str | None
++) -> None:
++    if secret is None:
++        monkeypatch.delenv("TICTACTOE_SECRET", raising=False)
++    else:
++        monkeypatch.setenv("TICTACTOE_SECRET", secret)
++    importlib.reload(signing)
++    token = signing.sign(BOARD, "hard", 0)
++    empty_key = hmac.new(b"", b"tictactoe-game-v1|hard|0|X---O----", hashlib.sha256)
++    assert token != f"0.{empty_key.hexdigest()}"
++    importlib.reload(signing)
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        signing.verify(token, BOARD, "hard")
++
++
++def other_board() -> list[str]:
++    cells = list(BOARD)
++    cells[8] = "X"
++    return cells
++
++
++@pytest.mark.parametrize(
++    ("board", "level"),
++    [(other_board(), "hard"), (BOARD, "easy"), (["O", *BOARD[1:]], "hard")],
++)
++def test_a_token_does_not_verify_for_another_board_or_level(board: list[str], level: str) -> None:
++    token = signing.sign(BOARD, "hard", 0)
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        signing.verify(token, board, level)
++
++
++def test_changing_the_steal_count_breaks_the_token() -> None:
++    zero, one = signing.sign(BOARD, "hard", 0), signing.sign(BOARD, "hard", 1)
++    for forged in ("1" + zero[1:], "0" + one[1:]):
++        with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++            signing.verify(forged, BOARD, "hard")
++
++
++def malformed() -> list[object]:
++    good = signing.sign(BOARD, "hard", 0)
++    return [
++        None,
++        0,
++        ["0", good[2:]],
++        "",
++        "0",
++        "0.",
++        good.upper(),
++        "2" + good[1:],
++        "00" + good[1:],
++        good + "0",
++        good[:-1],
++        good + "\n",
++        " " + good,
++        good.replace(".", ":"),
++    ]
++
++
++@pytest.mark.parametrize("token", malformed())
++def test_malformed_tokens_are_rejected(token: object) -> None:
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        signing.verify(token, BOARD, "hard")
++
++
++def test_the_key_never_appears_in_a_token_or_an_error(
++    monkeypatch: pytest.MonkeyPatch, reload_signing: None
++) -> None:
++    monkeypatch.setenv("TICTACTOE_SECRET", "s3cret-key-value")
++    importlib.reload(signing)
++    token = signing.sign(BOARD, "hard", 0)
++    assert "s3cret" not in token
++    with pytest.raises(game.IllegalMoveError) as error:
++        signing.verify("1" + token[1:], BOARD, "hard")
++    assert "s3cret" not in str(error.value)
+diff --git a/tictactoe/ai.py b/tictactoe/ai.py
+index b908078..77a684e 100644
+--- a/tictactoe/ai.py
++++ b/tictactoe/ai.py
+@@ -3,6 +3,9 @@
+ Hard plays perfectly (negamax over the whole game tree, which is small
+ enough to search every move), so it never loses. Easy wins when it sees a
+ winning move and otherwise plays at random, which a casual player can beat.
++
++`steals` is how many steals the game has used (see `game.turn`): a steal
++changes whose turn the counts say it is, so the search needs it too.
+ """
+ 
+ import random
+@@ -14,7 +17,9 @@ LEVELS = ("easy", "hard")
+ WIN = 10
+ 
+ 
+-def choose_move(board: list[str], level: str, rng: random.Random | None = None) -> int:
++def choose_move(
++    board: list[str], level: str, rng: random.Random | None = None, *, steals: int = 0
++) -> int:
+     """The cell the computer plays for whoever's turn it is on `board`."""
+     if level not in LEVELS:
+         raise game.IllegalMoveError(f"level must be one of: {', '.join(LEVELS)}")
+@@ -22,23 +27,26 @@ def choose_move(board: list[str], level: str, rng: random.Random | None = None)
+     if not moves:
+         raise game.IllegalMoveError("the game is over")
+     if level == "hard":
+-        return best_move(tuple(board))
+-    me = game.turn(board)
++        return best_move(tuple(board), steals)
++    me = game.turn(board, steals)
+     for cell in moves:
+-        if game.outcome(game.play(board, cell)).winner == me:
++        if game.outcome(game.play(board, cell, steals)).winner == me:
+             return cell
+     return (rng or random).choice(moves)
+ 
+ 
+ @cache
+-def best_move(board: tuple[str, ...]) -> int:
++def best_move(board: tuple[str, ...], steals: int = 0) -> int:
+     """The best cell for the player to move; the lowest cell among equals."""
+     moves = game.legal_moves(list(board))
+-    return max(moves, key=lambda cell: (-value(tuple(game.play(list(board), cell))), -cell))
++    return max(
++        moves,
++        key=lambda cell: (-value(tuple(game.play(list(board), cell, steals)), steals), -cell),
++    )
+ 
+ 
+ @cache
+-def value(board: tuple[str, ...]) -> int:
++def value(board: tuple[str, ...], steals: int = 0) -> int:
+     """How good `board` is for the player to move: positive wins, 0 draws.
+ 
+     A win is worth more the sooner it comes, so Hard wins quickly and loses
+@@ -49,4 +57,7 @@ def value(board: tuple[str, ...]) -> int:
+         return -(WIN - (9 - board.count(game.EMPTY)))
+     if result.status == "draw":
+         return 0
+-    return max(-value(tuple(game.play(list(board), c))) for c in game.legal_moves(list(board)))
++    return max(
++        -value(tuple(game.play(list(board), c, steals)), steals)
++        for c in game.legal_moves(list(board))
++    )
+diff --git a/tictactoe/game.py b/tictactoe/game.py
+index 047e97e..af939a4 100644
+--- a/tictactoe/game.py
++++ b/tictactoe/game.py
+@@ -54,9 +54,13 @@ def outcome(board: list[str]) -> Outcome:
+     return Outcome("playing")
+ 
+ 
+-def turn(board: list[str]) -> str:
+-    """The mark that moves next."""
+-    return "X" if board.count("X") == board.count("O") else "O"
++def turn(board: list[str], steals: int = 0) -> str:
++    """The mark that moves next, with `steals` steals used in the game.
++
++    A steal turns an O into an X without adding a mark, so X is to move when
++    X count - O count equals `steals`.
++    """
++    return "X" if board.count("X") - board.count("O") == steals else "O"
+ 
+ 
+ def legal_moves(board: list[str]) -> list[int]:
+@@ -65,19 +69,25 @@ def legal_moves(board: list[str]) -> list[int]:
+     return [i for i, cell in enumerate(board) if not cell]
+ 
+ 
+-def validate(board: object) -> list[str]:
+-    """Check a board that came from outside and return it as a clean list."""
++def check_cells(board: object) -> list[str]:
++    """Check only the shape and the cells of a board from outside, not the counts."""
+     if not isinstance(board, list) or len(board) != SIZE:
+         raise IllegalMoveError("board must be a list of 9 cells")
+     if any(cell not in (*MARKS, EMPTY) for cell in board):
+         raise IllegalMoveError('cells must be "X", "O" or ""')
++    return list(board)
++
++
++def validate(board: object, steals: int = 0) -> list[str]:
++    """Check a board that came from outside and return it as a clean list."""
++    board = check_cells(board)
+     x, o = board.count("X"), board.count("O")
+-    if x - o not in (0, 1):
++    if x - o not in (steals, steals + 1):
+         raise IllegalMoveError("X moves first and the players alternate")
+-    return list(board)
++    return board
+ 
+ 
+-def play(board: list[str], cell: object) -> list[str]:
++def play(board: list[str], cell: object, steals: int = 0) -> list[str]:
+     """The board after the player to move takes `cell`. Does not change `board`."""
+     # bool is a subclass of int, but true is not a square
+     if not isinstance(cell, int) or isinstance(cell, bool) or not 0 <= cell < SIZE:
+@@ -87,5 +97,27 @@ def play(board: list[str], cell: object) -> list[str]:
+     if board[cell]:
+         raise IllegalMoveError("that square is taken")
+     after = list(board)
+-    after[cell] = turn(board)
++    after[cell] = turn(board, steals)
++    return after
++
++
++def steal(board: list[str], cell: object, steals: int) -> list[str]:
++    """The board after X takes the computer's O on `cell`. Does not change `board`.
++
++    A steal is X's move, allowed once per game: `steals` is how many steals
++    the game has used so far.
++    """
++    if steals >= 1:
++        raise IllegalMoveError("you have already stolen a square in this game")
++    # bool is a subclass of int, but true is not a square
++    if not isinstance(cell, int) or isinstance(cell, bool) or not 0 <= cell < SIZE:
++        raise IllegalMoveError("steal must be a whole number from 0 to 8")
++    if outcome(board).status != "playing":
++        raise IllegalMoveError("the game is over")
++    if turn(board, steals) != "X":
++        raise IllegalMoveError("against the computer you play X")
++    if board[cell] != "O":
++        raise IllegalMoveError("you can only steal one of the computer's squares")
++    after = list(board)
++    after[cell] = "X"
+     return after
+diff --git a/tictactoe/server.py b/tictactoe/server.py
+index 2ff86e7..e07e093 100644
+--- a/tictactoe/server.py
++++ b/tictactoe/server.py
+@@ -10,7 +10,7 @@ from http import HTTPStatus
+ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+ from pathlib import Path
+ 
+-from . import ai, game
++from . import ai, game, signing
+ 
+ STATIC = Path(__file__).parent / "static"
+ # Only these files are served: a fixed map, so no path from a request ever
+@@ -28,7 +28,46 @@ def handle_move(request: object) -> dict:
+     """Answer one POST /api/move body. Raises IllegalMoveError on bad input."""
+     if not isinstance(request, dict):
+         raise game.IllegalMoveError("the body must be a JSON object")
+-    board = game.validate(request.get("board"))
++    # A field sent as null counts as not sent.
++    token = request.get("game")
++    stolen = request.get("steal")
++    # Without a token or a steal, exactly today's checks in today's order.
++    judged = token is not None or stolen is not None
++    if judged:
++        board = game.check_cells(request.get("board"))
++    else:
++        board = game.validate(request.get("board"))
++    mode, level = check_mode(request, board, judged)
++    steals = signing.verify(token, board, level) if token is not None else 0
++    if judged:
++        board = check_steal_request(request, board, mode, steals)
++    # A token proves a chain of positions from an empty board: hand out a
++    # first one only when this request starts a new game.
++    chained = token is not None or not any(board)
++    if stolen is not None:
++        board = game.steal(board, stolen, steals)
++        steals = 1
++    else:
++        board = game.play(board, request.get("cell"), steals)
++    computer_move = None
++    if mode == "computer" and game.outcome(board).status == "playing":
++        computer_move = ai.choose_move(board, level, steals=steals)
++        board = game.play(board, computer_move, steals)
++    answer = describe(board, steals) | {"computer_move": computer_move}
++    new_token = None
++    if mode == "computer" and answer["status"] == "playing" and chained:
++        new_token = signing.sign(board, level, steals)
++    can_steal = new_token is not None and steals == 0 and answer["turn"] == "X"
++    return answer | {
++        "game": new_token,
++        "stealable": [i for i, cell in enumerate(board) if cell == "O"] if can_steal else [],
++        "steal_used": steals == 1,
++        "assisted": answer["winner"] == "X" and steals == 1,
++    }
++
++
++def check_mode(request: dict, board: list[str], judged: bool) -> tuple[str, str]:
++    """Check the mode and level, and that a token comes only with the computer."""
+     mode = request.get("mode", "computer")
+     if mode not in MODES:
+         raise game.IllegalMoveError(f"mode must be one of: {', '.join(MODES)}")
+@@ -36,24 +75,38 @@ def handle_move(request: object) -> dict:
+     if mode == "computer":
+         if level not in ai.LEVELS:
+             raise game.IllegalMoveError(f"level must be one of: {', '.join(ai.LEVELS)}")
+-        if game.turn(board) != "X":
++        if not judged and game.turn(board) != "X":
+             raise game.IllegalMoveError("against the computer you play X")
+-    board = game.play(board, request.get("cell"))
+-    computer_move = None
+-    if mode == "computer" and game.outcome(board).status == "playing":
+-        computer_move = ai.choose_move(board, level)
+-        board = game.play(board, computer_move)
+-    return describe(board) | {"computer_move": computer_move}
+-
+-
+-def describe(board: list[str]) -> dict:
++    elif request.get("game") is not None:
++        # Friend mode never hands out a token, so one sent here is not ours.
++        raise game.IllegalMoveError("the game token is only for games against the computer")
++    return mode, level
++
++
++def check_steal_request(request: dict, board: list[str], mode: str, steals: int) -> list[str]:
++    """The checks for a request with a token or a steal, after the token's."""
++    stolen = request.get("steal")
++    if stolen is not None:
++        if request.get("cell") is not None:
++            raise game.IllegalMoveError("send either cell or steal, not both")
++        if mode == "friend":
++            raise game.IllegalMoveError("you can only steal from the computer")
++        if request.get("game") is None:
++            raise game.IllegalMoveError("a steal needs the game token from the last answer")
++    board = game.validate(board, steals)
++    if mode == "computer" and game.turn(board, steals) != "X":
++        raise game.IllegalMoveError("against the computer you play X")
++    return board
++
++
++def describe(board: list[str], steals: int = 0) -> dict:
+     result = game.outcome(board)
+     return {
+         "board": board,
+         "status": result.status,
+         "winner": result.winner,
+         "line": list(result.line) if result.line else None,
+-        "turn": game.turn(board) if result.status == "playing" else None,
++        "turn": game.turn(board, steals) if result.status == "playing" else None,
+     }
+ 
+ 
+@@ -79,10 +132,22 @@ class Handler(BaseHTTPRequestHandler):
+             return
+         try:
+             request = json.loads(self.rfile.read(int(length)) or b"null")
+-            self.reply_json(HTTPStatus.OK, handle_move(request))
++            answer = handle_move(request)
+         except (ValueError, game.IllegalMoveError) as error:
+             # json.JSONDecodeError and IllegalMoveError are both ValueErrors
+             self.reply_json(HTTPStatus.BAD_REQUEST, {"error": str(error)})
++            return
++        self.reply_json(HTTPStatus.OK, answer)
++        if request.get("steal") is not None:
++            # Only a steal that was played gets here, so level and cell are
++            # known-good values. Never log the token, the key or the board.
++            self.log_message(
++                "steal level=%s cell=%d status=%s assisted=%s",
++                request.get("level", "hard"),
++                request["steal"],
++                answer["status"],
++                "true" if answer["assisted"] else "false",
++            )
+ 
+     def serve(self, *, head: bool) -> None:
+         path = self.path.split("?", 1)[0]
+diff --git a/tictactoe/signing.py b/tictactoe/signing.py
+new file mode 100644
+index 0000000..427ee6e
+--- /dev/null
++++ b/tictactoe/signing.py
+@@ -0,0 +1,43 @@
++"""The game token: a signed position, so the server can stay stateless.
++
++A token is "<s>.<mac>", where <s> is the number of steals used in the game
++(0 or 1) and <mac> is the lowercase hex HMAC-SHA256, under the server's
++key, of the level, <s> and the board. The server hands one out with each
++position it answers and accepts it back only for that exact position.
++
++The key is TICTACTOE_SECRET when it is set, otherwise random bytes made at
++start-up. It never leaves this module.
++"""
++
++import hashlib
++import hmac
++import os
++import re
++import secrets
++
++from .game import IllegalMoveError
++
++_KEY = os.environ.get("TICTACTOE_SECRET", "").encode() or secrets.token_bytes(32)
++_SHAPE = re.compile(r"[01]\.[0-9a-f]{64}")
++_MISMATCH = "the game token does not match this game"
++
++
++def _mac(board: list[str], level: str, steals: int) -> str:
++    cells = "".join(cell or "-" for cell in board)
++    message = f"tictactoe-game-v1|{level}|{steals}|{cells}".encode()
++    return hmac.new(_KEY, message, hashlib.sha256).hexdigest()
++
++
++def sign(board: list[str], level: str, steals: int) -> str:
++    """The token for `board` at `level` with `steals` steals used."""
++    return f"{steals}.{_mac(board, level, steals)}"
++
++
++def verify(token: object, board: list[str], level: str) -> int:
++    """The steals a token for `board` at `level` carries; raises if it does not match."""
++    if not isinstance(token, str) or not _SHAPE.fullmatch(token):
++        raise IllegalMoveError(_MISMATCH)
++    steals = int(token[0])
++    if not hmac.compare_digest(token[2:], _mac(board, level, steals)):
++        raise IllegalMoveError(_MISMATCH)
++    return steals
+diff --git a/tictactoe/static/app.js b/tictactoe/static/app.js
+index ddd36ad..6e7e8d7 100644
+--- a/tictactoe/static/app.js
++++ b/tictactoe/static/app.js
+@@ -7,17 +7,30 @@ const statusEl = document.getElementById("status");
+ const modeEl = document.getElementById("mode");
+ const levelEl = document.getElementById("level");
+ const levelLabel = document.getElementById("level-label");
+-const score = { X: 0, O: 0, draw: 0 };
++const cheatEl = document.getElementById("cheat");
++const stealEl = document.getElementById("steal");
++const cheatTextEl = document.getElementById("cheat-text");
++const score = { X: 0, O: 0, draw: 0, help: 0 };
+ 
+ let state = null; // the server's last answer
+ let busy = false; // a move is on its way to the server
+ let focused = 0; // the cell that holds the board's single tab stop
++let unlocked = false; // the cheat code was typed during this game
++let stealMode = false; // the player is choosing one of the computer's squares
++let notice = null; // a message the status line shows instead of the usual text
++let keys = []; // the last keys typed, to recognise the cheat code
++
++// The cheat code. It is shared on purpose, so it is plain here.
++const CODE = [
++  "ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown",
++  "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a",
++];
+ 
+ const cells = Array.from({ length: 9 }, (_, i) => {
+   const cell = document.createElement("button");
+   cell.type = "button";
+   cell.className = "cell";
+-  cell.addEventListener("click", () => move(i));
++  cell.addEventListener("click", () => choose(i));
+   cell.addEventListener("keydown", (event) => onKey(event, i));
+   cell.addEventListener("focus", () => { focused = i; });
+   boardEl.appendChild(cell);
+@@ -25,58 +38,126 @@ const cells = Array.from({ length: 9 }, (_, i) => {
+ });
+ 
+ function newGame() {
+-  state = { board: Array(9).fill(""), status: "playing", winner: null, line: null, turn: "X" };
++  state = {
++    board: Array(9).fill(""), status: "playing", winner: null, line: null, turn: "X",
++    game: null, stealable: [], steal_used: false, assisted: false,
++  };
++  unlocked = false;
++  stealMode = false;
++  notice = null;
++  keys = [];
+   levelLabel.hidden = modeEl.value !== "computer";
+   render();
+ }
+ 
+-async function move(cell) {
+-  if (busy || state.status !== "playing" || state.board[cell]) return;
++// A square was chosen: in steal mode only a square the server listed as
++// stealable does something; otherwise it is a move, as always.
++function choose(cell) {
++  if (!stealMode) move(cell);
++  else if (state.stealable.includes(cell)) send({ steal: cell });
++}
++
++function move(cell) {
++  if (state.status !== "playing" || state.board[cell]) return;
++  send({ cell });
++}
++
++async function send(fields) {
++  if (busy) return;
+   busy = true;
+   try {
+     const response = await fetch("/api/move", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+-      body: JSON.stringify({ board: state.board, cell, mode: modeEl.value, level: levelEl.value }),
++      body: JSON.stringify(request(fields)),
+     });
+     const answer = await response.json();
+     if (!response.ok) throw new Error(answer.error || response.statusText);
+     state = answer;
+-    if (state.status === "won") score[state.winner] += 1;
++    notice = null;
++    if ("steal" in fields && state.status === "playing") {
++      notice = `You stole row ${Math.floor(fields.steal / 3) + 1}, column ${(fields.steal % 3) + 1}.`;
++    }
++    // a win with a steal counts only "with help", never as an X win
++    if (state.assisted) score.help += 1;
++    else if (state.status === "won") score[state.winner] += 1;
+     if (state.status === "draw") score.draw += 1;
+   } catch (error) {
+-    statusEl.textContent = `Something went wrong: ${error.message}`;
+-    return;
++    notice = `Something went wrong: ${error.message}`;
+   } finally {
+     busy = false;
++    stealMode = false; // steal mode ends with the answer
++  }
++  render();
++}
++
++// The steal button: turns steal mode on (only when the server lists squares
++// to steal) and moves the focus to the first of them; pressed again, cancels.
++function toggleSteal() {
++  if (stealMode) {
++    cancelSteal();
++    return;
+   }
++  if (busy || state.stealable.length === 0) return;
++  stealMode = true;
++  notice = "Steal: choose one of the computer's squares.";
++  focused = Math.min(...state.stealable);
+   render();
++  cells[focused].focus();
++}
++
++function cancelSteal() {
++  stealMode = false;
++  notice = null;
++  render();
++  stealEl.focus();
++}
++
++// The body of a move request: the board, the mode and level, the game token
++// from the last answer when there is one, and the given cell or steal.
++function request(fields) {
++  const body = { board: state.board, ...fields, mode: modeEl.value, level: levelEl.value };
++  if (state.game) body.game = state.game;
++  return body;
+ }
+ 
+ function render() {
+   const winning = new Set(state.line || []);
+   cells.forEach((cell, i) => {
+     const mark = state.board[i];
++    const stealable = stealMode && state.stealable.includes(i);
+     cell.textContent = mark;
+-    cell.className = `cell ${mark.toLowerCase()} ${winning.has(i) ? "win" : ""}`;
++    cell.className = `cell ${mark.toLowerCase()} ${winning.has(i) ? "win" : ""} ${stealable ? "stealable" : ""}`;
+     // aria-disabled, not disabled: a disabled button cannot keep the focus
+-    cell.setAttribute("aria-disabled", String(state.status !== "playing" || Boolean(mark)));
++    const disabled = stealMode ? !stealable : state.status !== "playing" || Boolean(mark);
++    cell.setAttribute("aria-disabled", String(disabled));
+     cell.tabIndex = i === focused ? 0 : -1;
+     const row = Math.floor(i / 3) + 1;
+     const col = (i % 3) + 1;
+     const what = mark || "empty";
+-    cell.setAttribute("aria-label", `Row ${row}, column ${col}, ${what}${winning.has(i) ? ", winning" : ""}`);
++    const extra = `${winning.has(i) ? ", winning" : ""}${stealable ? ", can be stolen" : ""}`;
++    cell.setAttribute("aria-label", `Row ${row}, column ${col}, ${what}${extra}`);
+   });
+-  statusEl.textContent = describe();
++  statusEl.textContent = notice || describe();
+   document.getElementById("score-x").textContent = score.X;
+   document.getElementById("score-o").textContent = score.O;
+   document.getElementById("score-draw").textContent = score.draw;
++  document.getElementById("score-help").textContent = score.help;
++  cheatEl.hidden = !unlocked;
++  const canSteal = state.stealable.length > 0;
++  stealEl.setAttribute("aria-disabled", String(!canSteal));
++  stealEl.setAttribute("aria-pressed", String(stealMode));
++  if (canSteal) cheatTextEl.textContent = "Press Steal, then choose an O. Esc cancels.";
++  else if (state.steal_used) cheatTextEl.textContent = "Steal used";
++  else if (state.status !== "playing") cheatTextEl.textContent = "Game over";
++  else cheatTextEl.textContent = "No O to steal yet";
+ }
+ 
+ function describe() {
+   const vsComputer = modeEl.value === "computer";
+   if (state.status === "won") {
+     if (!vsComputer) return `${state.winner} wins!`;
++    if (state.assisted) return "You won... with a little help";
+     return state.winner === "X" ? "You win!" : "The computer wins.";
+   }
+   if (state.status === "draw") return "It's a draw.";
+@@ -108,6 +189,30 @@ function onKey(event, i) {
+   }
+ }
+ 
++// Recognises the cheat code from the last keys typed anywhere on the page.
++// Esc anywhere also ends steal mode.
++function onPageKey(event) {
++  if (event.key === "Escape" && stealMode) {
++    cancelSteal();
++    return;
++  }
++  if (event.ctrlKey || event.altKey || event.metaKey || event.repeat) return;
++  if (event.target instanceof HTMLSelectElement) return; // arrows there change the game
++  const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
++  keys = [...keys, key].slice(-CODE.length);
++  if (keys.join(" ") !== CODE.join(" ")) return;
++  keys = [];
++  if (unlocked || modeEl.value !== "computer" || state.status !== "playing") return;
++  unlocked = true;
++  // the "With help" column stays from now on, until the page is reloaded
++  document.getElementById("score-help-head").hidden = false;
++  document.getElementById("score-help").hidden = false;
++  notice ="Cheat unlocked! Once this game, you may steal one of the computer's squares.";
++  render();
++}
++
++document.addEventListener("keydown", onPageKey);
++stealEl.addEventListener("click", toggleSteal);
+ document.getElementById("new-game").addEventListener("click", newGame);
+ modeEl.addEventListener("change", newGame);
+ levelEl.addEventListener("change", newGame);
+diff --git a/tictactoe/static/index.html b/tictactoe/static/index.html
+index f60a422..b91c84d 100644
+--- a/tictactoe/static/index.html
++++ b/tictactoe/static/index.html
+@@ -28,11 +28,16 @@
+ 
+     <p id="status" role="status" aria-live="polite"></p>
+ 
++    <div id="cheat" hidden>
++      <button type="button" id="steal" aria-pressed="false" aria-describedby="cheat-text">Steal a square</button>
++      <p id="cheat-text"></p>
++    </div>
++
+     <div id="board" role="group" aria-label="Board"></div>
+ 
+     <table id="score" aria-label="Score">
+-      <tr><th>X wins</th><th>O wins</th><th>Draws</th></tr>
+-      <tr><td id="score-x">0</td><td id="score-o">0</td><td id="score-draw">0</td></tr>
++      <tr><th>X wins</th><th>O wins</th><th>Draws</th><th id="score-help-head" hidden>With help</th></tr>
++      <tr><td id="score-x">0</td><td id="score-o">0</td><td id="score-draw">0</td><td id="score-help" hidden>0</td></tr>
+     </table>
+ 
+     <p class="hint">Click or tap a square. Keyboard: arrow keys to move, Enter or Space to play.</p>
+diff --git a/tictactoe/static/style.css b/tictactoe/static/style.css
+index 353b6ec..d3b8fe2 100644
+--- a/tictactoe/static/style.css
++++ b/tictactoe/static/style.css
+@@ -24,6 +24,9 @@
+ 
+ * { box-sizing: border-box; }
+ 
++/* hidden must win over the display rules below */
++[hidden] { display: none !important; }
++
+ body {
+   margin: 0;
+   background: var(--bg);
+@@ -59,6 +62,42 @@ select, button {
+   font-weight: 600;
+ }
+ 
++#cheat {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 4px 12px;
++  justify-content: center;
++  align-items: center;
++  margin: 0 0 12px;
++}
++
++#cheat p { margin: 0; color: var(--muted); }
++
++#steal {
++  min-height: 44px;
++  border: 2px solid var(--fg);
++  border-radius: 6px;
++  background: var(--bg);
++  color: var(--fg);
++  cursor: pointer;
++}
++
++#steal[aria-pressed="true"] {
++  background: var(--fg);
++  color: var(--bg);
++}
++
++#steal[aria-disabled="true"] {
++  border-style: dotted;
++  opacity: 0.55;
++  cursor: not-allowed;
++}
++
++#steal:focus-visible {
++  outline: 4px solid var(--focus);
++  outline-offset: 2px;
++}
++
+ #board {
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+@@ -89,6 +128,14 @@ select, button {
+   outline-offset: -4px;
+ }
+ 
++/* a dashed frame, so a stealable square does not rely on colour alone */
++.cell.stealable {
++  border: 4px dashed var(--fg);
++  cursor: pointer;
++}
++
++.cell.stealable:focus-visible { outline-offset: -10px; }
++
+ #score {
+   margin: 16px auto 0;
+   border-collapse: collapse;
+@@ -97,4 +144,8 @@ select, button {
+ #score th, #score td { padding: 2px 12px; }
+ #score td { font-size: 1.25rem; font-weight: 600; }
+ 
++/* four columns fit 320 px: tighter cells only once "With help" shows */
++#score:has(#score-help:not([hidden])) th,
++#score:has(#score-help:not([hidden])) td { padding: 2px 6px; }
++
+ .hint { color: var(--muted); font-size: 0.875rem; }

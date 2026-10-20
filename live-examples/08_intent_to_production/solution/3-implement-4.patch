@@ -1,0 +1,335 @@
+diff --git a/changes/cheat-code/plan.md b/changes/cheat-code/plan.md
+index cdd041f..6924c16 100644
+--- a/changes/cheat-code/plan.md
++++ b/changes/cheat-code/plan.md
+@@ -141,7 +141,7 @@
+ 
+ ## Phase 4: The cheat on the page
+ 
+-- [ ] `app.js`, the code: a `keydown` listener on `document` keeps the last
++- [x] `app.js`, the code: a `keydown` listener on `document` keeps the last
+   10 keys and compares them with
+   `ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft ArrowRight ArrowLeft ArrowRight b a`,
+   with B and A in either case. It ignores events with Ctrl, Alt or Meta
+@@ -151,13 +151,13 @@
+   level change locks it again and clears the keys. On unlock, the status
+   line says "Cheat unlocked! Once this game, you may steal one of the
+   computer's squares." The board's own arrow handling does not change.
+-- [ ] `app.js`, the panel: unlocking shows the panel and the "With help"
++- [x] `app.js`, the panel: unlocking shows the panel and the "With help"
+   column. The column stays visible until the page is reloaded. The button is
+   `aria-disabled="true"` (still focusable) when `state.stealable` is empty.
+   The panel text is then "No O to steal yet" when `steal_used` is false, or
+   "Steal used" when it is true. Otherwise it is "Press Steal, then choose an
+   O. Esc cancels."
+-- [ ] `app.js`, steal mode: the button (click, Enter, Space) turns steal
++- [x] `app.js`, steal mode: the button (click, Enter, Space) turns steal
+   mode on only when `stealable` is not empty. It sets `aria-pressed`, says
+   "Steal: choose one of the computer's squares." and moves the focus to the
+   lowest stealable square, using the roving `tabindex`. In steal mode, only
+@@ -167,16 +167,16 @@
+   arrives, or with Esc or a second press of the button, which puts the
+   focus back on the button. Outside steal mode, an O does nothing, as
+   today.
+-- [ ] `app.js`, after a steal: the status line says "You stole row R,
++- [x] `app.js`, after a steal: the status line says "You stole row R,
+   column C." when the game goes on, and the usual text comes back on the
+   next render. A win with `assisted: true` shows "You won... with a little
+   help", adds 1 to "With help" and adds nothing to X wins. O wins and draws
+   count as today. `app.js` uses `stealable`, `steal_used` and `assisted`
+   exactly as the server sends them, and never works out a rule itself.
+-- [ ] `docs/architecture.md`, "The page": the code and how the page
++- [x] `docs/architecture.md`, "The page": the code and how the page
+   recognises it, locking per game, the panel, steal mode and its keyboard
+   and screen-reader behaviour, and the "With help" score.
+-- [ ] Verify: `python3 -m pytest -q` passes, and ruff is clean. A throwaway
++- [x] Verify: `python3 -m pytest -q` passes, and ruff is clean. A throwaway
+   `python3` check reads the served `app.js`. It must contain the 10-key
+   code, send `steal` and `game`, and read `stealable` and `assisted`. It
+   must hold no rule: no winning-line triples, no counting of X and O, and
+@@ -215,6 +215,9 @@
+   focus to the lowest stealable O. The arrow keys move the focus, Enter
+   steals, and Esc (or pressing the button again) cancels and puts the focus
+   back on the button.
++- "Cheat unlocked! …" and "You stole row R, column C." stay in the status
++  line while the arrow keys move the focus, and give way to the usual text
++  after the next move.
+ - A screen reader reads ", can be stolen" on stealable squares, the button's
+   pressed state, and the status messages ("Steal: choose…", "You stole row
+   R, column C.").
+diff --git a/changes/cheat-code/spec.md b/changes/cheat-code/spec.md
+index 0321d77..e139ca3 100644
+--- a/changes/cheat-code/spec.md
++++ b/changes/cheat-code/spec.md
+@@ -277,7 +277,8 @@ exist in `index.html` with `hidden` and are not shown or announced.
+ ### After a steal
+ 
+ - The status line says "You stole row R, column C." when the game goes on
+-  (then the usual "Your turn (X)" on the next render), and "You won... with
++  (then the usual "Your turn (X)" once the next answer arrives; moving the
++  focus with the arrow keys keeps the message), and "You won... with
+   a little help" when the steal or a later move wins with `assisted: true`.
+ - Score: `assisted: true` adds 1 to **With help** and nothing to X wins.
+   A computer win or a draw after a steal counts as today.
+diff --git a/docs/architecture.md b/docs/architecture.md
+index 1409a0f..55e2843 100644
+--- a/docs/architecture.md
++++ b/docs/architecture.md
+@@ -110,7 +110,7 @@ and nothing else: no token, no key, no board.
+ ## The page
+ 
+ `app.js` holds the current answer from the server and the score (X wins, O
+-wins, draws, until the page is reloaded). Each click or Enter/Space on a
++wins, draws, and wins with help, until the page is reloaded). Each click or Enter/Space on a
+ square sends one move. The board is one tab stop: arrow keys, Home and End
+ move between squares (roving `tabindex`), and every square has an
+ `aria-label` such as "Row 1, column 3, X, winning". The status line is an
+@@ -128,10 +128,47 @@ development restart, shows in the status line, and New game recovers.
+ `#cheat-text`) and a fourth score column "With help" (`#score-help-head`,
+ `#score-help`). All of them carry `hidden`, and `style.css` makes `hidden`
+ win over every display rule, so until the cheat is unlocked the page looks
+-and reads exactly as before. `style.css` already styles them: a dashed
+-frame on `.cell.stealable` (shape, not colour alone), a steal button at
+-least 44 px tall, and tighter score cells once the fourth column shows, so
+-it fits 320 px.
++and reads exactly as before. `style.css` styles them: a dashed frame on
++`.cell.stealable` (shape, not colour alone), a steal button at least 44 px
++tall, and tighter score cells once the fourth column shows, so it fits
++320 px.
++
++### The cheat code
++
++- **Recognising it.** A `keydown` listener on `document` keeps the last 10
++  keys and compares them with `ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft
++  ArrowRight ArrowLeft ArrowRight b a` (B and A in either case), so extra
++  keys before the code do not matter. It ignores keys with Ctrl, Alt or
++  Meta, auto-repeat, and keys typed in a `<select>`. The board's own arrow
++  handling is unchanged: typing the code on the board only moves the focus.
++  The code is plain in `app.js`: it is shared on purpose.
++- **Locking per game.** The code unlocks only in `computer` mode while the
++  game is `playing`; otherwise it does nothing at all. New game, a mode
++  change or a level change locks it again and clears the keys. The server
++  does not know about the code; it only judges steals.
++- **Unlocking** shows the panel and the "With help" column and announces
++  "Cheat unlocked! Once this game, you may steal one of the computer's
++  squares." in the status line. Such messages (`notice` in `app.js`) stay
++  until the next answer from the server, then the usual text returns.
++- **The panel.** The button is `aria-disabled="true"` (still focusable)
++  while the answer's `stealable` is empty, and the text says why: "No O to
++  steal yet", or "Steal used" once `steal_used`. Otherwise it says "Press
++  Steal, then choose an O. Esc cancels."
++- **Steal mode.** The button (click, Enter, Space) turns it on only when
++  `stealable` is not empty: `aria-pressed="true"`, the status says "Steal:
++  choose one of the computer's squares.", and the focus moves to the lowest
++  stealable square (roving `tabindex`). Only the squares in `stealable` are
++  then `aria-disabled="false"`, with class `stealable` and ", can be stolen"
++  in their label; every other square does nothing. Choosing one sends
++  `{board, steal, mode, level, game}`. Steal mode ends with the answer (or
++  an error), or with Esc or a second press of the button, which puts the
++  focus back on the button. Outside steal mode an O does nothing, as before.
++- **After a steal.** While the game goes on, the status says "You stole row
++  R, column C.". An answer with `assisted: true` shows "You won... with a
++  little help" and adds 1 to "With help", not to "X wins"; O wins and draws
++  count as before. The column stays visible until the page is reloaded.
++  `app.js` uses `stealable`, `steal_used` and `assisted` as the server sends
++  them and works out no rule.
+ 
+ ## Tests
+ 
+diff --git a/tictactoe/static/app.js b/tictactoe/static/app.js
+index 4e40b87..fd62dc2 100644
+--- a/tictactoe/static/app.js
++++ b/tictactoe/static/app.js
+@@ -7,17 +7,30 @@ const statusEl = document.getElementById("status");
+ const modeEl = document.getElementById("mode");
+ const levelEl = document.getElementById("level");
+ const levelLabel = document.getElementById("level-label");
+-const score = { X: 0, O: 0, draw: 0 };
++const cheatEl = document.getElementById("cheat");
++const stealEl = document.getElementById("steal");
++const cheatTextEl = document.getElementById("cheat-text");
++const score = { X: 0, O: 0, draw: 0, help: 0 };
+ 
+ let state = null; // the server's last answer
+ let busy = false; // a move is on its way to the server
+ let focused = 0; // the cell that holds the board's single tab stop
++let unlocked = false; // the cheat code was typed during this game
++let stealMode = false; // the player is choosing one of the computer's squares
++let notice = null; // a message the status line shows instead of the usual text
++let keys = []; // the last keys typed, to recognise the cheat code
++
++// The cheat code. It is shared on purpose, so it is plain here.
++const CODE = [
++  "ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown",
++  "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a",
++];
+ 
+ const cells = Array.from({ length: 9 }, (_, i) => {
+   const cell = document.createElement("button");
+   cell.type = "button";
+   cell.className = "cell";
+-  cell.addEventListener("click", () => move(i));
++  cell.addEventListener("click", () => choose(i));
+   cell.addEventListener("keydown", (event) => onKey(event, i));
+   cell.addEventListener("focus", () => { focused = i; });
+   boardEl.appendChild(cell);
+@@ -29,35 +42,79 @@ function newGame() {
+     board: Array(9).fill(""), status: "playing", winner: null, line: null, turn: "X",
+     game: null, stealable: [], steal_used: false, assisted: false,
+   };
++  unlocked = false;
++  stealMode = false;
++  notice = null;
++  keys = [];
+   levelLabel.hidden = modeEl.value !== "computer";
+   render();
+ }
+ 
+-async function move(cell) {
+-  if (busy || state.status !== "playing" || state.board[cell]) return;
++// A square was chosen: in steal mode only a square the server listed as
++// stealable does something; otherwise it is a move, as always.
++function choose(cell) {
++  if (!stealMode) move(cell);
++  else if (state.stealable.includes(cell)) send({ steal: cell });
++}
++
++function move(cell) {
++  if (state.status !== "playing" || state.board[cell]) return;
++  send({ cell });
++}
++
++async function send(fields) {
++  if (busy) return;
+   busy = true;
+   try {
+     const response = await fetch("/api/move", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+-      body: JSON.stringify(request({ cell })),
++      body: JSON.stringify(request(fields)),
+     });
+     const answer = await response.json();
+     if (!response.ok) throw new Error(answer.error || response.statusText);
+     state = answer;
+-    if (state.status === "won") score[state.winner] += 1;
++    notice = null;
++    if ("steal" in fields && state.status === "playing") {
++      notice = `You stole row ${Math.floor(fields.steal / 3) + 1}, column ${(fields.steal % 3) + 1}.`;
++    }
++    // a win with a steal counts only "with help", never as an X win
++    if (state.assisted) score.help += 1;
++    else if (state.status === "won") score[state.winner] += 1;
+     if (state.status === "draw") score.draw += 1;
+   } catch (error) {
+-    statusEl.textContent = `Something went wrong: ${error.message}`;
+-    return;
++    notice = `Something went wrong: ${error.message}`;
+   } finally {
+     busy = false;
++    stealMode = false; // steal mode ends with the answer
+   }
+   render();
+ }
+ 
++// The steal button: turns steal mode on (only when the server lists squares
++// to steal) and moves the focus to the first of them; pressed again, cancels.
++function toggleSteal() {
++  if (stealMode) {
++    cancelSteal();
++    return;
++  }
++  if (busy || state.stealable.length === 0) return;
++  stealMode = true;
++  notice = "Steal: choose one of the computer's squares.";
++  focused = Math.min(...state.stealable);
++  render();
++  cells[focused].focus();
++}
++
++function cancelSteal() {
++  stealMode = false;
++  notice = null;
++  render();
++  stealEl.focus();
++}
++
+ // The body of a move request: the board, the mode and level, the game token
+-// from the last answer when there is one, and the given cell.
++// from the last answer when there is one, and the given cell or steal.
+ function request(fields) {
+   const body = { board: state.board, ...fields, mode: modeEl.value, level: levelEl.value };
+   if (state.game) body.game = state.game;
+@@ -68,26 +125,37 @@ function render() {
+   const winning = new Set(state.line || []);
+   cells.forEach((cell, i) => {
+     const mark = state.board[i];
++    const stealable = stealMode && state.stealable.includes(i);
+     cell.textContent = mark;
+-    cell.className = `cell ${mark.toLowerCase()} ${winning.has(i) ? "win" : ""}`;
++    cell.className = `cell ${mark.toLowerCase()} ${winning.has(i) ? "win" : ""} ${stealable ? "stealable" : ""}`;
+     // aria-disabled, not disabled: a disabled button cannot keep the focus
+-    cell.setAttribute("aria-disabled", String(state.status !== "playing" || Boolean(mark)));
++    const disabled = stealMode ? !stealable : state.status !== "playing" || Boolean(mark);
++    cell.setAttribute("aria-disabled", String(disabled));
+     cell.tabIndex = i === focused ? 0 : -1;
+     const row = Math.floor(i / 3) + 1;
+     const col = (i % 3) + 1;
+     const what = mark || "empty";
+-    cell.setAttribute("aria-label", `Row ${row}, column ${col}, ${what}${winning.has(i) ? ", winning" : ""}`);
++    const extra = `${winning.has(i) ? ", winning" : ""}${stealable ? ", can be stolen" : ""}`;
++    cell.setAttribute("aria-label", `Row ${row}, column ${col}, ${what}${extra}`);
+   });
+-  statusEl.textContent = describe();
++  statusEl.textContent = notice || describe();
+   document.getElementById("score-x").textContent = score.X;
+   document.getElementById("score-o").textContent = score.O;
+   document.getElementById("score-draw").textContent = score.draw;
++  document.getElementById("score-help").textContent = score.help;
++  cheatEl.hidden = !unlocked;
++  const canSteal = state.stealable.length > 0;
++  stealEl.setAttribute("aria-disabled", String(!canSteal));
++  stealEl.setAttribute("aria-pressed", String(stealMode));
++  if (canSteal) cheatTextEl.textContent = "Press Steal, then choose an O. Esc cancels.";
++  else cheatTextEl.textContent = state.steal_used ? "Steal used" : "No O to steal yet";
+ }
+ 
+ function describe() {
+   const vsComputer = modeEl.value === "computer";
+   if (state.status === "won") {
+     if (!vsComputer) return `${state.winner} wins!`;
++    if (state.assisted) return "You won... with a little help";
+     return state.winner === "X" ? "You win!" : "The computer wins.";
+   }
+   if (state.status === "draw") return "It's a draw.";
+@@ -119,6 +187,30 @@ function onKey(event, i) {
+   }
+ }
+ 
++// Recognises the cheat code from the last keys typed anywhere on the page.
++// Esc anywhere also ends steal mode.
++function onPageKey(event) {
++  if (event.key === "Escape" && stealMode) {
++    cancelSteal();
++    return;
++  }
++  if (event.ctrlKey || event.altKey || event.metaKey || event.repeat) return;
++  if (event.target instanceof HTMLSelectElement) return; // arrows there change the game
++  const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
++  keys = [...keys, key].slice(-CODE.length);
++  if (keys.join(" ") !== CODE.join(" ")) return;
++  keys = [];
++  if (unlocked || modeEl.value !== "computer" || state.status !== "playing") return;
++  unlocked = true;
++  // the "With help" column stays from now on, until the page is reloaded
++  document.getElementById("score-help-head").hidden = false;
++  document.getElementById("score-help").hidden = false;
++  notice ="Cheat unlocked! Once this game, you may steal one of the computer's squares.";
++  render();
++}
++
++document.addEventListener("keydown", onPageKey);
++stealEl.addEventListener("click", toggleSteal);
+ document.getElementById("new-game").addEventListener("click", newGame);
+ modeEl.addEventListener("change", newGame);
+ levelEl.addEventListener("change", newGame);

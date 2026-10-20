@@ -1,0 +1,322 @@
+diff --git a/changes/cheat-code/plan.md b/changes/cheat-code/plan.md
+index 0d644db..22f2dd2 100644
+--- a/changes/cheat-code/plan.md
++++ b/changes/cheat-code/plan.md
+@@ -55,7 +55,7 @@
+ 
+ ## Phase 2: The move API judges steals
+ 
+-- [ ] `tictactoe/server.py` `handle_move`: read the optional `game` and
++- [x] `tictactoe/server.py` `handle_move`: read the optional `game` and
+   `steal`. A request with neither must go through exactly today's checks in
+   today's order, with `steals=0`. A request that has either one is checked
+   in this order. First, today's checks of the body, the board's shape, the
+@@ -66,12 +66,12 @@
+   `game.validate(board, steals=s)` with the X-to-move check under `s`. After
+   that come `game.steal`'s own errors, or `game.play`'s errors for a normal
+   move. Keep the signature `handle_move(request)`.
+-- [ ] `handle_move`: play the steal (`game.steal`, after which `s` becomes 1)
++- [x] `handle_move`: play the steal (`game.steal`, after which `s` becomes 1)
+   or the move (`game.play(..., steals=s)`). If the game goes on in computer
+   mode, play the computer's reply with
+   `ai.choose_move(board, level, steals=s)`. Pass `steals` to
+   `describe(board, steals)` so that `turn` is right after a steal.
+-- [ ] Add the four new answer fields to every `200` answer, in every mode.
++- [x] Add the four new answer fields to every `200` answer, in every mode.
+   `game`: a new token only in computer mode while `playing`. It keeps the
+   request token's `s` (or 1 after the steal), or has `s = 0` when there was
+   no token and the request's board was empty. Otherwise it is `null`.
+@@ -82,12 +82,12 @@
+   successful steal, write one line through `self.log_message`:
+   `steal level=<level> cell=<n> status=<status> assisted=<true|false>`, and
+   log nothing else: no token, no key, no board.
+-- [ ] `docs/architecture.md`, "The move API": add `steal` and `game` to the
++- [x] `docs/architecture.md`, "The move API": add `steal` and `game` to the
+   request, add `game`, `stealable`, `steal_used` and `assisted` to the
+   answer, and describe the game token and why the server can stay stateless
+   with it, the turn rule after a steal, every new error and the steal log
+   line.
+-- [ ] Verify: `python3 -m pytest -q` passes with no test changed, and ruff
++- [x] Verify: `python3 -m pytest -q` passes with no test changed, and ruff
+   is clean. Then run a throwaway `python3` script that calls `handle_move`
+   directly. It plays the spec's examples, sending each answer's `game` back
+   with the next request: first move, second move, steal 4 (an assisted win
+@@ -101,7 +101,7 @@
+   bad requests in `tests/test_server.py`, the answer without its four new
+   keys (or the error) equals what the code of commit `74dcd2d` answers
+   (loaded with `git show` as in Phase 1).
+-- [ ] Verify the real server: start `python3 -m tictactoe --port 0` as a
++- [x] Verify the real server: start `python3 -m tictactoe --port 0` as a
+   process, with stdout and stderr captured, read the URL from its first
+   line, and drive it with `urllib`. `/health` answers `200 ok`. A whole
+   game against Hard steals and wins with `assisted: true`, and a second
+diff --git a/changes/cheat-code/spec.md b/changes/cheat-code/spec.md
+index 541e1a1..0321d77 100644
+--- a/changes/cheat-code/spec.md
++++ b/changes/cheat-code/spec.md
+@@ -294,7 +294,7 @@ needs a keyboard, so phones without one cannot unlock it (Open questions 2).
+ 
+ | File | Change |
+ |------|--------|
+-| `game.py` | `turn(board, steals=0)`, `validate(board, steals=0)`, `play(board, cell, steals=0)` follow rule 4. New `steal(board, cell, steals) -> list[str]`: checks and errors from the table above (already stolen, cell type, game over, not X's turn, not an O); returns a new board, never changes its input. `outcome()` and `legal_moves()` do not change. |
++| `game.py` | `turn(board, steals=0)`, `validate(board, steals=0)`, `play(board, cell, steals=0)` follow rule 4. New `steal(board, cell, steals) -> list[str]`: checks and errors from the table above (already stolen, cell type, game over, not X's turn, not an O); returns a new board, never changes its input. New `check_cells(board)`: only the shape and cell checks of `validate` (which now calls it), so the server can check a board's shape before it knows the token's `s`. `outcome()` and `legal_moves()` do not change. |
+ | `ai.py` | `choose_move(board, level, rng=None, *, steals=0)`; `best_move` and `value` take `steals` too (still cached), so the search uses the right turn after a steal. With `steals=0` the moves are exactly today's. |
+ | new `signing.py` | The key (env or random at import, as above), `sign(board, level, steals) -> str`, `verify(token, board, level) -> int` (returns `s`, raises `IllegalMoveError`). Nothing else imports `os.environ`. |
+ | `server.py` | `handle_move` reads `game` and `steal`, verifies, plays the move or the steal, then the computer's reply with the right `steals`, and adds `game`, `stealable`, `steal_used`, `assisted`. `describe()` takes `steals`. `do_POST` writes the steal log line. Signature `handle_move(request)` stays. |
+diff --git a/docs/architecture.md b/docs/architecture.md
+index 828963c..63a1649 100644
+--- a/docs/architecture.md
++++ b/docs/architecture.md
+@@ -17,10 +17,10 @@ legal or who won: it shows what the server answers.
+ 
+ | File | Job |
+ |------|-----|
+-| `game.py` | The rules. A board is a list of 9 cells, row by row, each `"X"`, `"O"` or `""`. X moves first, so `turn(board, steals=0)` follows from the counts: with `steals` steals used in the game (0 or 1), X is to move when X count − O count == `steals`. `validate(board, steals=0)` checks a board from outside (X − O must be `steals` or `steals + 1`), `play(board, cell, steals=0)` returns a new board (never changes its input) or raises `IllegalMoveError`, `steal(board, cell, steals)` returns a new board with the O on `cell` turned into an X (once per game, on X's turn, only an O), `outcome()` says `playing`, `won` (with winner and line) or `draw`. With `steals=0` everything is the plain game. |
++| `game.py` | The rules. A board is a list of 9 cells, row by row, each `"X"`, `"O"` or `""`. X moves first, so `turn(board, steals=0)` follows from the counts: with `steals` steals used in the game (0 or 1), X is to move when X count − O count == `steals`. `check_cells(board)` checks only a board's shape and cells, `validate(board, steals=0)` checks a whole board from outside (`check_cells`, then X − O must be `steals` or `steals + 1`), `play(board, cell, steals=0)` returns a new board (never changes its input) or raises `IllegalMoveError`, `steal(board, cell, steals)` returns a new board with the O on `cell` turned into an X (once per game, on X's turn, only an O), `outcome()` says `playing`, `won` (with winner and line) or `draw`. With `steals=0` everything is the plain game. |
+ | `ai.py` | The computer. `choose_move(board, level, rng=None, *, steals=0)`: **hard** is negamax over the full game tree, cached (per board and `steals`), lowest cell among equals, so it is deterministic and never loses; **easy** takes a winning move if it sees one, otherwise plays at random. `steals` is passed on to every rule call, so the search knows whose turn it is after a steal. |
+-| `signing.py` | The game token. The key is `TICTACTOE_SECRET` when set and not empty, otherwise 32 random bytes made at start-up; it is the only module that reads `os.environ`, and the key never leaves it. `sign(board, level, steals)` returns `"<s>.<mac>"`, the HMAC-SHA256 (lowercase hex) of `tictactoe-game-v1|<level>|<s>|<cells>`, cells written `X`, `O` or `-`. `verify(token, board, level)` returns `s`, or raises `IllegalMoveError("the game token does not match this game")`; it compares with `hmac.compare_digest`. Not used by the move API yet. |
+-| `server.py` | `ThreadingHTTPServer`. Serves a fixed map of assets (no request path reaches the file system), `/health`, and the move API. Keeps no state. |
++| `signing.py` | The game token. The key is `TICTACTOE_SECRET` when set and not empty, otherwise 32 random bytes made at start-up; it is the only module that reads `os.environ`, and the key never leaves it. `sign(board, level, steals)` returns `"<s>.<mac>"`, the HMAC-SHA256 (lowercase hex) of `tictactoe-game-v1|<level>|<s>|<cells>`, cells written `X`, `O` or `-`. `verify(token, board, level)` returns `s`, or raises `IllegalMoveError("the game token does not match this game")`; it compares with `hmac.compare_digest`. |
++| `server.py` | `ThreadingHTTPServer`. Serves a fixed map of assets (no request path reaches the file system), `/health`, and the move API (`handle_move`, with `check_steal_request` for requests that carry a token or a steal). Keeps no state: what it must trust it signs with `signing.py`. Logs one line per successful steal. |
+ | `__main__.py` | `python3 -m tictactoe [--host] [--port]`; prints the URL it listens on. |
+ | `static/` | `index.html`, `style.css`, `app.js`. No build step, no libraries. |
+ 
+@@ -29,7 +29,8 @@ legal or who won: it shows what the server answers.
+ `POST /api/move`, a JSON body of at most 1024 bytes:
+ 
+ ```json
+-{"board": ["X", "", "", "", "O", "", "", "", ""], "cell": 2, "mode": "computer", "level": "hard"}
++{"board": ["X", "", "", "", "O", "", "", "", ""], "cell": 2, "mode": "computer", "level": "hard",
++ "game": "0.<64 hex>"}
+ ```
+ 
+ - `mode` is `computer` (default) or `friend`; `level` is `easy` or `hard`
+@@ -38,22 +39,73 @@ legal or who won: it shows what the server answers.
+   to move.
+ - The server plays `cell` for whoever is to move, then, against the
+   computer and if the game goes on, the computer's reply as O.
++- `game` (optional) is the token from the previous answer. `steal`
++  (optional, instead of `cell`) is a cell holding an O that the player
++  turns into an X, as their move: once per game, only against the computer,
++  and only together with a `game` token. A field sent as `null` counts as
++  not sent.
+ 
+ Answer `200`:
+ 
+ ```json
+ {"board": ["X", "", "X", "", "O", "", "", "", "O"], "status": "playing",
+- "winner": null, "line": null, "turn": "X", "computer_move": 8}
++ "winner": null, "line": null, "turn": "X", "computer_move": 8,
++ "game": "0.<64 hex>", "stealable": [4, 8], "steal_used": false, "assisted": false}
+ ```
+ 
+ `status` is `playing`, `won` or `draw`; `line` is the three winning cells;
+ `turn` is `null` once the game is over; `computer_move` is `null` when the
+-computer did not move.
++computer did not move. `game` is the token for the new position (below) or
++`null`; `stealable` lists the O cells when the answer's token has `s = 0`,
++the game is playing and X is to move, else `[]`; `steal_used` is `true`
++once the game has used its steal; `assisted` is `true` for a win by X with
++`steal_used`. The page uses these as given and works out none of them.
++
++### The game token, and why the server stays stateless
++
++To allow one steal per game without remembering games, the server signs
++each position it hands out (`signing.py`): the token `"<s>.<mac>"` binds
++the board, the level and `s`, the steals used so far. It is handed out
++only in `computer` mode while the game is `playing`: with the request's
++`s` (or `1` after a steal) when the request carried a valid token, with
++`s = 0` when the request had no token and an empty board (a new game), and
++otherwise `game` is `null` (a hand-made mid-game board plays as before but
++can never steal). A steal needs an `s = 0` token; after it every token in
++that game has `s = 1`, and forging one needs the key. An old token stays
++valid, so a player can go back to an earlier position of the same game
++and steal there: a branch, which still has at most one steal.
++
++**Turn after a steal.** A steal changes a mark without adding one, so with
++`s` steals used X is to move when X − O == `s`, and a valid board has
++X − O equal to `s` or `s + 1`. With `s = 0` this is the plain rule.
++
++**Without `game` and `steal`** a request goes through exactly the old
++checks and gets the old answer, plus the four new fields.
+ 
+ Errors: `400 {"error": "..."}` for any bad input (bad JSON, impossible
+ board, taken square, game over, unknown mode or level), `411` without a
+ `Content-Length`, `413` for a body over 1024 bytes, `404` for other paths,
+-`405` for `GET /api/move`.
++`405` for `GET /api/move`. A request with `game` or `steal` is checked in
++this order: the body, the board's shape and cells, mode, level; then
++
++| Case | Message |
++|------|---------|
++| `game` does not verify for this `board` and `level` | `the game token does not match this game` |
++| both `cell` and `steal` | `send either cell or steal, not both` |
++| `steal` in `friend` mode | `you can only steal from the computer` |
++| `steal` without `game` | `a steal needs the game token from the last answer` |
++| X − O outside `s`..`s + 1` | `X moves first and the players alternate` |
++| not X to move under `s`, against the computer | `against the computer you play X` |
++| `steal` with an `s = 1` token | `you have already stolen a square in this game` |
++| `steal` not a whole number 0–8 | `steal must be a whole number from 0 to 8` |
++| the game is over | `the game is over` |
++| the cell is not an O | `you can only steal one of the computer's squares` |
++
++A normal move with a token then gets `play`'s usual errors.
++
++**Log.** After each successful steal the server writes one line through
++`log_message` (stderr), `steal level=hard cell=4 status=won assisted=true`,
++and nothing else: no token, no key, no board.
+ 
+ ## The page
+ 
+diff --git a/tictactoe/game.py b/tictactoe/game.py
+index 16d7792..af939a4 100644
+--- a/tictactoe/game.py
++++ b/tictactoe/game.py
+@@ -69,16 +69,22 @@ def legal_moves(board: list[str]) -> list[int]:
+     return [i for i, cell in enumerate(board) if not cell]
+ 
+ 
+-def validate(board: object, steals: int = 0) -> list[str]:
+-    """Check a board that came from outside and return it as a clean list."""
++def check_cells(board: object) -> list[str]:
++    """Check only the shape and the cells of a board from outside, not the counts."""
+     if not isinstance(board, list) or len(board) != SIZE:
+         raise IllegalMoveError("board must be a list of 9 cells")
+     if any(cell not in (*MARKS, EMPTY) for cell in board):
+         raise IllegalMoveError('cells must be "X", "O" or ""')
++    return list(board)
++
++
++def validate(board: object, steals: int = 0) -> list[str]:
++    """Check a board that came from outside and return it as a clean list."""
++    board = check_cells(board)
+     x, o = board.count("X"), board.count("O")
+     if x - o not in (steals, steals + 1):
+         raise IllegalMoveError("X moves first and the players alternate")
+-    return list(board)
++    return board
+ 
+ 
+ def play(board: list[str], cell: object, steals: int = 0) -> list[str]:
+diff --git a/tictactoe/server.py b/tictactoe/server.py
+index 2ff86e7..ee321b6 100644
+--- a/tictactoe/server.py
++++ b/tictactoe/server.py
+@@ -10,7 +10,7 @@ from http import HTTPStatus
+ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+ from pathlib import Path
+ 
+-from . import ai, game
++from . import ai, game, signing
+ 
+ STATIC = Path(__file__).parent / "static"
+ # Only these files are served: a fixed map, so no path from a request ever
+@@ -28,7 +28,15 @@ def handle_move(request: object) -> dict:
+     """Answer one POST /api/move body. Raises IllegalMoveError on bad input."""
+     if not isinstance(request, dict):
+         raise game.IllegalMoveError("the body must be a JSON object")
+-    board = game.validate(request.get("board"))
++    # A field sent as null counts as not sent.
++    token = request.get("game")
++    stolen = request.get("steal")
++    # Without a token or a steal, exactly today's checks in today's order.
++    judged = token is not None or stolen is not None
++    if judged:
++        board = game.check_cells(request.get("board"))
++    else:
++        board = game.validate(request.get("board"))
+     mode = request.get("mode", "computer")
+     if mode not in MODES:
+         raise game.IllegalMoveError(f"mode must be one of: {', '.join(MODES)}")
+@@ -36,24 +44,60 @@ def handle_move(request: object) -> dict:
+     if mode == "computer":
+         if level not in ai.LEVELS:
+             raise game.IllegalMoveError(f"level must be one of: {', '.join(ai.LEVELS)}")
+-        if game.turn(board) != "X":
++        if not judged and game.turn(board) != "X":
+             raise game.IllegalMoveError("against the computer you play X")
+-    board = game.play(board, request.get("cell"))
++    steals = signing.verify(token, board, level) if token is not None else 0
++    if judged:
++        board = check_steal_request(request, board, mode, steals)
++    # A token proves a chain of positions from an empty board: hand out a
++    # first one only when this request starts a new game.
++    chained = token is not None or not any(board)
++    if stolen is not None:
++        board = game.steal(board, stolen, steals)
++        steals = 1
++    else:
++        board = game.play(board, request.get("cell"), steals)
+     computer_move = None
+     if mode == "computer" and game.outcome(board).status == "playing":
+-        computer_move = ai.choose_move(board, level)
+-        board = game.play(board, computer_move)
+-    return describe(board) | {"computer_move": computer_move}
++        computer_move = ai.choose_move(board, level, steals=steals)
++        board = game.play(board, computer_move, steals)
++    answer = describe(board, steals) | {"computer_move": computer_move}
++    new_token = None
++    if mode == "computer" and answer["status"] == "playing" and chained:
++        new_token = signing.sign(board, level, steals)
++    can_steal = new_token is not None and steals == 0 and answer["turn"] == "X"
++    return answer | {
++        "game": new_token,
++        "stealable": [i for i, cell in enumerate(board) if cell == "O"] if can_steal else [],
++        "steal_used": steals == 1,
++        "assisted": answer["winner"] == "X" and steals == 1,
++    }
++
+ 
++def check_steal_request(request: dict, board: list[str], mode: str, steals: int) -> list[str]:
++    """The checks for a request with a token or a steal, after the token's."""
++    stolen = request.get("steal")
++    if stolen is not None:
++        if request.get("cell") is not None:
++            raise game.IllegalMoveError("send either cell or steal, not both")
++        if mode == "friend":
++            raise game.IllegalMoveError("you can only steal from the computer")
++        if request.get("game") is None:
++            raise game.IllegalMoveError("a steal needs the game token from the last answer")
++    board = game.validate(board, steals)
++    if mode == "computer" and game.turn(board, steals) != "X":
++        raise game.IllegalMoveError("against the computer you play X")
++    return board
+ 
+-def describe(board: list[str]) -> dict:
++
++def describe(board: list[str], steals: int = 0) -> dict:
+     result = game.outcome(board)
+     return {
+         "board": board,
+         "status": result.status,
+         "winner": result.winner,
+         "line": list(result.line) if result.line else None,
+-        "turn": game.turn(board) if result.status == "playing" else None,
++        "turn": game.turn(board, steals) if result.status == "playing" else None,
+     }
+ 
+ 
+@@ -79,10 +123,22 @@ class Handler(BaseHTTPRequestHandler):
+             return
+         try:
+             request = json.loads(self.rfile.read(int(length)) or b"null")
+-            self.reply_json(HTTPStatus.OK, handle_move(request))
++            answer = handle_move(request)
+         except (ValueError, game.IllegalMoveError) as error:
+             # json.JSONDecodeError and IllegalMoveError are both ValueErrors
+             self.reply_json(HTTPStatus.BAD_REQUEST, {"error": str(error)})
++            return
++        self.reply_json(HTTPStatus.OK, answer)
++        if request.get("steal") is not None:
++            # Only a steal that was played gets here, so level and cell are
++            # known-good values. Never log the token, the key or the board.
++            self.log_message(
++                "steal level=%s cell=%d status=%s assisted=%s",
++                request.get("level", "hard"),
++                request["steal"],
++                answer["status"],
++                "true" if answer["assisted"] else "false",
++            )
+ 
+     def serve(self, *, head: bool) -> None:
+         path = self.path.split("?", 1)[0]

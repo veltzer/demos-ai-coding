@@ -1,0 +1,663 @@
+diff --git a/tests/test_ai.py b/tests/test_ai.py
+index f6bd9b8..92f9ffd 100644
+--- a/tests/test_ai.py
++++ b/tests/test_ai.py
+@@ -1,4 +1,5 @@
+ import random
++from functools import cache
+ 
+ import pytest
+ 
+@@ -60,3 +61,73 @@ def test_unknown_level_is_rejected() -> None:
+ def test_no_move_when_the_game_is_over() -> None:
+     with pytest.raises(game.IllegalMoveError, match="over"):
+         ai.choose_move(["X", "X", "X", "O", "O", "", "", "", ""], "hard")
++
++
++# After a steal (changes/cheat-code/spec.md, rule 7)
++
++AFTER_STEAL = ["X", "X", "", "", "O", "", "", "", "X"]  # O to move, one steal used
++
++
++@pytest.mark.parametrize("level", ai.LEVELS)
++def test_after_a_steal_the_computer_plays_as_o(level: str) -> None:
++    move = ai.choose_move(AFTER_STEAL, level, random.Random(1), steals=1)
++    assert move in game.legal_moves(AFTER_STEAL)
++    after = game.play(AFTER_STEAL, move, steals=1)
++    assert after[move] == "O"
++
++
++def test_hard_blocks_after_a_steal() -> None:
++    assert ai.choose_move(AFTER_STEAL, "hard", steals=1) == 2
++
++
++@pytest.mark.parametrize("level", ai.LEVELS)
++def test_the_computer_takes_a_win_after_a_steal(level: str) -> None:
++    cells = ["X", "X", "", "O", "O", "", "X", "X", ""]  # O wins at 5
++    assert game.turn(cells, steals=1) == "O"
++    assert ai.choose_move(cells, level, random.Random(1), steals=1) == 5
++
++
++def test_easy_plays_whole_games_after_a_steal() -> None:
++    rng = random.Random(3)
++    for _ in range(100):
++        cells = list(AFTER_STEAL)
++        while game.outcome(cells).status == "playing":
++            cells = game.play(cells, ai.choose_move(cells, "easy", rng, steals=1), steals=1)
++        assert cells.count("X") - cells.count("O") in (1, 2)
++
++
++@cache
++def reference_value(cells: tuple[str, ...]) -> int:
++    """Today's negamax, written out with today's turn rule (X when the counts are equal)."""
++    result = game.outcome(list(cells))
++    if result.status == "won":
++        return -(ai.WIN - (9 - cells.count("")))
++    if result.status == "draw":
++        return 0
++    me = "X" if cells.count("X") == cells.count("O") else "O"
++    return max(
++        -reference_value((*cells[:i], me, *cells[i + 1 :])) for i, c in enumerate(cells) if not c
++    )
++
++
++def reference_move(cells: list[str]) -> int:
++    me = "X" if cells.count("X") == cells.count("O") else "O"
++    moves = [i for i, c in enumerate(cells) if not c]
++    return max(moves, key=lambda i: (-reference_value((*cells[:i], me, *cells[i + 1 :])), -i))
++
++
++@pytest.mark.parametrize("computer", game.MARKS)
++def test_hard_without_a_steal_plays_todays_moves(computer: str) -> None:
++    seen, todo = 0, [game.new_board()]
++    while todo:
++        cells = todo.pop()
++        if game.outcome(cells).status != "playing":
++            continue
++        if game.turn(cells) == computer:
++            assert ai.choose_move(cells, "hard") == reference_move(cells)
++            assert ai.choose_move(cells, "hard", steals=0) == reference_move(cells)
++            seen += 1
++            todo.append(game.play(cells, reference_move(cells)))
++        else:
++            todo.extend(game.play(cells, move) for move in game.legal_moves(cells))
++    assert seen > 50
+diff --git a/tests/test_game.py b/tests/test_game.py
+index 5b9543e..b3f56eb 100644
+--- a/tests/test_game.py
++++ b/tests/test_game.py
+@@ -69,3 +69,111 @@ def test_no_legal_moves_once_won() -> None:
+ def test_validate_rejects_impossible_boards(bad: object) -> None:
+     with pytest.raises(game.IllegalMoveError):
+         game.validate(bad)
++
++
++# The cheat code's steal (changes/cheat-code/spec.md, rules 1, 2, 4 and 5)
++
++
++def test_turn_after_a_steal_is_x_when_x_leads_by_one() -> None:
++    assert game.turn(board("XX. .O. ..X"), steals=1) == "O"
++    assert game.turn(board("XXO .O. ..X"), steals=1) == "X"
++    assert game.turn(game.new_board(), steals=1) == "O"
++
++
++@pytest.mark.parametrize(
++    ("text", "mark"),
++    [("... ... ...", "X"), ("X.. ... ...", "O"), ("XO. ... ...", "X"), ("XOX OX. ...", "O")],
++)
++def test_without_a_steal_turn_and_validate_are_unchanged(text: str, mark: str) -> None:
++    cells = board(text)
++    assert game.turn(cells, steals=0) == game.turn(cells) == mark
++    assert game.validate(cells, steals=0) == game.validate(cells) == cells
++
++
++def test_validate_after_a_steal_accepts_x_one_or_two_ahead() -> None:
++    assert game.validate(board("XX. .O. ..."), steals=1) == board("XX. .O. ...")
++    assert game.validate(board("XX. .O. ..X"), steals=1) == board("XX. .O. ..X")
++
++
++@pytest.mark.parametrize("text", ["XO. ... ...", "XXX X.. O..", "... ... ..."])
++def test_validate_after_a_steal_rejects_other_counts(text: str) -> None:
++    with pytest.raises(game.IllegalMoveError, match="alternate"):
++        game.validate(board(text), steals=1)
++
++
++@pytest.mark.parametrize(
++    "bad", [None, "X........", [""] * 8, [""] * 10, ["x", *[""] * 8], [None] * 9]
++)
++def test_check_cells_rejects_bad_shapes_and_cells(bad: object) -> None:
++    with pytest.raises(game.IllegalMoveError):
++        game.check_cells(bad)
++
++
++def test_check_cells_does_not_check_the_counts() -> None:
++    cells = board("XXX X.. ...")
++    copy = game.check_cells(cells)
++    assert copy == cells
++    assert copy is not cells
++
++
++def test_play_after_a_steal_uses_the_steal_turn_rule() -> None:
++    assert game.play(board("XX. .O. ..X"), 2, steals=1) == board("XXO .O. ..X")
++    assert game.play(board("XXO .O. ..X"), 3, steals=1) == board("XXO XO. ..X")
++
++
++def test_steal_turns_an_o_into_an_x() -> None:
++    before = board("XO. .O. ..X")
++    after = game.steal(before, 1, 0)
++    assert after == board("XX. .O. ..X")
++    assert before == board("XO. .O. ..X"), "steal must not change its input"
++    assert game.turn(after, steals=1) == "O", "the steal is X's move"
++
++
++def test_a_steal_can_win_at_once() -> None:
++    after = game.steal(board("XO. .O. ..X"), 4, 0)
++    result = game.outcome(after)
++    assert (result.status, result.winner, result.line) == ("won", "X", (0, 4, 8))
++
++
++def test_a_steal_never_adds_a_mark() -> None:
++    before = board("XO. .O. ..X")
++    after = game.steal(before, 1, 0)
++    assert after.count("") == before.count("")
++
++
++def test_only_one_steal_per_game() -> None:
++    with pytest.raises(game.IllegalMoveError, match="already stolen"):
++        game.steal(board("XXO .O. ..X"), 2, 1)
++
++
++@pytest.mark.parametrize("cell", [-1, 9, "4", 4.0, True, False, None])
++def test_steal_rejects_cells_that_are_not_squares(cell: object) -> None:
++    with pytest.raises(game.IllegalMoveError, match="steal must be a whole number from 0 to 8"):
++        game.steal(board("XO. .O. ..X"), cell, 0)
++
++
++@pytest.mark.parametrize("cell", [0, 2, 8])
++def test_steal_only_takes_the_computers_squares(cell: int) -> None:
++    with pytest.raises(game.IllegalMoveError, match="one of the computer's squares"):
++        game.steal(board("XO. .O. ..X"), cell, 0)
++
++
++def test_steal_rejects_a_finished_game() -> None:
++    with pytest.raises(game.IllegalMoveError, match="the game is over"):
++        game.steal(board("XX. OOO X.."), 3, 0)
++
++
++def test_steal_only_on_xs_turn() -> None:
++    with pytest.raises(game.IllegalMoveError, match="you play X"):
++        game.steal(board("XO. X.. ..."), 1, 0)
++
++
++def test_steal_checks_in_the_specs_order() -> None:
++    # already stolen comes before a bad cell, a bad cell before game over,
++    # game over before "not an O"
++    with pytest.raises(game.IllegalMoveError, match="already stolen"):
++        game.steal(board("XO. ... ..."), "x", 1)
++    with pytest.raises(game.IllegalMoveError, match="whole number"):
++        game.steal(board("XX. OOO X.."), 9, 0)
++    with pytest.raises(game.IllegalMoveError, match="over"):
++        game.steal(board("XX. OOO X.."), 0, 0)
+diff --git a/tests/test_server.py b/tests/test_server.py
+index 6e81461..761aee9 100644
+--- a/tests/test_server.py
++++ b/tests/test_server.py
+@@ -1,6 +1,6 @@
+ import pytest
+ 
+-from tictactoe import game, server
++from tictactoe import game, server, signing
+ 
+ EMPTY = [""] * 9
+ 
+@@ -47,3 +47,312 @@ def test_the_computer_can_win() -> None:
+ def test_bad_requests_are_rejected(request_body: object, message: str) -> None:
+     with pytest.raises(game.IllegalMoveError, match=message):
+         server.handle_move(request_body)
++
++
++# The cheat code's steal (changes/cheat-code/spec.md)
++
++NEW_FIELDS = {"game", "stealable", "steal_used", "assisted"}
++OLD_FIELDS = {"board", "status", "winner", "line", "turn", "computer_move"}
++MISMATCH = "the game token does not match this game"
++
++
++def board(text: str) -> list[str]:
++    """A board from 9 characters, row by row: "X", "O" or "." for empty."""
++    return ["" if c == "." else c for c in text.replace(" ", "")]
++
++
++def move(cells: list[str], level: str = "hard", **fields: object) -> dict:
++    return server.handle_move({"board": cells, "mode": "computer", "level": level, **fields})
++
++
++def the_spec_game() -> dict:
++    """The spec's example up to X's choice: X 0, O 4, X 8, O 1, with a token."""
++    first = move(EMPTY, cell=0)
++    return move(first["board"], cell=8, game=first["game"])
++
++
++def test_the_first_move_of_a_new_game_gets_a_token() -> None:
++    answer = move(EMPTY, cell=0)
++    assert answer["board"] == board("X.. .O. ...")
++    assert answer["game"].startswith("0.")
++    assert (answer["stealable"], answer["steal_used"], answer["assisted"]) == ([4], False, False)
++
++
++def test_sending_the_token_back_chains_the_game() -> None:
++    answer = the_spec_game()
++    assert answer["board"] == board("XO. .O. ..X")
++    assert answer["game"].startswith("0.")
++    assert answer["stealable"] == [1, 4]
++
++
++def test_a_steal_that_wins_ends_the_game_assisted() -> None:
++    before = the_spec_game()
++    answer = move(before["board"], steal=4, game=before["game"])
++    assert answer == {
++        "board": board("XO. .X. ..X"),
++        "status": "won",
++        "winner": "X",
++        "line": [0, 4, 8],
++        "turn": None,
++        "computer_move": None,
++        "game": None,
++        "stealable": [],
++        "steal_used": True,
++        "assisted": True,
++    }
++
++
++def test_a_steal_that_does_not_win_gets_the_computers_reply() -> None:
++    before = the_spec_game()
++    answer = move(before["board"], steal=1, game=before["game"])
++    assert answer["board"] == board("XXO .O. ..X")
++    assert (answer["status"], answer["turn"], answer["computer_move"]) == ("playing", "X", 2)
++    assert answer["game"].startswith("1.")
++    assert (answer["stealable"], answer["steal_used"], answer["assisted"]) == ([], True, False)
++
++
++def test_a_second_steal_is_refused() -> None:
++    before = the_spec_game()
++    after = move(before["board"], steal=1, game=before["game"])
++    with pytest.raises(game.IllegalMoveError, match="already stolen"):
++        move(after["board"], steal=4, game=after["game"])
++
++
++def test_the_game_goes_on_after_a_steal_and_stays_stolen() -> None:
++    before = the_spec_game()
++    after = move(before["board"], steal=1, game=before["game"])
++    nxt = move(after["board"], cell=3, game=after["game"])
++    assert nxt["board"][3] == "X"
++    assert nxt["game"] is None or nxt["game"].startswith("1.")
++    assert (nxt["stealable"], nxt["steal_used"]) == ([], True)
++    if nxt["status"] == "playing":
++        with pytest.raises(game.IllegalMoveError, match="already stolen"):
++            move(nxt["board"], steal=nxt["board"].index("O"), game=nxt["game"])
++
++
++def test_the_board_after_a_steal_needs_its_token() -> None:
++    before = the_spec_game()
++    after = move(before["board"], steal=1, game=before["game"])
++    # without the token, X one ahead on X's turn is today's error
++    with pytest.raises(game.IllegalMoveError, match="you play X"):
++        move(after["board"], cell=3)
++    # an s = 0 token cannot be made for it without the key
++    zero = "0" + after["game"][1:]
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        move(after["board"], steal=4, game=zero)
++
++
++def test_a_steal_works_at_easy() -> None:
++    first = move(EMPTY, "easy", cell=0)
++    o_cell = first["board"].index("O")
++    answer = move(first["board"], "easy", steal=o_cell, game=first["game"])
++    assert answer["board"][o_cell] == "X"
++    assert answer["steal_used"] is True
++    assert answer["game"] is None or answer["game"].startswith("1.")
++
++
++def test_a_later_win_after_a_steal_is_assisted() -> None:
++    cells = board("XX. OO. X..")
++    answer = move(cells, cell=2, game=signing.sign(cells, "hard", 1))
++    assert (answer["status"], answer["winner"]) == ("won", "X")
++    assert (answer["assisted"], answer["steal_used"], answer["game"]) == (True, True, None)
++
++
++def test_a_win_without_a_steal_is_not_assisted() -> None:
++    cells = board("XX. OO. ...")
++    answer = move(cells, cell=2, game=signing.sign(cells, "hard", 0))
++    assert (answer["status"], answer["winner"]) == ("won", "X")
++    assert (answer["assisted"], answer["steal_used"]) == (False, False)
++
++
++def test_a_computer_win_after_a_steal_is_a_normal_o_win() -> None:
++    cells = board("X.. OO. XX.")
++    answer = move(cells, cell=1, game=signing.sign(cells, "hard", 1))
++    assert (answer["status"], answer["winner"], answer["computer_move"]) == ("won", "O", 5)
++    assert (answer["assisted"], answer["steal_used"], answer["game"]) == (False, True, None)
++
++
++def test_a_draw_after_a_steal_is_a_normal_draw() -> None:
++    cells = board("XOX XO. OX.")
++    answer = move(cells, cell=8, game=signing.sign(cells, "hard", 1))
++    assert (answer["status"], answer["computer_move"]) == ("draw", 5)
++    assert (answer["assisted"], answer["steal_used"], answer["game"]) == (False, True, None)
++
++
++def test_every_steal_path_against_hard_has_at_most_one_steal() -> None:
++    # Walk every game a player can play against Hard through the API, trying
++    # every move and every steal, and check the rules on every answer.
++    todo = [(EMPTY, None, False)]
++    finished = 0
++    while todo:
++        cells, token, stolen = todo.pop()
++        options = [{"cell": c} for c in game.legal_moves(cells)]
++        options += [{"steal": c} for c in range(9) if cells[c] == "O"]
++        for option in options:
++            fields = {"game": token} if token else {}
++            if "steal" in option and stolen:
++                with pytest.raises(game.IllegalMoveError, match="already stolen"):
++                    move(cells, **option, **fields)
++                continue
++            answer = move(cells, **option, **fields)
++            used = stolen or "steal" in option
++            assert answer["steal_used"] is used
++            assert answer["assisted"] is (used and answer["winner"] == "X")
++            if answer["status"] != "playing":
++                assert (answer["game"], answer["stealable"]) == (None, [])
++                finished += 1
++                continue
++            assert answer["game"].startswith("1." if used else "0.")
++            o_cells = [i for i, c in enumerate(answer["board"]) if c == "O"]
++            assert answer["stealable"] == ([] if used else o_cells)
++            todo.append((answer["board"], answer["game"], used))
++    assert finished > 100
++
++
++def test_replaying_an_older_token_branches_the_game() -> None:
++    # Open questions 3: accepted, and the branch still has one steal at most
++    first = move(EMPTY, cell=0)
++    second = move(first["board"], cell=8, game=first["game"])
++    move(second["board"], steal=1, game=second["game"])
++    branch = move(first["board"], steal=4, game=first["game"])
++    assert branch["steal_used"] is True
++    if branch["status"] == "playing":
++        with pytest.raises(game.IllegalMoveError, match="already stolen"):
++            move(branch["board"], steal=branch["board"].index("O"), game=branch["game"])
++
++
++def test_a_hand_made_board_without_a_token_cannot_steal() -> None:
++    cells = board("XO. ... ...")
++    answer = move(cells, cell=8)
++    assert (answer["game"], answer["stealable"], answer["steal_used"]) == (None, [], False)
++    with pytest.raises(game.IllegalMoveError, match="needs the game token"):
++        move(answer["board"], steal=1)
++
++
++def test_a_friend_game_gets_the_new_fields_and_never_a_token() -> None:
++    answer = server.handle_move({"board": EMPTY, "cell": 4, "mode": "friend"})
++    assert {k: answer[k] for k in NEW_FIELDS} == {
++        "game": None,
++        "stealable": [],
++        "steal_used": False,
++        "assisted": False,
++    }
++
++
++@pytest.mark.parametrize("with_token", [False, True])
++def test_no_steal_against_a_friend(with_token: bool) -> None:
++    cells = board("XO. ... ...")
++    request = {"board": cells, "steal": 1, "mode": "friend"}
++    if with_token:
++        request["game"] = signing.sign(cells, "hard", 0)
++    with pytest.raises(game.IllegalMoveError, match="only steal from the computer"):
++        server.handle_move(request)
++
++
++@pytest.mark.parametrize(
++    "request_body",
++    [
++        {"board": EMPTY, "cell": 0, "mode": "computer", "level": "hard"},
++        {"board": board("XO. ... ..."), "cell": 8, "mode": "computer"},
++        {"board": board("XX. OO. ..."), "cell": 2},
++        {"board": EMPTY, "cell": 4, "mode": "friend"},
++        {"board": board("X.. ... ..."), "cell": 4, "mode": "friend"},
++    ],
++)
++def test_without_a_token_only_the_four_fields_are_added(request_body: dict) -> None:
++    answer = server.handle_move(request_body)
++    assert set(answer) == OLD_FIELDS | NEW_FIELDS
++    # a field sent as null counts as not sent
++    assert server.handle_move({**request_body, "game": None, "steal": None}) == answer
++
++
++@pytest.mark.parametrize(
++    ("request_body", "message"),
++    [
++        ({"board": EMPTY, "cell": 0, "game": None, "steal": None, "mode": "x"}, "mode"),
++        ({"board": board("X.. ... ..."), "cell": 1, "game": None}, "you play X"),
++        ({"board": board("XX. ... ..."), "cell": 1, "steal": None}, "alternate"),
++        ({"board": EMPTY, "cell": 9, "game": None}, "cell"),
++    ],
++)
++def test_without_a_token_the_old_errors_stay(request_body: dict, message: str) -> None:
++    with pytest.raises(game.IllegalMoveError, match=message):
++        server.handle_move(request_body)
++
++
++def test_every_request_with_a_token_is_checked() -> None:
++    cells = board("XO. ... ...")
++    token = signing.sign(cells, "hard", 0)
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        move(board("XO. ... ..X"), cell=7, game=token)
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        move(cells, "easy", cell=4, game=token)
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        move(cells, cell=4, game="")
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        move(cells, cell=4, game=["0", token[2:]])
++    assert move(cells, cell=4, game=token)["game"].startswith("0.")
++
++
++def test_a_hand_edited_board_breaks_the_token() -> None:
++    before = the_spec_game()
++    edited = list(before["board"])
++    edited[1] = ""
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        move(edited, steal=4, game=before["game"])
++
++
++@pytest.mark.parametrize(
++    ("cells", "steals", "fields", "message"),
++    [
++        # each error of the spec's table
++        ("XO. ... ...", 0, {"cell": 2, "steal": 1}, "send either cell or steal, not both"),
++        ("XO. ... ...", None, {"steal": 1}, "a steal needs the game token from the last answer"),
++        ("XXO .O. ..X", 1, {"steal": 4}, "you have already stolen a square in this game"),
++        ("XO. ... ...", 0, {"steal": True}, "steal must be a whole number from 0 to 8"),
++        ("XO. ... ...", 0, {"steal": 9}, "steal must be a whole number from 0 to 8"),
++        ("XO. ... ...", 0, {"steal": "1"}, "steal must be a whole number from 0 to 8"),
++        ("XX. OOO X..", 0, {"steal": 3}, "the game is over"),
++        ("XO. ... ...", 0, {"steal": 0}, "you can only steal one of the computer's squares"),
++        ("XO. ... ...", 0, {"steal": 2}, "you can only steal one of the computer's squares"),
++        # the board check uses the token's steal count
++        ("XX. ... ...", 0, {"cell": 2}, "X moves first and the players alternate"),
++        ("XO. ... ...", 1, {"cell": 2}, "X moves first and the players alternate"),
++        ("X.. ... ...", 0, {"steal": 1}, "against the computer you play X"),
++        ("XX. O.. X..", 1, {"cell": 2}, "against the computer you play X"),
++    ],
++)
++def test_steal_errors(cells: str, steals: int | None, fields: dict, message: str) -> None:
++    grid = board(cells)
++    if steals is not None:
++        fields = {**fields, "game": signing.sign(grid, "hard", steals)}
++    with pytest.raises(game.IllegalMoveError, match=f"^{message}$"):
++        move(grid, **fields)
++
++
++@pytest.mark.parametrize(
++    ("request_body", "message"),
++    [
++        # today's checks come first
++        ({"board": [""] * 8, "steal": 1, "game": "bad"}, "board must be"),
++        ({"board": EMPTY, "steal": 1, "game": "bad", "mode": "online"}, "mode"),
++        ({"board": EMPTY, "steal": 1, "game": "bad", "level": "impossible"}, "level"),
++        # then the token, then the table in order
++        ({"board": board("XO. ... ..."), "cell": 2, "steal": 1, "game": "bad"}, MISMATCH),
++        ({"board": board("XO. ... ..."), "cell": 2, "steal": 1, "mode": "friend"}, "not both"),
++        ({"board": board("XO. ... ..."), "steal": 1, "mode": "friend"}, "from the computer"),
++        ({"board": board("XO. ... ..."), "steal": "x"}, "needs the game token"),
++    ],
++)
++def test_steal_errors_come_in_the_specs_order(request_body: dict, message: str) -> None:
++    with pytest.raises(game.IllegalMoveError, match=message):
++        server.handle_move(request_body)
++
++
++def test_already_stolen_comes_before_a_bad_cell_and_a_bad_cell_before_game_over() -> None:
++    cells = board("XXO .O. ..X")
++    with pytest.raises(game.IllegalMoveError, match="already stolen"):
++        move(cells, steal="x", game=signing.sign(cells, "hard", 1))
++    over = board("XX. OOO X..")
++    with pytest.raises(game.IllegalMoveError, match="whole number"):
++        move(over, steal=9, game=signing.sign(over, "hard", 0))
+diff --git a/tests/test_signing.py b/tests/test_signing.py
+new file mode 100644
+index 0000000..0eb0a3f
+--- /dev/null
++++ b/tests/test_signing.py
+@@ -0,0 +1,132 @@
++import hashlib
++import hmac
++import importlib
++from collections.abc import Iterator
++
++import pytest
++
++from tictactoe import game, signing
++
++BOARD = ["X", "", "", "", "O", "", "", "", ""]
++MISMATCH = "the game token does not match this game"
++
++
++@pytest.fixture
++def reload_signing(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
++    """Let a test reload signing under its own environment, then restore a fresh key."""
++    yield
++    monkeypatch.delenv("TICTACTOE_SECRET", raising=False)
++    importlib.reload(signing)
++
++
++@pytest.mark.parametrize("steals", [0, 1])
++def test_a_token_verifies_for_its_own_position(steals: int) -> None:
++    token = signing.sign(BOARD, "hard", steals)
++    assert signing.verify(token, BOARD, "hard") == steals
++
++
++def test_the_token_format() -> None:
++    token = signing.sign(BOARD, "easy", 0)
++    prefix, mac = token.split(".")
++    assert prefix == "0"
++    assert len(mac) == 64
++    assert mac == mac.lower()
++    int(mac, 16)
++
++
++def test_the_token_signs_the_documented_message(
++    monkeypatch: pytest.MonkeyPatch, reload_signing: None
++) -> None:
++    monkeypatch.setenv("TICTACTOE_SECRET", "a test key")
++    importlib.reload(signing)
++    message = b"tictactoe-game-v1|hard|1|X---O----"
++    mac = hmac.new(b"a test key", message, hashlib.sha256).hexdigest()
++    assert signing.sign(BOARD, "hard", 1) == f"1.{mac}"
++
++
++def test_tokens_survive_a_restart_with_the_same_secret(
++    monkeypatch: pytest.MonkeyPatch, reload_signing: None
++) -> None:
++    monkeypatch.setenv("TICTACTOE_SECRET", "kept across releases")
++    importlib.reload(signing)
++    token = signing.sign(BOARD, "hard", 0)
++    importlib.reload(signing)
++    assert signing.verify(token, BOARD, "hard") == 0
++
++
++@pytest.mark.parametrize("secret", [None, ""])
++def test_without_a_secret_each_start_makes_a_new_random_key(
++    monkeypatch: pytest.MonkeyPatch, reload_signing: None, secret: str | None
++) -> None:
++    if secret is None:
++        monkeypatch.delenv("TICTACTOE_SECRET", raising=False)
++    else:
++        monkeypatch.setenv("TICTACTOE_SECRET", secret)
++    importlib.reload(signing)
++    token = signing.sign(BOARD, "hard", 0)
++    empty_key = hmac.new(b"", b"tictactoe-game-v1|hard|0|X---O----", hashlib.sha256)
++    assert token != f"0.{empty_key.hexdigest()}"
++    importlib.reload(signing)
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        signing.verify(token, BOARD, "hard")
++
++
++def other_board() -> list[str]:
++    cells = list(BOARD)
++    cells[8] = "X"
++    return cells
++
++
++@pytest.mark.parametrize(
++    ("board", "level"),
++    [(other_board(), "hard"), (BOARD, "easy"), (["O", *BOARD[1:]], "hard")],
++)
++def test_a_token_does_not_verify_for_another_board_or_level(board: list[str], level: str) -> None:
++    token = signing.sign(BOARD, "hard", 0)
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        signing.verify(token, board, level)
++
++
++def test_changing_the_steal_count_breaks_the_token() -> None:
++    zero, one = signing.sign(BOARD, "hard", 0), signing.sign(BOARD, "hard", 1)
++    for forged in ("1" + zero[1:], "0" + one[1:]):
++        with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++            signing.verify(forged, BOARD, "hard")
++
++
++def malformed() -> list[object]:
++    good = signing.sign(BOARD, "hard", 0)
++    return [
++        None,
++        0,
++        ["0", good[2:]],
++        "",
++        "0",
++        "0.",
++        good.upper(),
++        "2" + good[1:],
++        "00" + good[1:],
++        good + "0",
++        good[:-1],
++        good + "\n",
++        " " + good,
++        good.replace(".", ":"),
++    ]
++
++
++@pytest.mark.parametrize("token", malformed())
++def test_malformed_tokens_are_rejected(token: object) -> None:
++    with pytest.raises(game.IllegalMoveError, match=MISMATCH):
++        signing.verify(token, BOARD, "hard")
++
++
++def test_the_key_never_appears_in_a_token_or_an_error(
++    monkeypatch: pytest.MonkeyPatch, reload_signing: None
++) -> None:
++    monkeypatch.setenv("TICTACTOE_SECRET", "s3cret-key-value")
++    importlib.reload(signing)
++    token = signing.sign(BOARD, "hard", 0)
++    assert "s3cret" not in token
++    with pytest.raises(game.IllegalMoveError) as error:
++        signing.verify("1" + token[1:], BOARD, "hard")
++    assert "s3cret" not in str(error.value)

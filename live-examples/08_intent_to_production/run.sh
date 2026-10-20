@@ -113,8 +113,10 @@ phase() {
 }
 
 # replay_phase <key> <prompt>: show the prompt, replay the recorded session
-# log, and apply the change it made. Phase 9's change is a deploy, which
-# happens outside the repository, so it is run for real.
+# log, and apply the change it made. Phase 9's change is a deploy, outside
+# the repository. The recording was unattended, so its deploy session
+# stopped for the missing preview sign-off; here a person signed off at the
+# preview, so the release goes out for real (not under --yes).
 replay_phase() {
 	local key="$1" log="${SOLUTION}/$1.jsonl" patch="${SOLUTION}/$1.patch"
 	[[ -f "${log}" ]] || {
@@ -126,7 +128,10 @@ replay_phase() {
 	say "  (replayed from solution/${key}.jsonl - no AI in this run)"
 	sed "s|@APP@|${APP}|g" "${log}" | (cd "${APP}" && python3 "${LIB_DIR}/stream.py" --stats "${WORKDIR}/${key}.json")
 	[[ -s "${patch}" ]] && git -C "${APP}" apply --binary --whitespace=nowarn "${patch}"
-	if [[ "${key}" == 9-deploy ]]; then
+	if [[ "${key}" == 9-deploy && "${YES:-0}" == 1 ]]; then
+		say "  (unattended: nobody signed off the preview, so no release)"
+	elif [[ "${key}" == 9-deploy ]]; then
+		say "  (you signed off the preview, so the release goes out now)"
 		if (cd "${APP}" && ops/deploy.sh >"${WORKDIR}/deploy-v2.log" 2>&1); then
 			ok "$(grep DEPLOYED "${WORKDIR}/deploy-v2.log")"
 		else

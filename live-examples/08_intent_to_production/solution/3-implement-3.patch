@@ -1,0 +1,212 @@
+diff --git a/changes/cheat-code/plan.md b/changes/cheat-code/plan.md
+index 22f2dd2..cdd041f 100644
+--- a/changes/cheat-code/plan.md
++++ b/changes/cheat-code/plan.md
+@@ -114,23 +114,23 @@
+ 
+ ## Phase 3: The page carries the token (nothing visible changes)
+ 
+-- [ ] `tictactoe/static/app.js`: `newGame()` starts with `game: null`,
++- [x] `tictactoe/static/app.js`: `newGame()` starts with `game: null`,
+   `stealable: []`, `steal_used: false` and `assisted: false` in `state`.
+   Every move request sends `game: state.game` (or leaves it out when it is
+   `null`). Errors (for example after a development restart: "the game token
+   does not match this game") show in the status line as today, and New game
+   recovers.
+-- [ ] `tictactoe/static/index.html`: add the cheat panel under the status
++- [x] `tictactoe/static/index.html`: add the cheat panel under the status
+   line, with `hidden`: a `<button type="button">` "Steal a square" with
+   `aria-pressed="false"` and a text paragraph, each with an `id` for
+   `app.js`. Add a fourth score column ("With help", `id="score-help"`),
+   whose `th` and `td` are both `hidden`. Change no other label or text.
+-- [ ] `tictactoe/static/style.css`: a `.cell.stealable` dashed outline that
++- [x] `tictactoe/static/style.css`: a `.cell.stealable` dashed outline that
+   does not rely on colour alone and is visible in light and dark mode, the
+   panel's layout, a steal button at least 44 px tall, and a four-column
+   score table that fits 320 px wide with no horizontal scroll. Hidden
+   elements stay hidden, so the page looks exactly as it does today.
+-- [ ] Verify: `python3 -m pytest -q` passes, and ruff is clean. Start
++- [x] Verify: `python3 -m pytest -q` passes, and ruff is clean. Start
+   `python3 -m tictactoe --port 0` and, with `urllib`, check that `/`,
+   `/static/app.js` and `/static/style.css` answer 200 and that in the HTML
+   the panel and both "With help" cells carry `hidden`. Then replay the
+@@ -228,3 +228,7 @@
+   and the dashed outline is clear without relying on colour.
+ - A whole game without the code, in each mode and level, plays exactly as
+   before.
++- During a game against the computer, restart a development server (no
++  `TICTACTOE_SECRET`) and play on: the status line shows "Something went
++  wrong: the game token does not match this game", and New game plays
++  normally again.
+diff --git a/docs/architecture.md b/docs/architecture.md
+index 63a1649..1409a0f 100644
+--- a/docs/architecture.md
++++ b/docs/architecture.md
+@@ -116,6 +116,23 @@ move between squares (roving `tabindex`), and every square has an
+ `aria-label` such as "Row 1, column 3, X, winning". The status line is an
+ `aria-live` region. Changing mode or level starts a new game.
+ 
++`app.js` keeps the whole last answer, including `game`, `stealable`,
++`steal_used` and `assisted`; a new game starts with `game: null`. Every
++move request sends the last answer's `game` token back, and leaves it out
++while it is `null` (the first move of a game, friend mode, a game that has
++ended). An error, such as "the game token does not match this game" after a
++development restart, shows in the status line, and New game recovers.
++
++`index.html` also holds the cheat panel under the status line (`#cheat`: the
++"Steal a square" button `#steal` with `aria-pressed`, and the text
++`#cheat-text`) and a fourth score column "With help" (`#score-help-head`,
++`#score-help`). All of them carry `hidden`, and `style.css` makes `hidden`
++win over every display rule, so until the cheat is unlocked the page looks
++and reads exactly as before. `style.css` already styles them: a dashed
++frame on `.cell.stealable` (shape, not colour alone), a steal button at
++least 44 px tall, and tighter score cells once the fourth column shows, so
++it fits 320 px.
++
+ ## Tests
+ 
+ - `tests/test_game.py`, `tests/test_ai.py`, `tests/test_server.py`: unit
+diff --git a/tictactoe/static/app.js b/tictactoe/static/app.js
+index ddd36ad..4e40b87 100644
+--- a/tictactoe/static/app.js
++++ b/tictactoe/static/app.js
+@@ -25,7 +25,10 @@ const cells = Array.from({ length: 9 }, (_, i) => {
+ });
+ 
+ function newGame() {
+-  state = { board: Array(9).fill(""), status: "playing", winner: null, line: null, turn: "X" };
++  state = {
++    board: Array(9).fill(""), status: "playing", winner: null, line: null, turn: "X",
++    game: null, stealable: [], steal_used: false, assisted: false,
++  };
+   levelLabel.hidden = modeEl.value !== "computer";
+   render();
+ }
+@@ -37,7 +40,7 @@ async function move(cell) {
+     const response = await fetch("/api/move", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+-      body: JSON.stringify({ board: state.board, cell, mode: modeEl.value, level: levelEl.value }),
++      body: JSON.stringify(request({ cell })),
+     });
+     const answer = await response.json();
+     if (!response.ok) throw new Error(answer.error || response.statusText);
+@@ -53,6 +56,14 @@ async function move(cell) {
+   render();
+ }
+ 
++// The body of a move request: the board, the mode and level, the game token
++// from the last answer when there is one, and the given cell.
++function request(fields) {
++  const body = { board: state.board, ...fields, mode: modeEl.value, level: levelEl.value };
++  if (state.game) body.game = state.game;
++  return body;
++}
++
+ function render() {
+   const winning = new Set(state.line || []);
+   cells.forEach((cell, i) => {
+diff --git a/tictactoe/static/index.html b/tictactoe/static/index.html
+index f60a422..b91c84d 100644
+--- a/tictactoe/static/index.html
++++ b/tictactoe/static/index.html
+@@ -28,11 +28,16 @@
+ 
+     <p id="status" role="status" aria-live="polite"></p>
+ 
++    <div id="cheat" hidden>
++      <button type="button" id="steal" aria-pressed="false" aria-describedby="cheat-text">Steal a square</button>
++      <p id="cheat-text"></p>
++    </div>
++
+     <div id="board" role="group" aria-label="Board"></div>
+ 
+     <table id="score" aria-label="Score">
+-      <tr><th>X wins</th><th>O wins</th><th>Draws</th></tr>
+-      <tr><td id="score-x">0</td><td id="score-o">0</td><td id="score-draw">0</td></tr>
++      <tr><th>X wins</th><th>O wins</th><th>Draws</th><th id="score-help-head" hidden>With help</th></tr>
++      <tr><td id="score-x">0</td><td id="score-o">0</td><td id="score-draw">0</td><td id="score-help" hidden>0</td></tr>
+     </table>
+ 
+     <p class="hint">Click or tap a square. Keyboard: arrow keys to move, Enter or Space to play.</p>
+diff --git a/tictactoe/static/style.css b/tictactoe/static/style.css
+index 353b6ec..d3b8fe2 100644
+--- a/tictactoe/static/style.css
++++ b/tictactoe/static/style.css
+@@ -24,6 +24,9 @@
+ 
+ * { box-sizing: border-box; }
+ 
++/* hidden must win over the display rules below */
++[hidden] { display: none !important; }
++
+ body {
+   margin: 0;
+   background: var(--bg);
+@@ -59,6 +62,42 @@ select, button {
+   font-weight: 600;
+ }
+ 
++#cheat {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 4px 12px;
++  justify-content: center;
++  align-items: center;
++  margin: 0 0 12px;
++}
++
++#cheat p { margin: 0; color: var(--muted); }
++
++#steal {
++  min-height: 44px;
++  border: 2px solid var(--fg);
++  border-radius: 6px;
++  background: var(--bg);
++  color: var(--fg);
++  cursor: pointer;
++}
++
++#steal[aria-pressed="true"] {
++  background: var(--fg);
++  color: var(--bg);
++}
++
++#steal[aria-disabled="true"] {
++  border-style: dotted;
++  opacity: 0.55;
++  cursor: not-allowed;
++}
++
++#steal:focus-visible {
++  outline: 4px solid var(--focus);
++  outline-offset: 2px;
++}
++
+ #board {
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+@@ -89,6 +128,14 @@ select, button {
+   outline-offset: -4px;
+ }
+ 
++/* a dashed frame, so a stealable square does not rely on colour alone */
++.cell.stealable {
++  border: 4px dashed var(--fg);
++  cursor: pointer;
++}
++
++.cell.stealable:focus-visible { outline-offset: -10px; }
++
+ #score {
+   margin: 16px auto 0;
+   border-collapse: collapse;
+@@ -97,4 +144,8 @@ select, button {
+ #score th, #score td { padding: 2px 12px; }
+ #score td { font-size: 1.25rem; font-weight: 600; }
+ 
++/* four columns fit 320 px: tighter cells only once "With help" shows */
++#score:has(#score-help:not([hidden])) th,
++#score:has(#score-help:not([hidden])) td { padding: 2px 6px; }
++
+ .hint { color: var(--muted); font-size: 0.875rem; }

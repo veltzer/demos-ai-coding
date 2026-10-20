@@ -1,0 +1,281 @@
+diff --git a/changes/cheat-code/review.md b/changes/cheat-code/review.md
+index 0cd2388..816eb4a 100644
+--- a/changes/cheat-code/review.md
++++ b/changes/cheat-code/review.md
+@@ -9,11 +9,11 @@ No code was changed.
+ 
+ **Blocker:** none. **Major:** none.
+ 
+-- [ ] **minor** `tictactoe/server.py:49`: a `game` token is verified and used in `friend` mode too. If you send a computer-game `1.` token with `mode: "friend"`, the friend move uses the after-steal turn rule and the answer says `steal_used: true`. The spec says (lines 182–183) that a friend game answers `steal_used: false`, and `docs/architecture.md` says `level` is "used only against the computer". It can't be exploited: friend mode never issues a token and never allows a steal. But the API breaks its own documented contract, and no test pins this either way. Either refuse or ignore `game` in friend mode, or fix the spec and the architecture doc to describe what happens now.
+-- [ ] **minor** `tictactoe/static/app.js:151`: when a game ends without a steal (the computer wins, or a draw), the panel still says "No O to steal yet" while Os are on the board. The text is also the steal button's `aria-describedby`, so a screen reader gives the player the wrong reason. The spec defines only two reasons ("No O to steal yet" and "Steal used") and doesn't cover a finished game. Something like "Game over" would be correct.
+-- [ ] **minor** `docs/architecture.md:3`: the doc no longer describes the whole system. The diagram doesn't show `signing.py`. The "Tests" section (line 173) lists neither `tests/test_signing.py` nor `tests/system/test_cheat.py` and `tests/system/client.py`. `CLAUDE.md` requires a change that adds a module to update this doc.
+-- [ ] **minor** `changes/cheat-code/spec.md:332`: the intent's success check ("steals in games we did not set up") depends on the client addresses in the request lines. The `steal …` log line itself has no address. But `ops/deploy.sh` starts production on `127.0.0.1`, so outside traffic must come through something local. If that is a reverse proxy, every request line shows `127.0.0.1`, and Product can't tell outside steals from the team's own. Before relying on this measure, ask the platform team whether the real client address reaches the log.
+-- [ ] **minor** `changes/cheat-code/test-report.md:5`: the report says the page "was checked by a person in `preview.md`". `preview.md` says the opposite: "Checked by: nobody", "Result: not checked". A reader who trusts the test report would believe the browser behaviour was signed off.
++- [x] **minor** `tictactoe/server.py:49`: a `game` token is verified and used in `friend` mode too. If you send a computer-game `1.` token with `mode: "friend"`, the friend move uses the after-steal turn rule and the answer says `steal_used: true`. The spec says (lines 182–183) that a friend game answers `steal_used: false`, and `docs/architecture.md` says `level` is "used only against the computer". It can't be exploited: friend mode never issues a token and never allows a steal. But the API breaks its own documented contract, and no test pins this either way. Either refuse or ignore `game` in friend mode, or fix the spec and the architecture doc to describe what happens now. **Fixed:** a `game` token in `friend` mode is now refused with `400 "the game token is only for games against the computer"`, checked right after mode and level (`check_mode` in `server.py`). The page never sends one in friend mode (a mode change starts a new game with `game: null`), so the player sees no change. Spec and `docs/architecture.md` updated. Tests: `test_a_friend_game_refuses_a_token` and a new row in `test_steal_errors_come_in_the_specs_order` (`tests/test_server.py`), and `test_a_friend_game_refuses_a_computer_games_token` (`tests/system/test_cheat.py`).
++- [x] **minor** `tictactoe/static/app.js:151`: when a game ends without a steal (the computer wins, or a draw), the panel still says "No O to steal yet" while Os are on the board. The text is also the steal button's `aria-describedby`, so a screen reader gives the player the wrong reason. The spec defines only two reasons ("No O to steal yet" and "Steal used") and doesn't cover a finished game. Something like "Game over" would be correct. **Fixed:** the panel now says "Game over" when a game has ended without a steal ("Steal used" still takes priority once the steal is used). Spec and `docs/architecture.md` updated. **No automated test:** the project can't run `app.js` in a test (standard library only, no browser tests). A person must check this in the preview, like the rest of the page.
++- [x] **minor** `docs/architecture.md:3`: the doc no longer describes the whole system. The diagram doesn't show `signing.py`. The "Tests" section (line 173) lists neither `tests/test_signing.py` nor `tests/system/test_cheat.py` and `tests/system/client.py`. `CLAUDE.md` requires a change that adds a module to update this doc. **Fixed:** the diagram shows `signing.py` and the token, and the Tests section lists `tests/test_signing.py`, `tests/system/client.py` and `tests/system/test_cheat.py`. This is a doc fix, so it has no test.
++- [ ] **minor** `changes/cheat-code/spec.md:332`: the intent's success check ("steals in games we did not set up") depends on the client addresses in the request lines. The `steal …` log line itself has no address. But `ops/deploy.sh` starts production on `127.0.0.1`, so outside traffic must come through something local. If that is a reverse proxy, every request line shows `127.0.0.1`, and Product can't tell outside steals from the team's own. Before relying on this measure, ask the platform team whether the real client address reaches the log. **Not fixed:** code can't answer this, so it is a question for the platform team. `ops/` is theirs to change, and the address only matters for measuring success, not for the release. Before Product relies on counting steals by address, someone must ask the platform team whether production sits behind a reverse proxy and whether the real client address reaches the log.
++- [x] **minor** `changes/cheat-code/test-report.md:5`: the report says the page "was checked by a person in `preview.md`". `preview.md` says the opposite: "Checked by: nobody", "Result: not checked". A reader who trusts the test report would believe the browser behaviour was signed off. **Fixed:** the report now says the page has not been checked by a person, as `preview.md` records. This is a doc fix, so it has no test.
+ 
+ ## Verdict
+ 
+diff --git a/changes/cheat-code/spec.md b/changes/cheat-code/spec.md
+index e139ca3..42aad7f 100644
+--- a/changes/cheat-code/spec.md
++++ b/changes/cheat-code/spec.md
+@@ -180,7 +180,8 @@ row 0 at cell 2; this reply is the expected one, not recorded from code.)
+ ```
+ 
+ A friend game answers `game: null, stealable: [], steal_used: false,
+-assisted: false` in addition to today's fields.
++assisted: false` in addition to today's fields. A friend request that
++carries a `game` token is refused (added in review fixes; see the table).
+ 
+ ### New errors (all `400 {"error": "..."}`)
+ 
+@@ -189,6 +190,7 @@ Checked in this order, after today's checks of the body, `board` shape,
+ 
+ | Case | Message |
+ |------|---------|
++| `game` present in `friend` mode | `the game token is only for games against the computer` |
+ | `game` present but not valid for this `board` and `level` (any request) | `the game token does not match this game` |
+ | both `cell` and `steal` present | `send either cell or steal, not both` |
+ | `steal` in `friend` mode | `you can only steal from the computer` |
+@@ -253,7 +255,8 @@ exist in `index.html` with `hidden` and are not shown or announced.
+   (`aria-pressed`) and the short text "Press Steal, then choose an O. Esc
+   cancels." The button is disabled-looking (`aria-disabled="true"`, still
+   focusable) when `stealable` is empty, with the reason in the panel text:
+-  "No O to steal yet" before the computer has moved, "Steal used" after.
++  "No O to steal yet" before the computer has moved, "Steal used" after,
++  and "Game over" when a game ends without a steal (added in review fixes).
+ - The score table shows a fourth column **With help** (and keeps showing it
+   until the page is reloaded, so the count stays visible).
+ 
+diff --git a/changes/cheat-code/test-report.md b/changes/cheat-code/test-report.md
+index ec60909..469e0e5 100644
+--- a/changes/cheat-code/test-report.md
++++ b/changes/cheat-code/test-report.md
+@@ -3,8 +3,8 @@
+ Phase 5 of `docs/process.md`. The real server was started as production
+ starts it (`python3 -m tictactoe --port 0`, its own process) and driven over
+ HTTP only. The page (code recognition, steal mode, labels, score column) is
+-browser behaviour and was checked by a person in `preview.md`; it is not
+-repeated here.
++browser behaviour and is not tested here. It has **not** been checked by a
++person: `preview.md` records "Checked by: nobody", "Result: not checked".
+ 
+ ## Result
+ 
+diff --git a/docs/architecture.md b/docs/architecture.md
+index 55e2843..05d21b7 100644
+--- a/docs/architecture.md
++++ b/docs/architecture.md
+@@ -4,10 +4,11 @@
+ browser (static/)                          server (Python, stdlib)
+ ┌───────────────────────┐  POST /api/move  ┌────────────────────────────┐
+ │ index.html  app.js    │ ───────────────▶ │ server.py  handle_move()   │
+-│ draws, sends clicks,  │    whole board   │   ├─ game.py  rules        │
+-│ keeps the score       │ ◀─────────────── │   └─ ai.py    computer     │
++│ draws, sends clicks,  │    whole board   │   ├─ game.py     rules     │
++│ keeps the score       │    + game token  │   ├─ ai.py       computer  │
++│                       │ ◀─────────────── │   └─ signing.py  token     │
+ └───────────────────────┘   new board +    └────────────────────────────┘
+-                            outcome
++                            outcome + token
+ ```
+ 
+ The rules live in Python only. The browser never decides whether a move is
+@@ -20,7 +21,7 @@ legal or who won: it shows what the server answers.
+ | `game.py` | The rules. A board is a list of 9 cells, row by row, each `"X"`, `"O"` or `""`. X moves first, so `turn(board, steals=0)` follows from the counts: with `steals` steals used in the game (0 or 1), X is to move when X count − O count == `steals`. `check_cells(board)` checks only a board's shape and cells, `validate(board, steals=0)` checks a whole board from outside (`check_cells`, then X − O must be `steals` or `steals + 1`), `play(board, cell, steals=0)` returns a new board (never changes its input) or raises `IllegalMoveError`, `steal(board, cell, steals)` returns a new board with the O on `cell` turned into an X (once per game, on X's turn, only an O), `outcome()` says `playing`, `won` (with winner and line) or `draw`. With `steals=0` everything is the plain game. |
+ | `ai.py` | The computer. `choose_move(board, level, rng=None, *, steals=0)`: **hard** is negamax over the full game tree, cached (per board and `steals`), lowest cell among equals, so it is deterministic and never loses; **easy** takes a winning move if it sees one, otherwise plays at random. `steals` is passed on to every rule call, so the search knows whose turn it is after a steal. |
+ | `signing.py` | The game token. The key is `TICTACTOE_SECRET` when set and not empty, otherwise 32 random bytes made at start-up; it is the only module that reads `os.environ`, and the key never leaves it. `sign(board, level, steals)` returns `"<s>.<mac>"`, the HMAC-SHA256 (lowercase hex) of `tictactoe-game-v1|<level>|<s>|<cells>`, cells written `X`, `O` or `-`. `verify(token, board, level)` returns `s`, or raises `IllegalMoveError("the game token does not match this game")`; it compares with `hmac.compare_digest`. |
+-| `server.py` | `ThreadingHTTPServer`. Serves a fixed map of assets (no request path reaches the file system), `/health`, and the move API (`handle_move`, with `check_steal_request` for requests that carry a token or a steal). Keeps no state: what it must trust it signs with `signing.py`. Logs one line per successful steal. |
++| `server.py` | `ThreadingHTTPServer`. Serves a fixed map of assets (no request path reaches the file system), `/health`, and the move API (`handle_move`, with `check_mode` for mode and level and `check_steal_request` for requests that carry a token or a steal). Keeps no state: what it must trust it signs with `signing.py`. Logs one line per successful steal. |
+ | `__main__.py` | `python3 -m tictactoe [--host] [--port]`; prints the URL it listens on. |
+ | `static/` | `index.html`, `style.css`, `app.js`. No build step, no libraries. |
+ 
+@@ -42,8 +43,9 @@ legal or who won: it shows what the server answers.
+ - `game` (optional) is the token from the previous answer. `steal`
+   (optional, instead of `cell`) is a cell holding an O that the player
+   turns into an X, as their move: once per game, only against the computer,
+-  and only together with a `game` token. A field sent as `null` counts as
+-  not sent.
++  and only together with a `game` token. A `game` token in `friend` mode
++  is refused: friend mode never hands one out. A field sent as `null`
++  counts as not sent.
+ 
+ Answer `200`:
+ 
+@@ -90,6 +92,7 @@ this order: the body, the board's shape and cells, mode, level; then
+ 
+ | Case | Message |
+ |------|---------|
++| `game` in `friend` mode | `the game token is only for games against the computer` |
+ | `game` does not verify for this `board` and `level` | `the game token does not match this game` |
+ | both `cell` and `steal` | `send either cell or steal, not both` |
+ | `steal` in `friend` mode | `you can only steal from the computer` |
+@@ -152,7 +155,8 @@ tall, and tighter score cells once the fourth column shows, so it fits
+   until the next answer from the server, then the usual text returns.
+ - **The panel.** The button is `aria-disabled="true"` (still focusable)
+   while the answer's `stealable` is empty, and the text says why: "No O to
+-  steal yet", or "Steal used" once `steal_used`. Otherwise it says "Press
++  steal yet", "Steal used" once `steal_used`, or "Game over" once a game
++  without a steal has ended. Otherwise it says "Press
+   Steal, then choose an O. Esc cancels."
+ - **Steal mode.** The button (click, Enter, Space) turns it on only when
+   `stealable` is not empty: `aria-pressed="true"`, the status says "Steal:
+@@ -172,8 +176,14 @@ tall, and tighter score cells once the fourth column shows, so it fits
+ 
+ ## Tests
+ 
+-- `tests/test_game.py`, `tests/test_ai.py`, `tests/test_server.py`: unit
+-  tests. `test_hard_never_loses` plays Hard against every possible opponent,
+-  as X and as O.
+-- `tests/system/test_http.py`: starts `python3 -m tictactoe --port 0` as a
+-  process and tests it over HTTP: health, assets, 404s, whole games, errors.
++- `tests/test_game.py`, `tests/test_ai.py`, `tests/test_server.py`,
++  `tests/test_signing.py`: unit tests. `test_hard_never_loses` plays Hard
++  against every possible opponent, as X and as O.
++- `tests/system/client.py`: `serve()` starts `python3 -m tictactoe --port 0`
++  as a process (optionally with a `TICTACTOE_SECRET` and a log file), waits
++  for `/health` and always stops it; `post()` sends a JSON body.
++- `tests/system/test_http.py`: tests the server over HTTP: health, assets,
++  404s, whole games, errors.
++- `tests/system/test_cheat.py`: the steal over HTTP with a known secret:
++  whole games with a steal, every refusal, the token across restarts, the
++  log line, and the old game unchanged.
+diff --git a/tests/system/test_cheat.py b/tests/system/test_cheat.py
+index dee6d26..c615e5b 100644
+--- a/tests/system/test_cheat.py
++++ b/tests/system/test_cheat.py
+@@ -214,6 +214,14 @@ def test_no_steal_between_friends(url: str) -> None:
+     assert error == "you can only steal from the computer"
+ 
+ 
++def test_a_friend_game_refuses_a_computer_games_token(url: str) -> None:
++    before = hard_opening(url)
++    after = move(url, board=before["board"], steal=1, level="hard", game=before["game"])
++    cell = after["board"].index("")
++    error = refused(url, board=after["board"], cell=cell, mode="friend", game=after["game"])
++    assert error == "the game token is only for games against the computer"
++
++
+ def test_cell_and_steal_together_are_refused(url: str) -> None:
+     before = hard_opening(url)
+     error = refused(url, board=before["board"], cell=2, steal=4, level="hard", game=before["game"])
+diff --git a/tests/test_server.py b/tests/test_server.py
+index 761aee9..f68cec6 100644
+--- a/tests/test_server.py
++++ b/tests/test_server.py
+@@ -239,16 +239,35 @@ def test_a_friend_game_gets_the_new_fields_and_never_a_token() -> None:
+     }
+ 
+ 
+-@pytest.mark.parametrize("with_token", [False, True])
+-def test_no_steal_against_a_friend(with_token: bool) -> None:
+-    cells = board("XO. ... ...")
+-    request = {"board": cells, "steal": 1, "mode": "friend"}
+-    if with_token:
+-        request["game"] = signing.sign(cells, "hard", 0)
++def test_no_steal_against_a_friend() -> None:
++    request = {"board": board("XO. ... ..."), "steal": 1, "mode": "friend"}
+     with pytest.raises(game.IllegalMoveError, match="only steal from the computer"):
+         server.handle_move(request)
+ 
+ 
++FRIEND_TOKEN = "the game token is only for games against the computer"
++
++
++@pytest.mark.parametrize(
++    ("cells", "steals", "fields"),
++    [
++        # review finding: a computer game's after-steal token used to be
++        # honoured in friend mode, and the answer said steal_used: true
++        ("XXO .O. ..X", 1, {"cell": 3}),
++        ("XO. ... ...", 0, {"cell": 2}),
++        ("XO. ... ...", 0, {"steal": 1}),
++        ("XO. ... ...", None, {"cell": 2, "game": "bad"}),
++    ],
++)
++def test_a_friend_game_refuses_a_token(cells: str, steals: int | None, fields: dict) -> None:
++    grid = board(cells)
++    if steals is not None:
++        fields = {**fields, "game": signing.sign(grid, "hard", steals)}
++    request = {"board": grid, "mode": "friend", **fields}
++    with pytest.raises(game.IllegalMoveError, match=f"^{FRIEND_TOKEN}$"):
++        server.handle_move(request)
++
++
+ @pytest.mark.parametrize(
+     "request_body",
+     [
+@@ -337,7 +356,8 @@ def test_steal_errors(cells: str, steals: int | None, fields: dict, message: str
+         ({"board": [""] * 8, "steal": 1, "game": "bad"}, "board must be"),
+         ({"board": EMPTY, "steal": 1, "game": "bad", "mode": "online"}, "mode"),
+         ({"board": EMPTY, "steal": 1, "game": "bad", "level": "impossible"}, "level"),
+-        # then the token, then the table in order
++        # then a token in friend mode, then the token, then the table in order
++        ({"board": board("XO. ... ..."), "cell": 2, "game": "bad", "mode": "friend"}, "only for"),
+         ({"board": board("XO. ... ..."), "cell": 2, "steal": 1, "game": "bad"}, MISMATCH),
+         ({"board": board("XO. ... ..."), "cell": 2, "steal": 1, "mode": "friend"}, "not both"),
+         ({"board": board("XO. ... ..."), "steal": 1, "mode": "friend"}, "from the computer"),
+diff --git a/tictactoe/server.py b/tictactoe/server.py
+index ee321b6..e07e093 100644
+--- a/tictactoe/server.py
++++ b/tictactoe/server.py
+@@ -37,15 +37,7 @@ def handle_move(request: object) -> dict:
+         board = game.check_cells(request.get("board"))
+     else:
+         board = game.validate(request.get("board"))
+-    mode = request.get("mode", "computer")
+-    if mode not in MODES:
+-        raise game.IllegalMoveError(f"mode must be one of: {', '.join(MODES)}")
+-    level = request.get("level", "hard")
+-    if mode == "computer":
+-        if level not in ai.LEVELS:
+-            raise game.IllegalMoveError(f"level must be one of: {', '.join(ai.LEVELS)}")
+-        if not judged and game.turn(board) != "X":
+-            raise game.IllegalMoveError("against the computer you play X")
++    mode, level = check_mode(request, board, judged)
+     steals = signing.verify(token, board, level) if token is not None else 0
+     if judged:
+         board = check_steal_request(request, board, mode, steals)
+@@ -74,6 +66,23 @@ def handle_move(request: object) -> dict:
+     }
+ 
+ 
++def check_mode(request: dict, board: list[str], judged: bool) -> tuple[str, str]:
++    """Check the mode and level, and that a token comes only with the computer."""
++    mode = request.get("mode", "computer")
++    if mode not in MODES:
++        raise game.IllegalMoveError(f"mode must be one of: {', '.join(MODES)}")
++    level = request.get("level", "hard")
++    if mode == "computer":
++        if level not in ai.LEVELS:
++            raise game.IllegalMoveError(f"level must be one of: {', '.join(ai.LEVELS)}")
++        if not judged and game.turn(board) != "X":
++            raise game.IllegalMoveError("against the computer you play X")
++    elif request.get("game") is not None:
++        # Friend mode never hands out a token, so one sent here is not ours.
++        raise game.IllegalMoveError("the game token is only for games against the computer")
++    return mode, level
++
++
+ def check_steal_request(request: dict, board: list[str], mode: str, steals: int) -> list[str]:
+     """The checks for a request with a token or a steal, after the token's."""
+     stolen = request.get("steal")
+diff --git a/tictactoe/static/app.js b/tictactoe/static/app.js
+index fd62dc2..6e7e8d7 100644
+--- a/tictactoe/static/app.js
++++ b/tictactoe/static/app.js
+@@ -148,7 +148,9 @@ function render() {
+   stealEl.setAttribute("aria-disabled", String(!canSteal));
+   stealEl.setAttribute("aria-pressed", String(stealMode));
+   if (canSteal) cheatTextEl.textContent = "Press Steal, then choose an O. Esc cancels.";
+-  else cheatTextEl.textContent = state.steal_used ? "Steal used" : "No O to steal yet";
++  else if (state.steal_used) cheatTextEl.textContent = "Steal used";
++  else if (state.status !== "playing") cheatTextEl.textContent = "Game over";
++  else cheatTextEl.textContent = "No O to steal yet";
+ }
+ 
+ function describe() {

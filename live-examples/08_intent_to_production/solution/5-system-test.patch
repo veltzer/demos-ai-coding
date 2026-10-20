@@ -1,0 +1,553 @@
+diff --git a/changes/cheat-code/test-report.md b/changes/cheat-code/test-report.md
+new file mode 100644
+index 0000000..ec60909
+--- /dev/null
++++ b/changes/cheat-code/test-report.md
+@@ -0,0 +1,106 @@
++# System test report: `cheat-code`
++
++Phase 5 of `docs/process.md`. The real server was started as production
++starts it (`python3 -m tictactoe --port 0`, its own process) and driven over
++HTTP only. The page (code recognition, steal mode, labels, score column) is
++browser behaviour and was checked by a person in `preview.md`; it is not
++repeated here.
++
++## Result
++
++**Whole suite: 215 passed** (`python3 -m pytest -q`, 0.65 s), unit and
++system tests together. `ruff check .` and `ruff format --check .` are clean.
++No server process is left running afterwards.
++
++**Bugs found: none.** No code in `tictactoe/` was changed in this phase.
++
++## What changed in `tests/system/`
++
++- New `client.py`: `serve()`, a context manager that starts the server on
++  port 0, waits for `/health`, yields the base URL and **always** stops the
++  process in `finally` (terminate, then kill if it has not stopped after
++  5 s), even when a test fails. It can set `TICTACTOE_SECRET` (and always
++  removes any inherited value otherwise) and send stderr to a file. Also
++  `get()` and `post()`, moved here from `test_http.py`.
++- `test_http.py`: now uses `client.py`. Its tests are unchanged.
++- New `test_cheat.py`: a module-scoped server started with a known
++  `TICTACTOE_SECRET`, as production does, with its log (stderr) written to a
++  temporary file.
++
++## What was tested (`test_cheat.py`)
++
++The steal, end to end:
++
++| Test | Shows |
++|------|-------|
++| `test_the_first_move_of_a_game_gets_a_token` | A tokenless first move from the empty board gets an `s = 0` token; `stealable` is the computer's O. |
++| `test_a_steal_that_wins_at_once_is_an_assisted_win` | Hard: X 0, O 4, X 8, O 1, then steal 4. The whole answer is exactly the spec's example: won by X on 0-4-8, no computer move, `game: null`, `steal_used` and `assisted` true. |
++| `test_a_steal_is_the_players_move_and_the_computer_replies` | Steal 1 instead: the cell becomes X, the computer replies (blocks at 2, as the spec expected), X to move, `1.` token, `stealable: []`. |
++| `test_after_a_steal_the_game_plays_on_to_its_end` | After a steal the game goes on with `1.` tokens to its end; `assisted` is true only if X won. |
++| `test_a_steal_works_at_easy` (3 openings) | The steal works at Easy too. |
++| `test_the_stealable_squares_are_the_os_on_the_players_turn` | Through a whole game, `stealable` always lists exactly the O cells, and is empty once the game is over. |
++
++Nobody can steal twice, even by hand:
++
++| Test | Request | Answer |
++|------|---------|--------|
++| `test_a_second_steal_is_refused` | a steal with the `1.` token from the first steal | 400 `you have already stolen a square in this game` |
++| `test_a_steal_needs_a_token` | a steal with no token | 400 `a steal needs the game token from the last answer` |
++| `test_a_stolen_board_without_its_token_is_refused` | the board after a steal, sent with no token | 400 `against the computer you play X` |
++| `test_the_token_is_bound_to_the_board` | a valid token with a different board | 400 `the game token does not match this game` |
++| `test_the_token_is_bound_to_the_level` | a valid Hard token with `level: easy` | same 400 |
++| `test_editing_the_steal_count_breaks_the_token` | `1.` changed to `0.` by hand (to steal again), and `0.` changed to `1.` | same 400 |
++| `test_a_malformed_or_forged_token_is_refused` (10 cases) | `""`, `"0"`, `"0."`, `s = 2`, a zero MAC, an uppercase-hex MAC, the number 0, `true`, a list, an object | same 400 |
++| `test_a_hand_made_mid_game_board_gets_no_token` | a tokenless mid-game board | 200 with `game: null`, `stealable: []`, so that game can never steal |
++| `test_a_token_survives_a_restart_with_the_same_secret` | a token from this server, sent to a fresh server with the same `TICTACTOE_SECRET` and then to one with a different secret | first accepted (as across a deploy), second refused with the mismatch 400 |
++
++Other refusals: a steal in friend mode (400 `you can only steal from the
++computer`); `cell` and `steal` together (400 `send either cell or steal, not
++both`); stealing an empty square or an X (400 `you can only steal one of the
++computer's squares`); `steal` of 9, -1, `true`, `"4"`, `4.0` (400 `steal must
++be a whole number from 0 to 8`).
++
++The old game, unchanged:
++
++- `test_a_friend_game_gets_no_token`: friend answers carry `game: null,
++  stealable: [], steal_used: false, assisted: false`.
++- `test_a_tokenless_game_against_hard_still_never_lets_x_win`: all 9
++  openings for X, played to the end without tokens: X never wins.
++- `test_tokenless_errors_are_todays`: today's messages for the wrong turn,
++  bad alternation and a bad level.
++- All tests in `test_http.py` (health, page and assets, 404s, a whole game
++  against Hard, a friend game, bad moves, 413) pass unchanged.
++
++What the server prints:
++
++- `test_a_steal_is_logged_without_the_key_or_any_token`: after a winning
++  steal, the server log has `steal level=hard cell=4 status=won
++  assisted=true`. Neither the secret nor the token (nor its MAC) appears
++  anywhere in the log of the whole test module.
++
++## A comparison with the server before the change (by hand, not in the suite)
++
++To back "the old game behaves exactly as before" with more than the fixed
++cases above, the baseline package (commit `09325b7`, before this change) was
++pulled from git and run as a second server next to the current one. 2318
++tokenless requests were sent to both: 2000 random boards (any mix of X, O
++and empty, cells -1 to 9, both modes, Hard), 300 random friend moves, all 9
++first moves against Hard, and malformed bodies (`null`, `[]`, `3`, `cell:
++true`, no cell, a bad board, a bad mode, a bad level, `game` and `steal` sent
++as `null`). Easy was left out because its moves are random.
++
++Result: **0 differences**. 275 of the requests were answered 200, and every
++field of the old answer was the same in the new one (the new one only adds
++the four new fields). The other 2043 got the same status and the same error
++message. This script is not in the suite because it needs the git history.
++
++## Notes for the code review (not bugs)
++
++- A token from a computer game is also accepted in friend mode, as the spec
++  says ("any request that carries a `game` field"). With a `1.` token the
++  friend move uses the after-steal turn rule and the answer says
++  `steal_used: true`, with `game: null`. The page never sends this, and it
++  cannot give a second steal or a new token, so it does no harm. Worth a
++  look if the reviewer would rather refuse `game` in friend mode.
++- Replaying an older `0.` token to steal from an earlier position works, as
++  the spec accepts (Open questions 3). No test asserts it either way.
+diff --git a/tests/system/client.py b/tests/system/client.py
+new file mode 100644
+index 0000000..7626143
+--- /dev/null
++++ b/tests/system/client.py
+@@ -0,0 +1,73 @@
++"""Start the real server as production does, and talk to it over HTTP."""
++
++import json
++import os
++import subprocess
++import sys
++import time
++import urllib.error
++import urllib.request
++from collections.abc import Iterator
++from contextlib import contextmanager
++from pathlib import Path
++from typing import IO
++
++ROOT = Path(__file__).resolve().parents[2]
++
++
++@contextmanager
++def serve(*, secret: str | None = None, log: IO[str] | None = None) -> Iterator[str]:
++    """Run `python3 -m tictactoe --port 0` and yield its base URL; always stop it.
++
++    `secret` is passed as TICTACTOE_SECRET (unset when None); the server's
++    stderr, where it logs, goes to `log` when given.
++    """
++    env = {k: v for k, v in os.environ.items() if k != "TICTACTOE_SECRET"}
++    if secret is not None:
++        env["TICTACTOE_SECRET"] = secret
++    process = subprocess.Popen(
++        [sys.executable, "-m", "tictactoe", "--port", "0"],
++        cwd=ROOT,
++        env=env,
++        stdout=subprocess.PIPE,
++        stderr=log,
++        text=True,
++    )
++    try:
++        assert process.stdout is not None
++        base = process.stdout.readline().split(" on ", 1)[1].strip().rstrip("/")
++        deadline = time.monotonic() + 5
++        while True:
++            try:
++                urllib.request.urlopen(f"{base}/health", timeout=1).close()
++                break
++            except OSError:
++                if time.monotonic() > deadline:
++                    raise
++                time.sleep(0.05)
++        yield base
++    finally:
++        process.terminate()
++        try:
++            process.wait(timeout=5)
++        except subprocess.TimeoutExpired:
++            process.kill()
++            process.wait()
++
++
++def get(url: str) -> tuple[int, str, str]:
++    try:
++        with urllib.request.urlopen(url, timeout=2) as response:
++            return response.status, response.headers["Content-Type"], response.read().decode()
++    except urllib.error.HTTPError as error:
++        return error.code, error.headers["Content-Type"], error.read().decode()
++
++
++def post(url: str, body: object) -> tuple[int, dict]:
++    data = json.dumps(body).encode()
++    request = urllib.request.Request(url, data, {"Content-Type": "application/json"})
++    try:
++        with urllib.request.urlopen(request, timeout=2) as response:
++            return response.status, json.load(response)
++    except urllib.error.HTTPError as error:
++        return error.code, json.load(error)
+diff --git a/tests/system/test_cheat.py b/tests/system/test_cheat.py
+new file mode 100644
+index 0000000..dee6d26
+--- /dev/null
++++ b/tests/system/test_cheat.py
+@@ -0,0 +1,288 @@
++"""The cheat code's steal, played over HTTP against the real server.
++
++The server runs with a known TICTACTOE_SECRET, as production does, and its
++log is kept so the tests can read what it prints.
++"""
++
++from collections.abc import Iterator
++from pathlib import Path
++
++import pytest
++
++from .client import post, serve
++
++SECRET = "system-test-secret-0123456789abcdef"
++EMPTY = [""] * 9
++NEW_FIELDS = ("game", "stealable", "steal_used", "assisted")
++
++
++@pytest.fixture(scope="module")
++def server(tmp_path_factory: pytest.TempPathFactory) -> Iterator[tuple[str, Path]]:
++    log = tmp_path_factory.mktemp("server") / "server.log"
++    with log.open("w") as stream, serve(secret=SECRET, log=stream) as base:
++        yield base, log
++
++
++@pytest.fixture
++def url(server: tuple[str, Path]) -> str:
++    return server[0]
++
++
++def move(url: str, **body: object) -> dict:
++    """A move that must succeed; returns the answer."""
++    code, answer = post(f"{url}/api/move", body)
++    assert code == 200, answer
++    return answer
++
++
++def refused(url: str, **body: object) -> str:
++    """A move that must be refused with 400; returns the error message."""
++    code, answer = post(f"{url}/api/move", body)
++    assert code == 400, answer
++    return answer["error"]
++
++
++def hard_opening(url: str) -> dict:
++    """X 0, O 4, X 8, O 1 against Hard: stealing 4 wins, stealing 1 does not."""
++    first = move(url, board=EMPTY, cell=0, level="hard")
++    answer = move(url, board=first["board"], cell=8, level="hard", game=first["game"])
++    assert answer["board"] == ["X", "O", "", "", "O", "", "", "", "X"]
++    assert answer["stealable"] == [1, 4]
++    return answer
++
++
++# --- The steal, end to end ---------------------------------------------------
++
++
++def test_the_first_move_of_a_game_gets_a_token(url: str) -> None:
++    answer = move(url, board=EMPTY, cell=0, level="hard")
++    assert answer["game"].startswith("0.")
++    assert answer["board"][answer["computer_move"]] == "O"
++    assert answer["stealable"] == [answer["computer_move"]]
++    assert (answer["steal_used"], answer["assisted"]) == (False, False)
++
++
++def test_a_steal_that_wins_at_once_is_an_assisted_win(url: str) -> None:
++    before = hard_opening(url)
++    answer = move(url, board=before["board"], steal=4, level="hard", game=before["game"])
++    assert answer == {
++        "board": ["X", "O", "", "", "X", "", "", "", "X"],
++        "status": "won",
++        "winner": "X",
++        "line": [0, 4, 8],
++        "turn": None,
++        "computer_move": None,
++        "game": None,
++        "stealable": [],
++        "steal_used": True,
++        "assisted": True,
++    }
++
++
++def test_a_steal_is_the_players_move_and_the_computer_replies(url: str) -> None:
++    before = hard_opening(url)
++    answer = move(url, board=before["board"], steal=1, level="hard", game=before["game"])
++    assert answer["board"] == ["X", "X", "O", "", "O", "", "", "", "X"]
++    assert answer["computer_move"] == 2
++    assert (answer["status"], answer["turn"]) == ("playing", "X")
++    assert answer["game"].startswith("1.")
++    assert answer["stealable"] == []
++    assert (answer["steal_used"], answer["assisted"]) == (True, False)
++
++
++def test_after_a_steal_the_game_plays_on_to_its_end(url: str) -> None:
++    before = hard_opening(url)
++    answer = move(url, board=before["board"], steal=1, level="hard", game=before["game"])
++    while answer["status"] == "playing":
++        assert answer["steal_used"] is True
++        assert answer["stealable"] == []
++        assert answer["game"].startswith("1.")
++        cell = answer["board"].index("")
++        answer = move(url, board=answer["board"], cell=cell, level="hard", game=answer["game"])
++    assert answer["game"] is None
++    assert answer["steal_used"] is True
++    assert answer["assisted"] is (answer["winner"] == "X")
++
++
++@pytest.mark.parametrize("seed_cell", [0, 4, 8])
++def test_a_steal_works_at_easy(url: str, seed_cell: int) -> None:
++    answer = move(url, board=EMPTY, cell=seed_cell, level="easy")
++    assert answer["stealable"]
++    target = answer["stealable"][0]
++    after = move(url, board=answer["board"], steal=target, level="easy", game=answer["game"])
++    assert after["board"][target] == "X"
++    assert after["steal_used"] is True
++    if after["status"] == "playing":
++        assert after["game"].startswith("1.")
++        assert after["board"][after["computer_move"]] == "O"
++    assert after["assisted"] is (after["winner"] == "X")
++
++
++def test_the_stealable_squares_are_the_os_on_the_players_turn(url: str) -> None:
++    answer = move(url, board=EMPTY, cell=0, level="hard")
++    while answer["status"] == "playing":
++        assert answer["stealable"] == [i for i, c in enumerate(answer["board"]) if c == "O"]
++        cell = answer["board"].index("")
++        answer = move(url, board=answer["board"], cell=cell, level="hard", game=answer["game"])
++    assert answer["stealable"] == []
++    assert answer["game"] is None
++
++
++# --- Nobody can steal twice, even by hand ------------------------------------
++
++
++def test_a_second_steal_is_refused(url: str) -> None:
++    before = hard_opening(url)
++    after = move(url, board=before["board"], steal=1, level="hard", game=before["game"])
++    error = refused(url, board=after["board"], steal=4, level="hard", game=after["game"])
++    assert error == "you have already stolen a square in this game"
++
++
++def test_a_steal_needs_a_token(url: str) -> None:
++    before = hard_opening(url)
++    error = refused(url, board=before["board"], steal=4, level="hard")
++    assert error == "a steal needs the game token from the last answer"
++
++
++def test_a_stolen_board_without_its_token_is_refused(url: str) -> None:
++    before = hard_opening(url)
++    after = move(url, board=before["board"], steal=1, level="hard", game=before["game"])
++    # X - O == 1 on X's turn: only an s = 1 token makes that board legal.
++    cell = after["board"].index("")
++    assert refused(url, board=after["board"], cell=cell, level="hard") == (
++        "against the computer you play X"
++    )
++
++
++def test_the_token_is_bound_to_the_board(url: str) -> None:
++    before = hard_opening(url)
++    other = ["X", "O", "", "", "O", "", "", "X", ""]
++    error = refused(url, board=other, steal=4, level="hard", game=before["game"])
++    assert error == "the game token does not match this game"
++
++
++def test_the_token_is_bound_to_the_level(url: str) -> None:
++    before = hard_opening(url)
++    error = refused(url, board=before["board"], steal=4, level="easy", game=before["game"])
++    assert error == "the game token does not match this game"
++
++
++def test_editing_the_steal_count_breaks_the_token(url: str) -> None:
++    before = hard_opening(url)
++    after = move(url, board=before["board"], steal=1, level="hard", game=before["game"])
++    reset = "0" + after["game"][1:]
++    error = refused(url, board=after["board"], steal=4, level="hard", game=reset)
++    assert error == "the game token does not match this game"
++    raised = "1" + before["game"][1:]
++    error = refused(url, board=before["board"], cell=2, level="hard", game=raised)
++    assert error == "the game token does not match this game"
++
++
++@pytest.mark.parametrize(
++    "token",
++    ["", "0", "0.", "2." + "0" * 64, "0." + "0" * 64, "0." + "A" * 64, 0, True, ["0."], {}],
++)
++def test_a_malformed_or_forged_token_is_refused(url: str, token: object) -> None:
++    before = hard_opening(url)
++    error = refused(url, board=before["board"], steal=4, level="hard", game=token)
++    assert error == "the game token does not match this game"
++
++
++def test_a_hand_made_mid_game_board_gets_no_token(url: str) -> None:
++    board = ["X", "O", "", "", "", "", "", "", ""]
++    answer = move(url, board=board, cell=8, level="hard")
++    assert answer["status"] == "playing"
++    assert (answer["game"], answer["stealable"], answer["steal_used"]) == (None, [], False)
++
++
++def test_a_token_survives_a_restart_with_the_same_secret(url: str) -> None:
++    before = hard_opening(url)
++    with serve(secret=SECRET) as again:
++        answer = move(again, board=before["board"], steal=4, level="hard", game=before["game"])
++        assert answer["assisted"] is True
++    with serve(secret="another-secret") as other:
++        error = refused(other, board=before["board"], steal=4, level="hard", game=before["game"])
++        assert error == "the game token does not match this game"
++
++
++# --- The other refusals ------------------------------------------------------
++
++
++def test_no_steal_between_friends(url: str) -> None:
++    board = ["X", "O", "", "", "", "", "", "", ""]
++    error = refused(url, board=board, steal=1, mode="friend")
++    assert error == "you can only steal from the computer"
++
++
++def test_cell_and_steal_together_are_refused(url: str) -> None:
++    before = hard_opening(url)
++    error = refused(url, board=before["board"], cell=2, steal=4, level="hard", game=before["game"])
++    assert error == "send either cell or steal, not both"
++
++
++@pytest.mark.parametrize(
++    ("cell", "message"),
++    [
++        (2, "you can only steal one of the computer's squares"),
++        (0, "you can only steal one of the computer's squares"),
++        (9, "steal must be a whole number from 0 to 8"),
++        (-1, "steal must be a whole number from 0 to 8"),
++        (True, "steal must be a whole number from 0 to 8"),
++        ("4", "steal must be a whole number from 0 to 8"),
++        (4.0, "steal must be a whole number from 0 to 8"),
++    ],
++)
++def test_only_an_o_can_be_stolen(url: str, cell: object, message: str) -> None:
++    before = hard_opening(url)
++    assert refused(url, board=before["board"], steal=cell, level="hard", game=before["game"]) == (
++        message
++    )
++
++
++# --- The old game, unchanged -------------------------------------------------
++
++
++def test_a_friend_game_gets_no_token(url: str) -> None:
++    answer = move(url, board=EMPTY, cell=0, mode="friend")
++    assert {k: answer[k] for k in NEW_FIELDS} == {
++        "game": None,
++        "stealable": [],
++        "steal_used": False,
++        "assisted": False,
++    }
++
++
++def test_a_tokenless_game_against_hard_still_never_lets_x_win(url: str) -> None:
++    # Every opening for X, played to the end without tokens and without steals.
++    for first in range(9):
++        board, answer = EMPTY, {"status": "playing"}
++        cell = first
++        while answer["status"] == "playing":
++            answer = move(url, board=board, cell=cell, level="hard")
++            board = answer["board"]
++            cell = board.index("") if "" in board else None
++        assert answer["winner"] != "X"
++        assert answer["assisted"] is False
++
++
++def test_tokenless_errors_are_todays(url: str) -> None:
++    assert refused(url, board=["X"] + [""] * 8, cell=1) == "against the computer you play X"
++    assert refused(url, board=["O"] + [""] * 8, cell=1) == "X moves first and the players alternate"
++    assert refused(url, board=EMPTY, cell=0, level="nightmare") == (
++        "level must be one of: easy, hard"
++    )
++
++
++# --- What the server prints --------------------------------------------------
++
++
++def test_a_steal_is_logged_without_the_key_or_any_token(server: tuple[str, Path]) -> None:
++    url, log = server
++    before = hard_opening(url)
++    after = move(url, board=before["board"], steal=4, level="hard", game=before["game"])
++    assert after["status"] == "won"
++    text = log.read_text()
++    assert "steal level=hard cell=4 status=won assisted=true" in text
++    assert SECRET not in text
++    for token in (before["game"], before["game"][2:]):
++        assert token not in text
+diff --git a/tests/system/test_http.py b/tests/system/test_http.py
+index b733dcc..5c81876 100644
+--- a/tests/system/test_http.py
++++ b/tests/system/test_http.py
+@@ -1,61 +1,16 @@
+ """The real server, started as production starts it, tested over HTTP."""
+ 
+-import json
+-import subprocess
+-import sys
+-import time
+-import urllib.error
+-import urllib.request
+ from collections.abc import Iterator
+-from pathlib import Path
+ 
+ import pytest
+ 
+-ROOT = Path(__file__).resolve().parents[2]
++from .client import get, post, serve
+ 
+ 
+ @pytest.fixture(scope="module")
+ def url() -> Iterator[str]:
+-    process = subprocess.Popen(
+-        [sys.executable, "-m", "tictactoe", "--port", "0"],
+-        cwd=ROOT,
+-        stdout=subprocess.PIPE,
+-        text=True,
+-    )
+-    try:
+-        assert process.stdout is not None
+-        base = process.stdout.readline().split(" on ", 1)[1].strip().rstrip("/")
+-        deadline = time.monotonic() + 5
+-        while True:
+-            try:
+-                urllib.request.urlopen(f"{base}/health", timeout=1).close()
+-                break
+-            except OSError:
+-                if time.monotonic() > deadline:
+-                    raise
+-                time.sleep(0.05)
++    with serve() as base:
+         yield base
+-    finally:
+-        process.terminate()
+-        process.wait(timeout=5)
+-
+-
+-def get(url: str) -> tuple[int, str, str]:
+-    try:
+-        with urllib.request.urlopen(url, timeout=2) as response:
+-            return response.status, response.headers["Content-Type"], response.read().decode()
+-    except urllib.error.HTTPError as error:
+-        return error.code, error.headers["Content-Type"], error.read().decode()
+-
+-
+-def post(url: str, body: object) -> tuple[int, dict]:
+-    data = json.dumps(body).encode()
+-    request = urllib.request.Request(url, data, {"Content-Type": "application/json"})
+-    try:
+-        with urllib.request.urlopen(request, timeout=2) as response:
+-            return response.status, json.load(response)
+-    except urllib.error.HTTPError as error:
+-        return error.code, json.load(error)
+ 
+ 
+ def test_health(url: str) -> None:

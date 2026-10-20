@@ -1,0 +1,46 @@
+diff --git a/changes/cheat-code/review.md b/changes/cheat-code/review.md
+new file mode 100644
+index 0000000..0cd2388
+--- /dev/null
++++ b/changes/cheat-code/review.md
+@@ -0,0 +1,40 @@
++# Code review: `cheat-code`
++
++Phase 7 of `docs/process.md`. Read: `intent.md`, `spec.md`, `plan.md`,
++`preview.md`, `test-report.md`, the diff `git diff e174aff HEAD` (the commit
++before the spec), and the code around it (`tictactoe/`, `tests/`,
++`docs/architecture.md`, `ops/deploy.sh`). At review time, `python3 -m pytest -q`
++gave 215 passed, and `ruff check .` and `ruff format --check .` were clean.
++No code was changed.
++
++**Blocker:** none. **Major:** none.
++
++- [ ] **minor** `tictactoe/server.py:49`: a `game` token is verified and used in `friend` mode too. If you send a computer-game `1.` token with `mode: "friend"`, the friend move uses the after-steal turn rule and the answer says `steal_used: true`. The spec says (lines 182–183) that a friend game answers `steal_used: false`, and `docs/architecture.md` says `level` is "used only against the computer". It can't be exploited: friend mode never issues a token and never allows a steal. But the API breaks its own documented contract, and no test pins this either way. Either refuse or ignore `game` in friend mode, or fix the spec and the architecture doc to describe what happens now.
++- [ ] **minor** `tictactoe/static/app.js:151`: when a game ends without a steal (the computer wins, or a draw), the panel still says "No O to steal yet" while Os are on the board. The text is also the steal button's `aria-describedby`, so a screen reader gives the player the wrong reason. The spec defines only two reasons ("No O to steal yet" and "Steal used") and doesn't cover a finished game. Something like "Game over" would be correct.
++- [ ] **minor** `docs/architecture.md:3`: the doc no longer describes the whole system. The diagram doesn't show `signing.py`. The "Tests" section (line 173) lists neither `tests/test_signing.py` nor `tests/system/test_cheat.py` and `tests/system/client.py`. `CLAUDE.md` requires a change that adds a module to update this doc.
++- [ ] **minor** `changes/cheat-code/spec.md:332`: the intent's success check ("steals in games we did not set up") depends on the client addresses in the request lines. The `steal …` log line itself has no address. But `ops/deploy.sh` starts production on `127.0.0.1`, so outside traffic must come through something local. If that is a reverse proxy, every request line shows `127.0.0.1`, and Product can't tell outside steals from the team's own. Before relying on this measure, ask the platform team whether the real client address reaches the log.
++- [ ] **minor** `changes/cheat-code/test-report.md:5`: the report says the page "was checked by a person in `preview.md`". `preview.md` says the opposite: "Checked by: nobody", "Result: not checked". A reader who trusts the test report would believe the browser behaviour was signed off.
++
++## Verdict
++
++The server side is sound and matches the spec. Every steal is judged on
++the server. The HMAC game token binds the board, the level and the steal
++count, is compared with `compare_digest`, and is handed out only on a chain
++that starts from an empty board, so a second steal, a forged or edited
++token, a hand-made board and friend-mode steals are all refused. The key is
++never logged or sent. Requests without `game` and `steal` go through exactly
++the old code path, Hard is unchanged for `steals=0`, and the unit and system
++tests cover every rule, error and "must not change" promise in the spec
++(including a 2318-request comparison with the baseline server). The page
++works out no rule. None of the findings blocks a release.
++
++Whoever releases must weigh one thing: **nobody has looked at the page.**
++`preview.md` records an unattended run, "Checked by: nobody", "Result: not
++checked", and the test report wrongly claims otherwise. So none of the
++browser behaviour has been seen by a person: that the page is unchanged
++before the code is typed, how the code is recognised, steal mode with mouse
++and keyboard, the screen-reader announcements, the "With help" column, and
++the 320 px layout. The 320 px fit depends on the CSS `:has()` selector, which
++older browsers ignore. These parts of the intent's "must not change" promise
++("the game behaves exactly as it does today", "nobody can steal without typing
++the code" on the page) rest only on reading `app.js`.

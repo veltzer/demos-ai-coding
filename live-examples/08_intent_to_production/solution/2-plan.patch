@@ -1,0 +1,236 @@
+diff --git a/changes/cheat-code/plan.md b/changes/cheat-code/plan.md
+new file mode 100644
+index 0000000..7523d5a
+--- /dev/null
++++ b/changes/cheat-code/plan.md
+@@ -0,0 +1,230 @@
++# Plan: a secret cheat code (`cheat-code`)
++
++## Phase 1: The rules and the signing key (no change to the API yet)
++
++- [ ] `tictactoe/game.py`: add a keyword `steals=0` to `turn`, `validate` and
++  `play`, following spec rule 4. X is to move when X count − O count ==
++  `steals`, and a valid board has X − O equal to `steals` or `steals + 1`.
++  With `steals=0`, every result, error message and the order of the checks
++  stay exactly as they are today. `outcome()` and `legal_moves()` do not
++  change.
++- [ ] `tictactoe/game.py`: add `steal(board, cell, steals) -> list[str]`. It
++  raises `IllegalMoveError` with the spec's exact messages, in the spec's
++  order: `steals` already 1 ("you have already stolen a square in this
++  game"), `cell` not a whole number 0–8 with `bool` refused ("steal must be a
++  whole number from 0 to 8"), game over ("the game is over"), not X's turn
++  under `steals` ("against the computer you play X"), cell not an `"O"`
++  ("you can only steal one of the computer's squares"). It returns a new
++  board with that cell set to `"X"` and never changes its input.
++- [ ] `tictactoe/ai.py`: add a keyword `steals=0` to
++  `choose_move(board, level, rng=None, *, steals=0)` and an argument to
++  `best_move` and `value`, so the `@cache` key includes it. Pass it to every
++  `game.turn`, `game.play` and recursive call, including Easy's check for a
++  winning move. With `steals=0` the moves must be exactly today's.
++- [ ] New `tictactoe/signing.py`, as the spec's "Game token" section
++  describes. The key is `TICTACTOE_SECRET` encoded as UTF-8 when it is set
++  and not empty, otherwise `secrets.token_bytes(32)`, made once at import.
++  This is the only module that reads `os.environ`. `sign(board, level,
++  steals)` returns `"<s>.<64 lowercase hex>"`: the HMAC-SHA256 of
++  `tictactoe-game-v1|<level>|<s>|<cells>`, with each cell written as `X`,
++  `O` or `-`. `verify(token, board, level) -> int` returns `s`. It raises
++  `IllegalMoveError("the game token does not match this game")` when the
++  token is not a `str`, does not have exactly the shape `0.`/`1.` followed
++  by 64 lowercase hex digits, or has a MAC that does not match. It compares
++  with `hmac.compare_digest`. The key never appears in a return value, an
++  error or a log.
++- [ ] `docs/architecture.md`, Modules table: describe the turn rule with
++  `steals`, `game.steal`, `ai`'s `steals` argument and the new `signing.py`.
++- [ ] Verify: `python3 -m pytest -q` passes with no test changed, and
++  `ruff check .` and `ruff format --check .` are clean. Then run a throwaway
++  `python3` script, kept outside `tests/`. (a) It gets the committed code of
++  commit `74dcd2d` with `git show 74dcd2d:tictactoe/<file>` into a temporary
++  package. For every position reachable by legal play from the empty board,
++  it checks that the new `turn`, `validate`, `play` and Hard
++  `choose_move(..., steals=0)` match the old ones. It also checks that a set
++  of impossible boards gets the same error message from both. (b) On the
++  spec's board `X O _ / _ O _ / _ _ X`: `steal(…, 4, 0)` wins on the diagonal
++  0-4-8. `steal(…, 1, 0)` gives `turn(…, steals=1) == "O"`, and Hard
++  `choose_move(…, steals=1)` answers 2. Each `steal` error from task 2 has
++  its exact message, and the input board is unchanged. (c) For
++  `sign`/`verify`: a round trip returns `s`. A different board, a different
++  level, a flipped `0.`/`1.` prefix, one changed hex digit, an uppercase MAC,
++  a non-string and an empty string are all rejected. With
++  `TICTACTOE_SECRET=abc` set, two separate processes make the same token.
++  Without it, two processes make different tokens.
++
++## Phase 2: The move API judges steals
++
++- [ ] `tictactoe/server.py` `handle_move`: read the optional `game` and
++  `steal`. A request with neither must go through exactly today's checks in
++  today's order, with `steals=0`. A request that has either one is checked
++  in this order. First, today's checks of the body, the board's shape, the
++  mode and the level. Then the token, when `game` is present (verify it
++  against `board` and `level`, which gives `s`). Then "send either cell or
++  steal, not both", "you can only steal from the computer" (friend mode),
++  "a steal needs the game token from the last answer", and last
++  `game.validate(board, steals=s)` with the X-to-move check under `s`. After
++  that come `game.steal`'s own errors, or `game.play`'s errors for a normal
++  move. Keep the signature `handle_move(request)`.
++- [ ] `handle_move`: play the steal (`game.steal`, after which `s` becomes 1)
++  or the move (`game.play(..., steals=s)`). If the game goes on in computer
++  mode, play the computer's reply with
++  `ai.choose_move(board, level, steals=s)`. Pass `steals` to
++  `describe(board, steals)` so that `turn` is right after a steal.
++- [ ] Add the four new answer fields to every `200` answer, in every mode.
++  `game`: a new token only in computer mode while `playing`. It keeps the
++  request token's `s` (or 1 after the steal), or has `s = 0` when there was
++  no token and the request's board was empty. Otherwise it is `null`.
++  `stealable`: the O cells when the new token has `s = 0`, the game is
++  `playing` and X is to move, otherwise `[]`. `steal_used`: `s == 1`.
++  `assisted`: `won` and `winner == "X"` and `steal_used`. Tokenless answers
++  keep every old field with the same value. In `Handler.do_POST`, after a
++  successful steal, write one line through `self.log_message`:
++  `steal level=<level> cell=<n> status=<status> assisted=<true|false>`, and
++  log nothing else: no token, no key, no board.
++- [ ] `docs/architecture.md`, "The move API": add `steal` and `game` to the
++  request, add `game`, `stealable`, `steal_used` and `assisted` to the
++  answer, and describe the game token and why the server can stay stateless
++  with it, the turn rule after a steal, every new error and the steal log
++  line.
++- [ ] Verify: `python3 -m pytest -q` passes with no test changed, and ruff
++  is clean. Then run a throwaway `python3` script that calls `handle_move`
++  directly. It plays the spec's examples, sending each answer's `game` back
++  with the next request: first move, second move, steal 4 (an assisted win
++  with `game` `null`), and steal 1 from the same position (computer replies
++  2, token starts with `1.`, `stealable == []`). A second steal with the
++  `1.` token gets 400 "already stolen". Every new error in the spec's table
++  gets its exact message, including the order when two errors apply at
++  once. Friend-mode answers have the four fields with their empty values, a
++  tokenless mid-game board gets `game: null`, and steals work at Easy too.
++  For every reachable X-to-move board (Hard and friend mode) and for the
++  bad requests in `tests/test_server.py`, the answer without its four new
++  keys (or the error) equals what the code of commit `74dcd2d` answers
++  (loaded with `git show` as in Phase 1).
++- [ ] Verify the real server: start `python3 -m tictactoe --port 0` as a
++  process, with stdout and stderr captured, read the URL from its first
++  line, and drive it with `urllib`. `/health` answers `200 ok`. A whole
++  game against Hard steals and wins with `assisted: true`, and a second
++  steal from a kept token answers 400. A whole tokenless game against Hard
++  ends without an X win. Stop the server in a `finally`, then check that
++  stderr holds exactly one `steal level=hard …` line per successful steal
++  and never contains a token's hex. Start two servers one after the other
++  with the same `TICTACTOE_SECRET`: a token from the first is accepted by
++  the second.
++
++## Phase 3: The page carries the token (nothing visible changes)
++
++- [ ] `tictactoe/static/app.js`: `newGame()` starts with `game: null`,
++  `stealable: []`, `steal_used: false` and `assisted: false` in `state`.
++  Every move request sends `game: state.game` (or leaves it out when it is
++  `null`). Errors (for example after a development restart: "the game token
++  does not match this game") show in the status line as today, and New game
++  recovers.
++- [ ] `tictactoe/static/index.html`: add the cheat panel under the status
++  line, with `hidden`: a `<button type="button">` "Steal a square" with
++  `aria-pressed="false"` and a text paragraph, each with an `id` for
++  `app.js`. Add a fourth score column ("With help", `id="score-help"`),
++  whose `th` and `td` are both `hidden`. Change no other label or text.
++- [ ] `tictactoe/static/style.css`: a `.cell.stealable` dashed outline that
++  does not rely on colour alone and is visible in light and dark mode, the
++  panel's layout, a steal button at least 44 px tall, and a four-column
++  score table that fits 320 px wide with no horizontal scroll. Hidden
++  elements stay hidden, so the page looks exactly as it does today.
++- [ ] Verify: `python3 -m pytest -q` passes, and ruff is clean. Start
++  `python3 -m tictactoe --port 0` and, with `urllib`, check that `/`,
++  `/static/app.js` and `/static/style.css` answer 200 and that in the HTML
++  the panel and both "With help" cells carry `hidden`. Then replay the
++  requests `app.js` now sends (an empty board without `game`, then each
++  answer's `game` sent back) through whole games against Easy and Hard and
++  in friend mode: every answer is 200 and the games end normally. Stop the
++  server in a `finally`.
++
++## Phase 4: The cheat on the page
++
++- [ ] `app.js`, the code: a `keydown` listener on `document` keeps the last
++  10 keys and compares them with
++  `ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft ArrowRight ArrowLeft ArrowRight b a`,
++  with B and A in either case. It ignores events with Ctrl, Alt or Meta
++  held, `event.repeat`, and keys typed while a `<select>` has the focus. It
++  unlocks only when the mode is `computer` and `state.status` is
++  `playing`, and otherwise does nothing at all. New game, a mode change or a
++  level change locks it again and clears the keys. On unlock, the status
++  line says "Cheat unlocked! Once this game, you may steal one of the
++  computer's squares." The board's own arrow handling does not change.
++- [ ] `app.js`, the panel: unlocking shows the panel and the "With help"
++  column. The column stays visible until the page is reloaded. The button is
++  `aria-disabled="true"` (still focusable) when `state.stealable` is empty.
++  The panel text is then "No O to steal yet" when `steal_used` is false, or
++  "Steal used" when it is true. Otherwise it is "Press Steal, then choose an
++  O. Esc cancels."
++- [ ] `app.js`, steal mode: the button (click, Enter, Space) turns steal
++  mode on only when `stealable` is not empty. It sets `aria-pressed`, says
++  "Steal: choose one of the computer's squares." and moves the focus to the
++  lowest stealable square, using the roving `tabindex`. In steal mode, only
++  the squares in `state.stealable` are `aria-disabled="false"` with class
++  `stealable` and the label suffix ", can be stolen". Choosing one sends
++  `{board, steal, mode, level, game}`. Steal mode ends when the answer
++  arrives, or with Esc or a second press of the button, which puts the
++  focus back on the button. Outside steal mode, an O does nothing, as
++  today.
++- [ ] `app.js`, after a steal: the status line says "You stole row R,
++  column C." when the game goes on, and the usual text comes back on the
++  next render. A win with `assisted: true` shows "You won... with a little
++  help", adds 1 to "With help" and adds nothing to X wins. O wins and draws
++  count as today. `app.js` uses `stealable`, `steal_used` and `assisted`
++  exactly as the server sends them, and never works out a rule itself.
++- [ ] `docs/architecture.md`, "The page": the code and how the page
++  recognises it, locking per game, the panel, steal mode and its keyboard
++  and screen-reader behaviour, and the "With help" score.
++- [ ] Verify: `python3 -m pytest -q` passes, and ruff is clean. A throwaway
++  `python3` check reads the served `app.js`. It must contain the 10-key
++  code, send `steal` and `game`, and read `stealable` and `assisted`. It
++  must hold no rule: no winning-line triples, no counting of X and O, and
++  no working out of which squares can be stolen. Then start
++  `python3 -m tictactoe --port 0` and, with `urllib`, send the exact request
++  body `app.js` builds for a steal: follow a Hard game to an assisted win
++  and an Easy game to a steal that does not win. Also play one tokenless
++  game, to show the old game is unchanged. Stop the server in a `finally`.
++  Everything that only a browser can show goes to the preview.
++
++## For the preview
++
++- Before the code, the page looks and behaves exactly as today: there is no
++  steal button, no hint, no "With help" column, and no change to labels or
++  status texts. A screen reader announces nothing new.
++- Before the code, clicking, tapping, or pressing Enter or Space on an O
++  does nothing.
++- Typing ↑ ↑ ↓ ↓ ← → ← → B A during a game against the computer (Easy and
++  Hard) unlocks the steal: the panel and the "With help" column appear, and
++  "Cheat unlocked! …" is announced.
++- Typing it with uppercase B A works. Extra keys before the code still
++  work, for example ↑ ↑ ↑ ↓ ↓ …. A wrong key in the middle does not unlock.
++  Keys held down (auto-repeat) or typed with Ctrl, Alt or Meta are ignored.
++- Typing the code with the focus on the board only moves the focus around
++  and never plays a move. Typing it with the focus on a `<select>` does not
++  unlock.
++- In friend mode, and after a game has ended, the code does nothing: no
++  message and no hint.
++- Before the computer's first move, the button looks disabled and the panel
++  says "No O to steal yet". After a steal, it says "Steal used" and the
++  button stays disabled-looking.
++- Steal with the mouse: press Steal, and only the O squares get the dashed
++  outline. Clicking an empty square or an X does nothing. Clicking an O
++  turns it into an X, and the computer replies.
++- Steal with the keyboard alone: Enter or Space on the button moves the
++  focus to the lowest stealable O. The arrow keys move the focus, Enter
++  steals, and Esc (or pressing the button again) cancels and puts the focus
++  back on the button.
++- A screen reader reads ", can be stolen" on stealable squares, the button's
++  pressed state, and the status messages ("Steal: choose…", "You stole row
++  R, column C.").
++- A win that used a steal shows "You won... with a little help". "With
++  help" goes up by 1 and "X wins" does not. A computer win or a draw after a
++  steal counts as today.
++- A new game, a mode change or a level change hides the steal again until
++  the code is typed again. The "With help" column stays until reload.
++- At 320 px wide, in light and dark mode, the panel and the four-column
++  score fit with no horizontal scroll, the button is at least 44 px tall,
++  and the dashed outline is clear without relying on colour.
++- A whole game without the code, in each mode and level, plays exactly as
++  before.
