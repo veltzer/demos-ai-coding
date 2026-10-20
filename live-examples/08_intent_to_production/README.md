@@ -12,8 +12,8 @@ VIEW=0 ./run.sh     # terminal only, no browser windows
 The browser carries the visuals, the terminal carries the sessions
 (`pandoc` and `xdg-open` are required):
 
-- **The pipeline**, before every stage: `pipeline.md` rendered with the
-  stages done ticked and the current one highlighted.
+- **The pipeline**, between stages: `pipeline.md` rendered with the
+  stages done ticked and the next one highlighted.
 - **Each session's prompt**, before it runs: the one line it gets and the
   tools it may use.
 - **Each artifact as it lands**: `intent.md`, `spec.md`, `plan.md`,
@@ -21,7 +21,11 @@ The browser carries the visuals, the terminal carries the sessions
 - **The game**: production version 1 at the start, the preview server
   for your sign-off, and production with the cheat at the end.
 
-The rendered pages are snapshots in the work dir's `view/`.
+Between stages every page opened carries a blue bar on top that names the
+next stage and says to press Enter in the terminal, and the terminal waits
+on a highlighted `▶ Next: ... press ENTER here` line. While a session runs, its
+prompt page says so instead. The rendered pages are snapshots in the work
+dir's `view/`.
 
 ## What happens
 

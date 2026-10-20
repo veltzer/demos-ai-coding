@@ -79,18 +79,21 @@ open_url() {
 	setsid -f xdg-open "$1" >/dev/null 2>&1 || true
 }
 
-# show_md <file.md> [title]: render a markdown file to HTML with pandoc
-# (GitHub-flavoured, code highlighted, inline <mark> kept) and open it in the
-# browser. The page is a snapshot under ${WORKDIR}/view/; run it again to
-# show a newer version of the same file.
+# show_md <file.md> [title] [note]: render a markdown file to HTML with
+# pandoc (GitHub-flavoured, code highlighted, inline <mark> kept) and open it
+# in the browser. A note becomes a bar pinned to the top of the page, for
+# telling the room what happens next. The page is a snapshot under
+# ${WORKDIR}/view/; run it again to show a newer version of the same file.
 show_md() {
-	local md="$1" title="${2:-$(basename "$1")}" html
+	local md="$1" title="${2:-$(basename "$1")}" note="${3:-}" before html
 	[[ "${VIEW:-1}" == 0 ]] && return
 	mkdir -p "${WORKDIR}/view"
 	html="${WORKDIR}/view/$(basename "${md%.md}").html"
+	before="<div class=\"source\">${md}</div>"
+	[[ -n "${note}" ]] && before="<div class=\"next\">${note}</div>${before}"
 	if pandoc --standalone --embed-resources -f gfm -t html5 \
 		--css "${LIB_DIR}/mdview.css" --metadata pagetitle="${title}" \
-		-V include-before="<div class=\"source\">${md}</div>" \
+		-V include-before="${before}" \
 		-o "${html}" "${md}" 2>/dev/null; then
 		open_url "${html}"
 	else
