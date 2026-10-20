@@ -4,7 +4,22 @@
 ./run.sh            # interactive: pauses after every phase
 ./run.sh --yes      # unattended dry run (nobody signs off the preview, so the deploy may refuse)
 PREVIEW_PORT=8087 PROD_PORT=8088 ./run.sh
+VIEW=0 ./run.sh     # terminal only, no browser windows
 ```
+
+## What the audience sees
+
+The browser carries the visuals, the terminal carries the sessions
+(`pandoc` and `xdg-open` are required):
+
+- **The pipeline**, before every stage: `pipeline.md` rendered with the
+  stages done ticked and the current one highlighted.
+- **Each artifact as it lands**: `intent.md`, `spec.md`, `plan.md`,
+  `test-report.md` and `review.md`, rendered with code highlighting.
+- **The game**: production version 1 at the start, the preview server
+  for your sign-off, and production with the cheat at the end.
+
+The rendered pages are snapshots in the work dir's `view/`.
 
 ## What happens
 

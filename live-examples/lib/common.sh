@@ -72,6 +72,32 @@ show_path() {
 	printf '\n  %s📄 %s:%s %s%s%s\n' "${BOLD}" "$1" "${RESET}" "${BOLD}${YELLOW}" "$2" "${RESET}"
 }
 
+# open_url <url-or-file>: show it in the desktop's browser, detached, so the
+# terminal keeps the stage. VIEW=0 turns all browser windows off.
+open_url() {
+	[[ "${VIEW:-1}" == 0 ]] && return
+	setsid -f xdg-open "$1" >/dev/null 2>&1 || true
+}
+
+# show_md <file.md> [title]: render a markdown file to HTML with pandoc
+# (GitHub-flavoured, code highlighted, inline <mark> kept) and open it in the
+# browser. The page is a snapshot under ${WORKDIR}/view/; run it again to
+# show a newer version of the same file.
+show_md() {
+	local md="$1" title="${2:-$(basename "$1")}" html
+	[[ "${VIEW:-1}" == 0 ]] && return
+	mkdir -p "${WORKDIR}/view"
+	html="${WORKDIR}/view/$(basename "${md%.md}").html"
+	if pandoc --standalone --embed-resources -f gfm -t html5 \
+		--css "${LIB_DIR}/mdview.css" --metadata pagetitle="${title}" \
+		-V include-before="<div class=\"source\">${md}</div>" \
+		-o "${html}" "${md}" 2>/dev/null; then
+		open_url "${html}"
+	else
+		say "(could not render ${md} with pandoc)"
+	fi
+}
+
 # copy_app <src-dir> <dest-dir> [overlay-dir...]: a fresh copy, with each
 # overlay copied on top, and a baseline commit so the AI's changes can be
 # shown with git diff afterwards.

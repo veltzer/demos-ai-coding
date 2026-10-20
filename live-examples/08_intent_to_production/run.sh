@@ -12,8 +12,13 @@
 # checks the result itself and commits it, so git log is the pipeline.
 # Production (default port 8088) stays up after the demo.
 #
+# Between phases a browser tab shows the pipeline with the current stage
+# highlighted, and each artifact (intent, spec, plan, ...) opens rendered as it
+# is written. Production and the preview open in the browser too.
+#
 # Usage: ./run.sh [--yes]     --yes runs unattended (no pauses)
 #        PREVIEW_PORT=8087 PROD_PORT=8088 ./run.sh
+#        VIEW=0 ./run.sh      no browser windows, terminal only
 
 set -euo pipefail
 
@@ -24,7 +29,7 @@ source "${HERE}/../lib/common.sh"
 case "${1:-}" in
 --yes) export YES=1 ;;
 -h | --help)
-	sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'
+	sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'
 	exit 0
 	;;
 "") ;;
@@ -34,7 +39,7 @@ case "${1:-}" in
 	;;
 esac
 
-require claude git python3 ruff curl
+require claude git python3 ruff curl pandoc xdg-open
 python3 -c 'import pytest' 2>/dev/null || {
 	echo "missing required tool: pytest (for python3 -m pytest)" >&2
 	exit 1
@@ -134,12 +139,63 @@ sign_off() {
 	show_path "the sign-off, for the reviewer" "${APP}/${CHANGE}/preview.md"
 }
 
+# The stages of the pipeline, in order, as "stage|what it leaves".
+STAGES=(
+	"Version 1 in production|the game, deployed by ops/deploy.sh"
+	"The intent|intent.md, from the business"
+	"Phase 1: Spec|spec.md"
+	"Phase 2: Plan|plan.md"
+	"Phase 3: Implement|code, docs/architecture.md"
+	"Preview (you)|preview.md, your sign-off"
+	"Phase 4: Unit tests|tests/"
+	"Phase 5: System test|tests/system/, test-report.md"
+	"Phase 6: Lint|clean code"
+	"Phase 7: Code review|review.md"
+	"Phase 8: Review fixes|ticked review.md"
+	"Phase 9: Deploy|release 2 in production"
+)
+
+# roadmap <n>: write pipeline.md with stage n highlighted as the current one
+# (n past the last stage: all done) and show it. It lives in the work dir,
+# not the app, so no session ever reads it.
+roadmap() {
+	local now="$1" i name leaves title="Pipeline: done" md="${WORKDIR}/pipeline.md"
+	((now < ${#STAGES[@]})) && title="Pipeline: ${STAGES[now]%%|*}"
+	{
+		echo "# Intent to production: where we are"
+		echo
+		echo "Change \`cheat-code\`: a secret code that lets the player steal a square."
+		echo
+		echo "| | Stage | Leaves |"
+		echo "|---|---|---|"
+		for i in "${!STAGES[@]}"; do
+			name="${STAGES[i]%%|*}"
+			leaves="${STAGES[i]#*|}"
+			if ((i < now)); then
+				echo "| ✅ | ${name} | ${leaves} |"
+			elif ((i == now)); then
+				echo "| ▶ | <mark>${name} ← we are here</mark> | <mark>${leaves}</mark> |"
+			else
+				echo "| ⬜ | ${name} | ${leaves} |"
+			fi
+		done
+		echo
+		if ((now >= ${#STAGES[@]})); then
+			echo "**Done:** every stage ran; production now serves release 2."
+		else
+			echo "**Now:** ${STAGES[now]%%|*}"
+		fi
+	} >"${md}"
+	show_md "${md}" "${title}"
+}
+
 findings() {
 	grep -E '^[[:space:]]*- \[[ xX]\] \*\*' "${APP}/${CHANGE}/review.md" | sed 's/^[[:space:]]*/    /' || true
 }
 
 # ── 0. where we start ────────────────────────────────────────────────────────
 banner "Where we start: a working game, with its docs"
+roadmap 0
 (cd "${APP}" && find . -path ./.git -prune -o -type f -print | sort | sed 's|^\./|    |')
 echo
 run_tests "tests"
@@ -153,15 +209,18 @@ else
 	exit 1
 fi
 show_path "production, version 1 - try to beat Hard" "${PROD_URL}/"
+open_url "${PROD_URL}/"
 echo
 pause "for the change request"
 
 # ── the intent ───────────────────────────────────────────────────────────────
 banner "The business hands over an intent"
+roadmap 1
 mkdir -p "${APP}/${CHANGE}"
 cp "${HERE}/intent.md" "${APP}/${CHANGE}/intent.md"
 snapshot "${APP}" 0-intent
 show_path "the intent" "${APP}/${CHANGE}/intent.md"
+show_md "${APP}/${CHANGE}/intent.md" "intent.md"
 echo
 sed -n '/^## What we want/,/^## How we will know/p' "${APP}/${CHANGE}/intent.md" | sed '$d' | sed 's/^/    /'
 say "Business language only: no API, no modules, no tests. Nine phases turn it"
@@ -169,22 +228,27 @@ say "into a release. Every prompt is one line: docs/process.md carries the rest.
 pause "to write the spec"
 
 # ── 1. spec ──────────────────────────────────────────────────────────────────
+roadmap 2
 phase 1-spec "Phase 1: intent -> spec" "$(prompt_for "1 (Spec)")" "${EDIT_TOOLS[@]}"
 need "${CHANGE}/spec.md"
 show_path "the design" "${APP}/${CHANGE}/spec.md"
+show_md "${APP}/${CHANGE}/spec.md" "spec.md"
 grep -E '^#{1,3} ' "${APP}/${CHANGE}/spec.md" | sed 's/^/    /' || true
 check "no code changed yet" git diff --quiet 0-intent 1-spec -- tictactoe tests || true
 pause "to plan the implementation"
 
 # ── 2. plan ──────────────────────────────────────────────────────────────────
+roadmap 3
 phase 2-plan "Phase 2: spec -> plan" "$(prompt_for "2 (Plan)")" "${EDIT_TOOLS[@]}"
 need "${CHANGE}/plan.md"
 show_path "the plan - open it and watch the boxes tick" "${APP}/${CHANGE}/plan.md"
+show_md "${APP}/${CHANGE}/plan.md" "plan.md"
 echo
 progress
 pause "to implement it, one plan phase per session"
 
 # ── 3. implement ─────────────────────────────────────────────────────────────
+roadmap 4
 read -r ticked total < <(progress --summary)
 sessions=0
 while ((ticked < total)); do
@@ -209,6 +273,7 @@ echo
 run_tests "the existing tests"
 git -C "${APP}" diff --stat 2-plan "${IMPLEMENTED}" -- tictactoe docs | sed 's/^/    /'
 
+roadmap 5
 banner "First look: a preview server (production still runs version 1)"
 (cd "${APP}" && exec python3 -m tictactoe --port "${PREVIEW_PORT}" >"${WORKDIR}/preview.log" 2>&1) &
 PREVIEW_PID=$!
@@ -218,6 +283,7 @@ for _ in $(seq 50); do
 done
 if check "GET /health on the preview server" curl -fsS --max-time 1 "http://127.0.0.1:${PREVIEW_PORT}/health"; then
 	show_path "the preview" "http://127.0.0.1:${PREVIEW_PORT}/"
+	open_url "http://127.0.0.1:${PREVIEW_PORT}/"
 	echo
 	say "Start a game against Hard, click into the page and type: ↑ ↑ ↓ ↓ ← → ← → B A"
 	say "It runs. Is it right? Nothing new has been tested yet - that is the next phase."
@@ -234,6 +300,7 @@ stop_preview
 sign_off "${verdict}"
 
 # ── 4. unit tests ────────────────────────────────────────────────────────────
+roadmap 6
 phase 4-unit-tests "Phase 4: unit tests" "$(prompt_for "4 (Unit tests)")" "${EDIT_TOOLS[@]}"
 echo
 run_tests "whole suite"
@@ -242,14 +309,17 @@ say "(any tictactoe/ lines above are code the tests forced to change: bugs caugh
 pause "to test the running system"
 
 # ── 5. system test ───────────────────────────────────────────────────────────
+roadmap 7
 phase 5-system-test "Phase 5: system test over HTTP" "$(prompt_for "5 (System test)")" "${EDIT_TOOLS[@]}"
 need "${CHANGE}/test-report.md"
 echo
 run_tests "whole suite"
 show_path "the test report" "${APP}/${CHANGE}/test-report.md"
+show_md "${APP}/${CHANGE}/test-report.md" "test-report.md"
 pause "to lint"
 
 # ── 6. lint ──────────────────────────────────────────────────────────────────
+roadmap 8
 banner "Before linting"
 check "ruff check" ruff check . || true
 check "ruff format --check" ruff format --check . || true
@@ -263,6 +333,7 @@ run_tests "tests still pass"
 pause "for the code review"
 
 # ── 7. review ────────────────────────────────────────────────────────────────
+roadmap 9
 phase 7-review "Phase 7: code review (a fresh reviewer, no code changes)" \
 	"$(prompt_for "7 (Code review)")" "${REVIEW_TOOLS[@]}"
 need "${CHANGE}/review.md"
@@ -271,9 +342,11 @@ findings
 echo
 check "the reviewer changed no code" git diff --quiet 6-lint 7-review -- tictactoe tests docs || true
 show_path "the review" "${APP}/${CHANGE}/review.md"
+show_md "${APP}/${CHANGE}/review.md" "review.md"
 pause "to fix the findings"
 
 # ── 8. review fixes ──────────────────────────────────────────────────────────
+roadmap 10
 phase 8-fixes "Phase 8: fix the review findings" "$(prompt_for "8 (Review fixes)")" "${EDIT_TOOLS[@]}"
 echo
 findings
@@ -282,6 +355,7 @@ run_tests "whole suite"
 pause "to deploy to production"
 
 # ── 9. deploy ────────────────────────────────────────────────────────────────
+roadmap 11
 phase 9-deploy "Phase 9: deploy to production" "$(prompt_for "9 (Deploy)")" "${DEPLOY_TOOLS[@]}"
 echo
 check "production: $(cd "${APP}" && ops/deploy.sh --status)" \
@@ -289,10 +363,12 @@ check "production: $(cd "${APP}" && ops/deploy.sh --status)" \
 say "releases (the first is version 1, kept for rollback):"
 find "${WORKDIR}/production/releases" -mindepth 1 -maxdepth 1 -printf '    %f\n' 2>/dev/null | sort || true
 show_path "production, with the cheat - ↑ ↑ ↓ ↓ ← → ← → B A" "${PROD_URL}/"
+open_url "${PROD_URL}/"
 pause "for the summary"
 
 # ── summary ──────────────────────────────────────────────────────────────────
 banner "The pipeline"
+roadmap "${#STAGES[@]}"
 git -C "${APP}" log --reverse --format='    %s' baseline..HEAD
 echo
 git -C "${APP}" diff --stat baseline HEAD | tail -n 1 | sed 's/^/   /'
