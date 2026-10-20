@@ -5,7 +5,22 @@
 ./run.sh --yes      # unattended dry run (nobody signs off the preview, so the deploy may refuse)
 PREVIEW_PORT=8087 PROD_PORT=8088 ./run.sh
 VIEW=0 ./run.sh     # terminal only, no browser windows
+./run.sh --with-solution   # no AI: replay a recorded run from solution/
 ```
+
+## A recorded solution
+
+`solution/` holds one finished run, for when time or the network is short:
+
+- `cheat-code/`: the artifacts (`spec.md`, `plan.md`, `test-report.md`,
+  `review.md`, ...) as that run ended, ready to open and show.
+- `change.diff`: the whole code change.
+- `<phase>.patch` and `<phase>.jsonl`: each session's change and event log.
+  `./run.sh --with-solution` replays the log on screen and applies the change
+  instead of calling the AI. The checks, your preview and the real deploy
+  still run.
+
+Record a new one with `./run.sh`, then `./save_solution.sh`.
 
 ## What the audience sees
 

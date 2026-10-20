@@ -16,7 +16,10 @@
 # highlighted, each session's prompt opens as a page before it runs, and each
 # artifact (intent, spec, plan, ...) opens rendered as it is written. Production and the preview open in the browser too.
 #
-# Usage: ./run.sh [--yes]     --yes runs unattended (no pauses)
+# Usage: ./run.sh [--yes] [--with-solution]
+#          --yes              runs unattended (no pauses)
+#          --with-solution    no AI: every session is replayed from solution/
+#                             (recorded by save_solution.sh), fast and offline
 #        PREVIEW_PORT=8087 PROD_PORT=8088 ./run.sh
 #        VIEW=0 ./run.sh      no browser windows, terminal only
 
@@ -26,20 +29,30 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=../lib/common.sh
 source "${HERE}/../lib/common.sh"
 
-case "${1:-}" in
---yes) export YES=1 ;;
--h | --help)
-	sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'
-	exit 0
-	;;
-"") ;;
-*)
-	echo "unknown option: $1 (try --help)" >&2
-	exit 2
-	;;
-esac
-
-require claude git python3 ruff curl pandoc xdg-open
+SOLUTION=""
+for arg in "$@"; do
+	case "${arg}" in
+	--yes) export YES=1 ;;
+	--with-solution) SOLUTION="${HERE}/solution" ;;
+	-h | --help)
+		sed -n '2,24p' "$0" | sed 's/^# \{0,1\}//'
+		exit 0
+		;;
+	*)
+		echo "unknown option: ${arg} (try --help)" >&2
+		exit 2
+		;;
+	esac
+done
+if [[ -n "${SOLUTION}" ]]; then
+	[[ -f "${SOLUTION}/2-plan.jsonl" ]] || {
+		echo "no recorded solution in ${SOLUTION} - see save_solution.sh" >&2
+		exit 1
+	}
+else
+	require claude
+fi
+require git python3 ruff curl pandoc xdg-open
 python3 -c 'import pytest' 2>/dev/null || {
 	echo "missing required tool: pytest (for python3 -m pytest)" >&2
 	exit 1
@@ -83,14 +96,44 @@ need() {
 }
 progress() { python3 "${LIB_DIR}/checklist.py" "${APP}/${CHANGE}/plan.md" "$@"; }
 
-# phase <key> <title> <prompt> <tool...>: one fresh session, then a commit
+# phase <key> <title> <prompt> <tool...>: one fresh session, then a commit.
+# With --with-solution the session is the recorded one: its log replays and
+# its change is applied, no AI involved.
 phase() {
 	local key="$1" title="$2" prompt="$3"
 	shift 3
 	banner "${title}"
 	prompt_md "${key}" "${title}" "${prompt}" "$@"
-	run_claude "${APP}" "${WORKDIR}/${key}.json" "${prompt}" --allowedTools "$@"
+	if [[ -n "${SOLUTION}" ]]; then
+		replay_phase "${key}" "${prompt}"
+	else
+		run_claude "${APP}" "${WORKDIR}/${key}.json" "${prompt}" --allowedTools "$@"
+	fi
 	snapshot "${APP}" "${key}"
+}
+
+# replay_phase <key> <prompt>: show the prompt, replay the recorded session
+# log, and apply the change it made. Phase 9's change is a deploy, which
+# happens outside the repository, so it is run for real.
+replay_phase() {
+	local key="$1" log="${SOLUTION}/$1.jsonl" patch="${SOLUTION}/$1.patch"
+	[[ -f "${log}" ]] || {
+		bad "the solution has no ${key} - record it again with save_solution.sh"
+		exit 1
+	}
+	printf '%s\n' "$2" >"${WORKDIR}/${key}.prompt"
+	show_prompt "${APP}" "${WORKDIR}/${key}.prompt"
+	say "  (replayed from solution/${key}.jsonl - no AI in this run)"
+	sed "s|@APP@|${APP}|g" "${log}" | (cd "${APP}" && python3 "${LIB_DIR}/stream.py" --stats "${WORKDIR}/${key}.json")
+	[[ -s "${patch}" ]] && git -C "${APP}" apply --binary --whitespace=nowarn "${patch}"
+	if [[ "${key}" == 9-deploy ]]; then
+		if (cd "${APP}" && ops/deploy.sh >"${WORKDIR}/deploy-v2.log" 2>&1); then
+			ok "$(grep DEPLOYED "${WORKDIR}/deploy-v2.log")"
+		else
+			bad "ops/deploy.sh refused or failed"
+			tail -n 15 "${WORKDIR}/deploy-v2.log" | sed 's/^/      /'
+		fi
+	fi
 }
 
 # prompt_md <key> <title> <prompt> <tool...>: the session's whole prompt, and

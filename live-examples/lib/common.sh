@@ -145,7 +145,8 @@ show_prompt() {
 # "@<file>" is read from that file, for prompts too big for one argument.
 # Only project settings are loaded so the presenter's personal CLAUDE.md,
 # memory and hooks do not leak into the demo. claude's stderr (auth notices
-# and the like) goes to <stats>.stderr to keep the stage clean.
+# and the like) goes to <stats>.stderr to keep the stage clean, and the raw
+# event stream to <stats>.jsonl, so a session can be replayed later.
 run_claude() {
 	local dir="$1" stats="$2" prompt="$3"
 	shift 3
@@ -165,6 +166,7 @@ run_claude() {
 			--setting-sources project \
 			--permission-mode acceptEdits \
 			"${model_args[@]}" "$@" <"${input}" 2>>"${stats%.json}.stderr" |
+			tee "${stats%.json}.jsonl" |
 			python3 "${LIB_DIR}/stream.py" --stats "${stats}"
 	)
 }
