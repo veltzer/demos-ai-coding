@@ -14,6 +14,8 @@ The browser carries the visuals, the terminal carries the sessions
 
 - **The pipeline**, before every stage: `pipeline.md` rendered with the
   stages done ticked and the current one highlighted.
+- **Each session's prompt**, before it runs: the one line it gets and the
+  tools it may use.
 - **Each artifact as it lands**: `intent.md`, `spec.md`, `plan.md`,
   `test-report.md` and `review.md`, rendered with code highlighting.
 - **The game**: production version 1 at the start, the preview server

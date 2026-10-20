@@ -13,8 +13,8 @@
 # Production (default port 8088) stays up after the demo.
 #
 # Between phases a browser tab shows the pipeline with the current stage
-# highlighted, and each artifact (intent, spec, plan, ...) opens rendered as it
-# is written. Production and the preview open in the browser too.
+# highlighted, each session's prompt opens as a page before it runs, and each
+# artifact (intent, spec, plan, ...) opens rendered as it is written. Production and the preview open in the browser too.
 #
 # Usage: ./run.sh [--yes]     --yes runs unattended (no pauses)
 #        PREVIEW_PORT=8087 PROD_PORT=8088 ./run.sh
@@ -87,8 +87,33 @@ phase() {
 	local key="$1" title="$2" prompt="$3"
 	shift 3
 	banner "${title}"
+	prompt_md "${key}" "${title}" "${prompt}" "$@"
 	run_claude "${APP}" "${WORKDIR}/${key}.json" "${prompt}" --allowedTools "$@"
 	snapshot "${APP}" "${key}"
+}
+
+# prompt_md <key> <title> <prompt> <tool...>: the session's whole prompt, and
+# what it may touch, as a page in the browser
+prompt_md() {
+	local key="$1" title="$2" prompt="$3" tool md="${WORKDIR}/prompt-$1.md"
+	shift 3
+	{
+		echo "# Prompt to Claude: ${title}"
+		echo
+		echo "A fresh session in \`app/\`. This is its whole prompt:"
+		echo
+		echo '```text'
+		echo "${prompt}"
+		echo '```'
+		echo
+		echo "Everything else comes from the repository: \`CLAUDE.md\`,"
+		echo "\`docs/process.md\` and the files in \`${CHANGE}/\`."
+		echo
+		echo "## Tools it may use"
+		echo
+		for tool in "$@"; do echo "- \`${tool}\`"; done
+	} >"${md}"
+	show_md "${md}" "Prompt: ${title}"
 }
 
 prompt_for() { echo "Do phase $1 of docs/process.md for the change in ${CHANGE}/."; }
