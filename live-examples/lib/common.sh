@@ -161,7 +161,7 @@ run_claude() {
 	(
 		cd "${dir}" || exit
 		claude -p \
-			--output-format stream-json --verbose \
+			--output-format stream-json --verbose --include-partial-messages \
 			--setting-sources project \
 			--permission-mode acceptEdits \
 			"${model_args[@]}" "$@" <"${input}" 2>>"${stats%.json}.stderr" |

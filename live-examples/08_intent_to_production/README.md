@@ -16,6 +16,11 @@ The browser carries the visuals, the terminal carries the sessions
   stages done ticked and the next one highlighted.
 - **Each session's prompt**, before it runs: the one line it gets and the
   tools it may use.
+- **Whether Claude is working**: while a session runs, the terminal's
+  bottom line says what it is doing (thinking, writing, preparing or
+  running a tool), for how long, and how long since its last sign of life.
+  It turns yellow after a minute of silence and red after five, when it may
+  be stuck (Ctrl-C stops the demo).
 - **Each artifact as it lands**: `intent.md`, `spec.md`, `plan.md`,
   `test-report.md` and `review.md`, rendered with code highlighting.
 - **The game**: production version 1 at the start, the preview server
