@@ -58,6 +58,8 @@ py_dirs = ["examples", "exercises"]
 # all of it, which is why those two exercises never produced a PDF under the
 # Makefile. xelatex is Unicode-native and renders them as written.
 [processor.generator.pandoc.exercises]
+# rspandoc, the Rust replacement: it takes pandoc's command line
+command = "rspandoc"
 src_dirs = "${doc_dirs}"
 formats = ["html", "pdf", "docx"]
 pdf_engine = "xelatex"
