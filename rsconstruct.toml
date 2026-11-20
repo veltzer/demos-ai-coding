@@ -63,6 +63,10 @@ command = "rspandoc"
 src_dirs = "${doc_dirs}"
 formats = ["html", "pdf", "docx"]
 pdf_engine = "xelatex"
+# The docx takes its look from the shared-themes submodule's reference
+# document, like the syllabi; pandoc's built-in styles are the bare default.
+args = ["--reference-doc=shared/shared-themes/docx/azure.docx"]
+dep_inputs = ["shared/shared-themes/docx/azure.docx"]
 
 # The Makefile also ran a pure-ASCII check (grep -P "[^\x00-\x7F]") on every
 # exercise. It existed to keep the pdflatex path working; with xelatex doing
