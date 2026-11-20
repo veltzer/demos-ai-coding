@@ -10,9 +10,9 @@ sha256 = "8ac22aebac95651eb64eff44d4abafeeee5bf606e6c943e3c6648de530c73255"
 executable_sha256 = "351e9f2555d8f37d86a35ea7268df146b102d069bdfbd45b9d9a9b61a81fa5a3"
 
 [binary.rspandoc]
-url = "https://github.com/veltzer/rspandoc/releases/download/v0.1.13/rspandoc-linux-x86_64"
-sha256 = "0d6247f2ca8fac5b26d800c0f259b2e09181d3b616585d86c07febb2479b8dd3"
-executable_sha256 = "0d6247f2ca8fac5b26d800c0f259b2e09181d3b616585d86c07febb2479b8dd3"
+url = "https://github.com/veltzer/rspandoc/releases/download/v0.1.14/rspandoc-linux-x86_64"
+sha256 = "fb99b3621fcb15e01e6390c60a178eb8c1972bf22f45500112da119ed5b39453"
+executable_sha256 = "fb99b3621fcb15e01e6390c60a178eb8c1972bf22f45500112da119ed5b39453"
 
 [binary.rumdl]
 url = "https://github.com/rvben/rumdl/releases/download/v0.2.66/rumdl-v0.2.66-x86_64-unknown-linux-gnu.tar.gz"
