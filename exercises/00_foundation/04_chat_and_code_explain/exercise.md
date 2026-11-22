@@ -5,6 +5,7 @@
 Learn to use Copilot Chat for code explanations, debugging, and optimization suggestions.
 
 ## Instructions
+
 1. Create a new Python file called `data_processor.py`
 1. Write the initial code provided below
 1. Use Copilot Chat to understand, improve, and extend the code
@@ -52,6 +53,7 @@ print(result)
 ### 1. Code Explanation
 
 Ask Copilot Chat:
+
 - "Explain what this process_grades function does"
 - "What is the purpose of the grade validation check?"
 - "Why do we check if count > 0 before calculating average?"
@@ -59,6 +61,7 @@ Ask Copilot Chat:
 ### 2. Code Improvement
 
 Ask Copilot Chat:
+
 - "How can I make this code more readable?"
 - "Are there any potential bugs in this code?"
 - "How can I optimize this function?"
@@ -66,6 +69,7 @@ Ask Copilot Chat:
 ### 3. Feature Extension
 
 Ask Copilot Chat:
+
 - "How can I add grade distribution (A, B, C, D, F) to this function?"
 - "How would I modify this to handle letter grades?"
 - "Can you help me add input validation?"
@@ -73,17 +77,20 @@ Ask Copilot Chat:
 ### 4. Testing
 
 Ask Copilot Chat:
+
 - "Generate unit tests for this function"
 - "What edge cases should I test?"
 - "Create test data that would break this function"
 
 ## What You'll Learn
+
 - How to effectively communicate with Copilot Chat
 - Using Chat for code review and improvement suggestions
 - Getting explanations for complex code logic
 - Generating test cases and documentation
 
 ## Success Criteria
+
 - [ ] You understand what the original code does
 - [ ] You've implemented at least one improvement suggested by Chat
 - [ ] You've added new features with Chat's help
@@ -92,6 +99,7 @@ Ask Copilot Chat:
 ## Advanced Challenge
 
 Ask Copilot Chat to help you:
+
 1. Convert the function to use classes instead of dictionaries
 2. Add logging to track function usage
 3. Create a command-line interface for the grade processor
@@ -99,6 +107,7 @@ Ask Copilot Chat to help you:
 ## Questions to Explore
 
 Try asking these questions in Copilot Chat:
+
 - "What are the time and space complexity of this function?"
 - "How would this code perform with 10,000 grades?"
 - "What would happen if someone passes a list with non-numeric values?"

@@ -5,12 +5,14 @@
 Learn how to use GitHub Copilot to create a complete, production-ready blog on GitHub Pages from scratch, including theme selection, customization, content management, and deployment automation.
 
 ## Prerequisites
+
 - GitHub account (create one at github.com if needed)
 - Basic Git knowledge
 - Text editor with Copilot installed
 - Command line access
 
 ## Instructions
+
 1. Create your GitHub Pages repository
 1. Use Copilot to guide you through setup
 1. Build and customize your blog
@@ -755,6 +757,7 @@ Create `overrides/blog-index.html`:
 | GitHub Pages | Needs Actions | Native support |
 
 ## What You'll Learn
+
 - Static site generation concepts
 - GitHub Pages deployment
 - Jekyll/Hugo fundamentals
@@ -765,6 +768,7 @@ Create `overrides/blog-index.html`:
 - Custom theme development
 
 ## Success Criteria
+
 - [ ] Repository created with correct naming
 - [ ] GitHub Pages is enabled and accessible
 - [ ] Blog has custom styling and layout
@@ -852,6 +856,7 @@ url: "https://username.github.io"
 ## Performance Optimization
 
 Ask Copilot to help with:
+
 1. Image optimization and lazy loading
 1. CSS/JS minification
 1. Caching strategies
@@ -861,6 +866,7 @@ Ask Copilot to help with:
 ## Maintenance Tasks
 
 Regular tasks to keep your blog running:
+
 1. Update dependencies
 1. Check broken links
 1. Review analytics
@@ -876,6 +882,7 @@ Regular tasks to keep your blog running:
 1. **Resource Library**: Downloadable content
 
 ## Reflection Questions
+
 1. What challenges did you face without explicit instructions?
 1. How did Copilot help you discover solutions?
 1. What would you do differently next time?
@@ -883,6 +890,7 @@ Regular tasks to keep your blog running:
 1. How does your blog compare to professional blogs?
 
 ## Next Steps
+
 1. Write weekly blog posts
 1. Engage with readers through comments
 1. Share posts on social media
@@ -890,6 +898,7 @@ Regular tasks to keep your blog running:
 1. Monitor analytics and iterate
 
 ## Resources for Inspiration
+
 - GitHub Pages documentation
 - Jekyll themes gallery
 - Successful developer blogs
@@ -899,6 +908,7 @@ Regular tasks to keep your blog running:
 ## Expected Learning Outcomes
 
 By completing this exercise, you will:
+
 - Have a live, professional blog
 - Understand static site generation
 - Know GitHub Pages inside out

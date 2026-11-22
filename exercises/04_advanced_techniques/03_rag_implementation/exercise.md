@@ -7,11 +7,13 @@ Learn how to implement Retrieval-Augmented Generation (RAG) systems to enhance A
 ## What is RAG?
 
 RAG combines:
+
 - **Retrieval**: Finding relevant documents from a knowledge base
 - **Augmentation**: Adding retrieved context to AI prompts
 - **Generation**: Producing responses based on retrieved information
 
 Benefits:
+
 - **Accuracy**: Responses grounded in actual documents
 - **Citations**: Can reference sources
 - **Up-to-date**: Knowledge base can be updated without retraining
@@ -19,6 +21,7 @@ Benefits:
 - **Reduced hallucination**: AI relies on retrieved facts
 
 ## Prerequisites
+
 - Node.js 18+ installed
 - GitHub Copilot configured
 - Basic understanding of vector search

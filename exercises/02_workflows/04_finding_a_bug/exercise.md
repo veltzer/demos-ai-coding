@@ -5,6 +5,7 @@
 Learn how to use GitHub Copilot to analyze existing codebases, identify potential bugs, understand code architecture, and propose fixes for real-world issues.
 
 ## Instructions
+
 1. Clone or access the pytconf repository
 1. Use Copilot to explore the codebase systematically
 1. Identify potential bugs and code quality issues
@@ -188,6 +189,7 @@ def test_bug_fix():
 ```
 
 ## What You'll Learn
+
 - How to systematically analyze unfamiliar codebases
 - Common bug patterns in Python applications
 - Effective use of AI for code review
@@ -196,6 +198,7 @@ def test_bug_fix():
 - Code quality assessment techniques
 
 ## Success Criteria
+
 - [ ] Found at least 3 potential bugs or issues
 - [ ] Properly documented each bug with impact analysis
 - [ ] Proposed fixes for identified issues
@@ -299,24 +302,28 @@ Search for threading problems:
 ## Bug Categories to Explore
 
 ### Logic Errors
+
 - Off-by-one errors
 - Incorrect boolean logic
 - Wrong operator usage
 - Flawed algorithms
 
 ### Data Handling
+
 - Null/None handling
 - Type conversion errors
 - Data validation gaps
 - Boundary conditions
 
 ### API Design Issues
+
 - Inconsistent interfaces
 - Breaking changes
 - Poor error messages
 - Missing functionality
 
 ### Configuration Problems
+
 - Hard-coded values
 - Environment-specific bugs
 - Missing configuration options
@@ -325,6 +332,7 @@ Search for threading problems:
 ## Code Quality Metrics
 
 Ask Copilot to evaluate:
+
 1. **Complexity**: "Find functions with high cyclomatic complexity"
 1. **Duplication**: "Identify duplicated code blocks"
 1. **Coupling**: "Find tightly coupled modules"
@@ -334,6 +342,7 @@ Ask Copilot to evaluate:
 ## Real-World Bug Hunting Tips
 
 ### Systematic Approach
+
 1. Start with critical paths (main functionality)
 1. Check error handling thoroughly
 1. Examine boundary conditions
@@ -341,6 +350,7 @@ Ask Copilot to evaluate:
 1. Focus on complex functions first
 
 ### Using Copilot Effectively
+
 - Ask specific questions about code segments
 - Request explanations of complex logic
 - Get second opinions on suspicious patterns
@@ -350,6 +360,7 @@ Ask Copilot to evaluate:
 ## Documentation Tasks
 
 After finding bugs:
+
 1. Create GitHub issues for each bug
 1. Write clear reproduction steps
 1. Propose fixes with explanations
@@ -357,6 +368,7 @@ After finding bugs:
 1. Update documentation if needed
 
 ## Reflection Questions
+
 1. What types of bugs were easiest to find?
 1. Which Copilot queries were most effective?
 1. How did AI assistance change your debugging approach?
@@ -364,6 +376,7 @@ After finding bugs:
 1. How would you prevent these bugs in new code?
 
 ## Follow-Up Actions
+
 1. Fork the repository and implement fixes
 1. Submit pull requests for confirmed bugs
 1. Write blog post about bugs found
@@ -373,6 +386,7 @@ After finding bugs:
 ## Expected Learning Outcomes
 
 By completing this exercise, you should be able to:
+
 - Navigate unfamiliar codebases efficiently
 - Identify common bug patterns quickly
 - Use AI tools for comprehensive code review

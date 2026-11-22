@@ -5,6 +5,7 @@
 Learn how to use GitHub Copilot to develop modern PHP web applications, implementing RESTful APIs, database operations, authentication, and following MVC architecture patterns.
 
 ## Instructions
+
 1. Create a PHP REST API for a blog system
 1. Use Copilot to implement CRUD operations
 1. Learn PHP best practices and security patterns
@@ -12,6 +13,7 @@ Learn how to use GitHub Copilot to develop modern PHP web applications, implemen
 1. Add advanced features like search, pagination, and caching
 
 ## Prerequisites
+
 - PHP 8.1 or later installed
 - Composer for dependency management
 - MySQL or PostgreSQL database
@@ -997,6 +999,7 @@ $app->run();
 ```
 
 ## What You'll Learn
+
 - Modern PHP development with Composer
 - RESTful API design principles
 - Slim Framework for routing and middleware
@@ -1009,6 +1012,7 @@ $app->run();
 - Security best practices
 
 ## Success Criteria
+
 - [ ] User registration and login work correctly
 - [ ] JWT tokens are generated and validated
 - [ ] CRUD operations for posts function properly
@@ -1140,6 +1144,7 @@ Create GraphQL endpoint alongside REST API:
 ```
 
 ## Real-World Extensions
+
 - Add Redis caching layer
 - Implement background job processing
 - Add API versioning
@@ -1154,6 +1159,7 @@ Create GraphQL endpoint alongside REST API:
 ## Expected Learning Outcomes
 
 By completing this exercise, you will understand:
+
 - Modern PHP application architecture
 - RESTful API design and implementation
 - Authentication and authorization patterns

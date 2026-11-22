@@ -9,6 +9,7 @@ Learn how GitHub Copilot can identify subtle bugs, security issues, and code qua
 Signal handlers in C have strict requirements about which functions are "async-signal-safe." Many common functions, including `malloc()`, `printf()`, and others, are NOT safe to call from signal handlers and can cause undefined behavior, deadlocks, or crashes.
 
 ## Instructions
+
 1. Create a new C file called `calculator.c`
 1. Implement the code as specified below
 1. Use Copilot Chat to review your code
@@ -19,6 +20,7 @@ Signal handlers in C have strict requirements about which functions are "async-s
 ### Step 1: Basic Implementation
 
 Write a C application with these requirements:
+
 - Asks user for two numbers in a loop
 - Prints the sum of the numbers
 - Continues until interrupted
@@ -111,6 +113,7 @@ void sigint_handler(int sig) {
 ```
 
 ## What You'll Learn
+
 - Signal safety concepts in C programming
 - Which functions are async-signal-safe and which are not
 - How Copilot can identify subtle system-level bugs
@@ -126,6 +129,7 @@ void sigint_handler(int sig) {
 1. **Buffer management**: Unsafe string operations
 
 ## Success Criteria
+
 - [ ] Copilot identifies the malloc() issue
 - [ ] Copilot explains why printf() is problematic in signal handlers
 - [ ] You understand the concept of async-signal-safe functions
@@ -176,6 +180,7 @@ Ask Copilot Chat: "Rewrite this program using modern best practices for signal h
 ## Real-World Applications
 
 This type of bug is common in:
+
 - System daemons and services
 - Network servers
 - Real-time applications
@@ -185,6 +190,7 @@ This type of bug is common in:
 ## Reflection Questions
 
 After completing this exercise:
+
 1. What other functions might be problematic in signal handlers?
 1. How would you test for signal safety issues?
 1. What are the trade-offs between simple and complex signal handling?
@@ -203,6 +209,7 @@ gcc -o calculator calculator.c
 ## Resources for Further Learning
 
 Ask Copilot about:
+
 - The complete list of async-signal-safe functions (POSIX.1-2008)
 - Signal handling best practices in modern C
 - Alternatives like signalfd(), eventfd(), or self-pipe trick

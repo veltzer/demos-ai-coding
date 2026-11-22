@@ -10,6 +10,7 @@ Show that an agent can **delegate** to other agents. The main agent becomes an o
 ---
 
 ## What pupils should walk away with
+
 - A subagent is a fresh agent spawned by the main agent for a specific job.
 - The subagent has its own context window — it doesn't see the parent's full conversation.
 - Useful when: (a) the work is open-ended, (b) the output is bulky and you don't want it in the main context, (c) you can run multiple in parallel.
@@ -17,6 +18,7 @@ Show that an agent can **delegate** to other agents. The main agent becomes an o
 ---
 
 ## Setup before class
+
 1. A small codebase to investigate. Use any real project, or:
 
    ```bash
@@ -57,12 +59,14 @@ short answer. Then summarize the three answers for me.
 ```
 
 Watch what happens:
+
 1. The main agent **launches three subagents at once**.
 2. Each subagent runs independently with its own tool calls and context.
 3. Each returns a one-line answer.
 4. The main agent stitches them into a summary.
 
 **Make the points one at a time:**
+
 - "**Parallel.** Three things happening simultaneously. Wall-clock time roughly = the slowest of the three."
 - "**Isolated.** The main agent never saw the file contents the subagents read. Its context stayed clean."
 - "**Composable.** The summary is just three short answers — the heavy lifting stayed in the subagents."
@@ -70,6 +74,7 @@ Watch what happens:
 ### Step 4 — Show context savings (3 min)
 
 Compare (verbally or by glancing at the conversation length):
+
 - Single-agent run: long, lots of file contents in scrollback.
 - Subagent run: short, only the three answers.
 
@@ -78,6 +83,7 @@ Compare (verbally or by glancing at the conversation length):
 ### Step 5 — When NOT to use subagents (2 min)
 
 Be honest:
+
 - Subagents start fresh — they don't know what the parent knows. You have to brief them.
 - For trivial tasks, the briefing overhead isn't worth it.
 - For things you'll need the details of (e.g., "read this file so we can edit it together"), keep it in the main agent.
@@ -95,6 +101,7 @@ Be honest:
 ---
 
 ## Common pitfalls / things to flag
+
 - Some agents call this **"Task tool"**, others **"Agent tool"**, others **"subagent"**. Same idea.
 - If the agent runs the three things sequentially instead of in parallel, **call it out**: "I asked for parallel — please launch them in one batch." This is the thing pupils need to see.
 - Subagent output is summarized by default; if pupils want to see what a subagent did, you may need to dig into a transcript.

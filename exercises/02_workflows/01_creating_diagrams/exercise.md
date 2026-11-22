@@ -5,6 +5,7 @@
 Learn how to use GitHub Copilot to generate various types of diagrams using Mermaid syntax, ASCII art, and diagram-as-code approaches.
 
 ## Instructions
+
 1. Create a new file called `diagrams.md`
 1. Use Copilot to help generate different types of diagrams
 1. Learn various diagramming syntaxes and when to use each
@@ -139,12 +140,14 @@ Let Copilot create ASCII file tree here
 Practice using Copilot Chat for diagram creation:
 
 **Chat Prompts to Try:**
+
 1. "Create a Mermaid diagram showing the lifecycle of a software bug from discovery to resolution"
 1. "Generate a sequence diagram for a typical e-commerce checkout process"
 1. "Create a flowchart for a machine learning model training pipeline"
 1. "Design an ER diagram for a library management system"
 
 ## What You'll Learn
+
 - Mermaid syntax for different diagram types
 - How to describe diagrams clearly for better Copilot suggestions
 - When to use different types of diagrams
@@ -152,6 +155,7 @@ Practice using Copilot Chat for diagram creation:
 - Using ASCII art for simple diagrams in code
 
 ## Success Criteria
+
 - [ ] You can generate flowcharts using Mermaid syntax
 - [ ] You understand sequence diagram creation
 - [ ] You can create ER diagrams for databases
@@ -164,6 +168,7 @@ Practice using Copilot Chat for diagram creation:
 ### Challenge 1: Documentation Enhancement
 
 Take an existing codebase and use Copilot to generate diagrams that explain:
+
 - The overall architecture
 - Data flow between components
 - API interaction patterns
@@ -203,6 +208,7 @@ gantt
 ## Diagram Types Reference
 
 Learn when to use each type:
+
 - **Flowcharts**: Process flows, decision trees
 - **Sequence Diagrams**: API interactions, user workflows
 - **ER Diagrams**: Database relationships
@@ -213,6 +219,7 @@ Learn when to use each type:
 ## Real-World Applications
 
 Practice creating diagrams for:
+
 - System design interviews
 - Technical documentation
 - Architecture reviews

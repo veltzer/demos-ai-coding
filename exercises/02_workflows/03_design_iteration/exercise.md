@@ -5,6 +5,7 @@
 Learn how to iteratively improve code design using GitHub Copilot, implementing caching strategies, error handling, and performance optimizations through progressive enhancements.
 
 ## Instructions
+
 1. Create a new Python file called `word_counter.py`
 1. Start with a basic implementation
 1. Use Copilot to iteratively add features
@@ -141,6 +142,7 @@ class AdvancedWordCounter(PersistentWordCounter):
 ### Cache Invalidation
 
 Ask Copilot these questions and implement solutions:
+
 1. "How should we detect if a file has changed since it was cached?"
 2. "What happens if a file is deleted after being cached?"
 3. "Should we use file modification time, size, or content hash?"
@@ -149,12 +151,14 @@ Ask Copilot these questions and implement solutions:
 ### Performance Considerations
 
 Discuss with Copilot:
+
 1. "What's the optimal cache size limit?"
 2. "When should we evict cache entries?"
 3. "How do we handle very large files?"
 4. "Should we use memory mapping for large files?"
 
 ## What You'll Learn
+
 - Iterative design improvement strategies
 - Cache implementation patterns (memory and persistent)
 - File change detection techniques
@@ -164,6 +168,7 @@ Discuss with Copilot:
 - Data persistence strategies
 
 ## Success Criteria
+
 - [ ] Basic word counter works correctly
 - [ ] Memory cache prevents re-counting same file
 - [ ] Persistent cache works across program runs
@@ -265,6 +270,7 @@ class RegexWordCount(WordCountPlugin):
 ## Code Review Questions
 
 After implementation, ask Copilot to review:
+
 1. "Are there any race conditions in the parallel processing?"
 1. "Is the cache thread-safe?"
 1. "What security issues might arise with the persistent cache?"
@@ -273,6 +279,7 @@ After implementation, ask Copilot to review:
 ## Real-World Applications
 
 This pattern applies to:
+
 - Build systems (detecting changed source files)
 - Static site generators (regenerating only changed pages)
 - Data processing pipelines (incremental processing)
@@ -280,6 +287,7 @@ This pattern applies to:
 - Search indexers (updating only changed documents)
 
 ## Reflection Questions
+
 1. How did the AI handle the file change detection problem?
 1. What caching strategy did Copilot suggest and why?
 1. Were there any edge cases the AI missed?
@@ -287,6 +295,7 @@ This pattern applies to:
 1. What would you do differently without AI assistance?
 
 ## Tips for Better AI Collaboration
+
 1. **Be Specific**: When asking for cache implementation, specify your requirements
 1. **Iterate Gradually**: Don't try to add all features at once
 1. **Test Each Stage**: Verify each iteration works before adding complexity
@@ -296,6 +305,7 @@ This pattern applies to:
 ## Expected Learning Outcomes
 
 By completing this exercise, you should understand:
+
 - How to guide AI through iterative design improvements
 - Common caching patterns and their trade-offs
 - File system operations and change detection

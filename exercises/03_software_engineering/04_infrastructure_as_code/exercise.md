@@ -7,12 +7,14 @@ Learn how to use AI assistance to create, manage, and deploy cloud infrastructur
 ## What is Infrastructure as Code?
 
 Infrastructure as Code (IaC) means managing and provisioning infrastructure through code rather than manual processes:
+
 - **Reproducible** - Same code = same infrastructure
 - **Version Controlled** - Track changes like application code
 - **Automated** - No manual clicking in consoles
 - **Documented** - The code IS the documentation
 
 ## Prerequisites
+
 - Basic cloud computing concepts (AWS, Azure, or GCP)
 - Docker installed
 - Kubernetes (minikube or Docker Desktop) installed

@@ -5,6 +5,7 @@
 Learn how to craft effective prompts to get the best results from AI coding assistants. Understand different prompting techniques, when to use them, and how to iteratively refine prompts for optimal code generation.
 
 ## Instructions
+
 1. Work through each prompting technique with practical examples
 1. Compare results from different prompt styles
 1. Learn to identify and fix poorly written prompts
@@ -14,6 +15,7 @@ Learn how to craft effective prompts to get the best results from AI coding assi
 ## Why Prompt Engineering Matters
 
 The quality of AI-generated code depends heavily on how you ask. A well-crafted prompt can mean the difference between:
+
 - Getting exactly what you need vs. multiple iterations
 - Secure, production-ready code vs. vulnerable prototypes
 - Following best practices vs. anti-patterns
@@ -131,6 +133,7 @@ class ConfigLoader:
 ```
 
 **Exercise 1.3:** Create detailed prompts for:
+
 1. A logging utility that should follow specific patterns
 2. A database connection pool with particular requirements
 3. A data validation decorator with custom behavior
@@ -424,6 +427,7 @@ class TodoList:
 **Exercise 2.5:** Practice iterative refinement:
 
 Start with a basic HTTP client, then incrementally add:
+
 1. Basic GET/POST functionality
 2. Authentication (Bearer token, Basic auth)
 3. Retry logic with exponential backoff
@@ -787,6 +791,7 @@ class DataCache:
 ### Exercise 6.1: Authentication System
 
 Create prompts to build a complete authentication system with:
+
 - User registration with email verification
 - Login with JWT tokens
 - Password reset flow
@@ -801,6 +806,7 @@ Write your prompts incrementally, starting with the most basic functionality.
 ### Exercise 6.2: File Processing Pipeline
 
 Create prompts to build a file processing system:
+
 - Watch directory for new files
 - Validate file format
 - Parse different formats (CSV, JSON, XML, Excel)
@@ -813,6 +819,7 @@ Create prompts to build a file processing system:
 ### Exercise 6.3: REST API
 
 Create prompts to build a RESTful API:
+
 - CRUD operations for a resource
 - Pagination and filtering
 - Sorting and searching
@@ -827,6 +834,7 @@ Create prompts to build a RESTful API:
 ### Exercise 6.4: CLI Tool
 
 Create prompts for a command-line tool:
+
 - Argument parsing with subcommands
 - Configuration file support
 - Interactive mode
@@ -1039,31 +1047,37 @@ Create a personal library of prompts for common tasks. Here's a template:
 Before submitting a prompt, check:
 
 **Clarity:**
+
 - [ ] Is the goal clearly stated?
 - [ ] Are requirements unambiguous?
 - [ ] Are technical terms defined if needed?
 
 **Context:**
+
 - [ ] Have I provided relevant background?
 - [ ] Are there examples or use cases?
 - [ ] Is the current state explained if refactoring?
 
 **Constraints:**
+
 - [ ] Are performance requirements specified?
 - [ ] Are there security considerations?
 - [ ] Are dependencies or limitations mentioned?
 
 **Format:**
+
 - [ ] Have I specified the desired code style?
 - [ ] Are naming conventions mentioned?
 - [ ] Is documentation level specified?
 
 **Testability:**
+
 - [ ] Can success be measured?
 - [ ] Are edge cases mentioned?
 - [ ] Are error cases defined?
 
 **Completeness:**
+
 - [ ] Are all inputs/outputs defined?
 - [ ] Is error handling addressed?
 - [ ] Are non-functional requirements included?

@@ -10,6 +10,7 @@ Show that for non-trivial work, an agent doesn't just dive in — it **plans fir
 ---
 
 ## What pupils should walk away with
+
 - For complex tasks, ask the agent to plan before acting.
 - A good plan is a tool: it forces clarity, lets you correct course early, and produces better final work.
 - Many agents (including Claude Code) have an explicit **Plan Mode** for exactly this.
@@ -17,6 +18,7 @@ Show that for non-trivial work, an agent doesn't just dive in — it **plans fir
 ---
 
 ## Setup before class
+
 1. Empty directory:
 
    ```bash
@@ -54,11 +56,13 @@ where the data will be stored. Wait for my approval.
 ```
 
 The agent will produce a plan: e.g.,
+
 - `todo.py` CLI with `add`, `list`, `done`, `remove`.
 - Data stored in `~/.todo.json`.
 - Uses argparse, no external deps.
 
 **Talk through the plan with the class.** Pretend you're the customer:
+
 - "I don't want it in my home dir, put it next to the script."
 - "Skip `remove` — I don't need it."
 
@@ -72,6 +76,7 @@ remove command. Then go ahead.
 ### Step 3 — Watch it execute the *agreed* plan (4 min)
 
 Now it will write the code matching the corrected plan. **Pupils see:**
+
 - Files created exactly as planned.
 - No surprise scope creep.
 - A working tool that fits the spec.
@@ -100,6 +105,7 @@ python todo.py list
 ---
 
 ## Common pitfalls / things to flag
+
 - If the agent skips the plan and starts coding anyway, interrupt it. Re-emphasize: "plan first, code after I approve."
 - Don't let the plan get too long. A plan should fit on one screen. If the agent writes a 5-page plan, ask it to compress.
 - The point of the plan is the *conversation* about it, not the plan itself. Use it.

@@ -10,6 +10,7 @@ Bring everything together. An **orchestrator** agent coordinates **specialist** 
 ---
 
 ## What pupils should walk away with
+
 - Real agent systems are usually **a graph of agents**, each with a role.
 - Orchestration ≠ doing the work. The orchestrator's job is to *route*, not produce.
 - Specialization beats generalism: a "reviewer" agent does a better review than the same agent that wrote the code.
@@ -18,6 +19,7 @@ Bring everything together. An **orchestrator** agent coordinates **specialist** 
 ---
 
 ## Setup before class
+
 1. Empty directory:
 
    ```bash
@@ -97,10 +99,12 @@ This prompt is doing a lot. Read it carefully on screen with the class before se
 Narrate as it runs:
 
 **Researcher phase:**
+
 - "Researcher is spawning. It will probably WebFetch or read its training knowledge."
 - When it returns: read the recommendation aloud. Maybe it picked stdlib `csv` + `json`. Maybe it picked `pandas`. Discuss with the class whether you agree.
 
 **Coder phase:**
+
 - "Coder is spawning, with the recommendation as input."
 - When it finishes, open `json2csv.py` together. Run it on the example:
 
@@ -110,10 +114,12 @@ Narrate as it runs:
   ```
 
 **Reviewer phase:**
+
 - "Reviewer is spawning. It hasn't seen the researcher or the coder — fresh eyes."
 - Read its findings. Common ones: "doesn't handle nested objects", "no UTF-8 BOM option", "crashes on empty array", "no help text on `-h`".
 
 **Fix phase:**
+
 - The orchestrator re-spawns the coder with the issue list.
 - The fixes appear in `json2csv.py`.
 
@@ -150,6 +156,7 @@ Ask pupils to design their own multi-agent workflow on paper for **5 minutes**, 
 ---
 
 ## Common pitfalls / things to flag
+
 - This demo will take longer than you think. Budget the full 30 minutes.
 - If a subagent wanders off, **stop it and remind the orchestrator** of the role boundaries. The orchestrator can correct mid-flight.
 - Don't try to add a fourth or fifth specialist on the live stage. Three is enough to make the point. More is showing off and increases failure modes.

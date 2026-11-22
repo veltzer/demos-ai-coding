@@ -10,6 +10,7 @@ Show what happens when a task has **many steps that take real time**. The agent 
 ---
 
 ## What pupils should walk away with
+
 - For multi-step work, the agent maintains a **todo list** internally.
 - Each item is started → completed in order, visibly.
 - This isn't decoration — it's how the agent stays on track without losing items.
@@ -17,6 +18,7 @@ Show what happens when a task has **many steps that take real time**. The agent 
 ---
 
 ## Setup before class
+
 1. A small Python project that needs work:
 
    ```bash
@@ -57,6 +59,7 @@ progress.
 
 The agent will respond by **creating a checklist** of about 6–8 items.
 Read it out loud to the class. Items will look something like:
+
 - Add type hints to calc.py
 - Add docstrings to each function
 - Handle division by zero
@@ -81,6 +84,7 @@ This is the heart of the demo. As the agent works, the list updates live. **Narr
 ### Step 3 — Verify the result (3 min)
 
 Open the new files and walk through them:
+
 - `calc.py` — type-hinted, docstrings, raises on divide-by-zero.
 - `tests/test_calc.py` — has tests for each function and the error case.
 - `README.md` — usage examples.
@@ -105,6 +109,7 @@ If pytest isn't installed, the test run will fail — which is itself a great te
 ---
 
 ## Common pitfalls / things to flag
+
 - If the agent tries to do everything in one giant edit without a todo list, **stop it** and ask: "give me the todo list first." Today's lesson is the list itself.
 - Don't make the task too small. If there are only 2 sub-tasks, the list is pointless. 6+ items is the sweet spot.
 - Resist micromanaging mid-execution. Let pupils see uninterrupted progress so the rhythm is clear.

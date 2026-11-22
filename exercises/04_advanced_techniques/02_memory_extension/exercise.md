@@ -7,6 +7,7 @@ Learn how to extend AI assistant memory capabilities beyond single conversations
 ## Why Memory Extension Matters
 
 AI assistants typically lose context between conversations. Memory extension allows:
+
 - **Persistence**: Remember facts, preferences, and context across sessions
 - **Personalization**: Build user-specific knowledge over time
 - **Project Continuity**: Maintain project state and decisions
@@ -14,6 +15,7 @@ AI assistants typically lose context between conversations. Memory extension all
 - **Relationship Building**: Remember past interactions and preferences
 
 ## Prerequisites
+
 - Node.js 18+ installed
 - Basic understanding of vector embeddings (we'll explain)
 - Familiarity with JSON/database concepts
@@ -24,24 +26,28 @@ AI assistants typically lose context between conversations. Memory extension all
 ## Part 1: Understanding Memory Types
 
 ### 1.1 Short-Term Memory (Working Memory)
+
 - **Scope**: Current conversation/session
 - **Storage**: In-memory, conversation context
 - **Use Cases**: Current task state, temporary calculations
 - **Limitation**: Lost on session end
 
 ### 1.2 Long-Term Memory (Persistent Storage)
+
 - **Scope**: Across all sessions
 - **Storage**: Files, databases
 - **Use Cases**: User preferences, project history, learned facts
 - **Limitation**: Requires explicit storage/retrieval
 
 ### 1.3 Semantic Memory (Vector-Based)
+
 - **Scope**: Content-based retrieval
 - **Storage**: Vector databases
 - **Use Cases**: Similar content recall, pattern matching
 - **Limitation**: Requires embedding generation
 
 ### 1.4 Episodic Memory (Event-Based)
+
 - **Scope**: Time-sequenced events
 - **Storage**: Timestamped logs
 - **Use Cases**: Project timeline, decision history

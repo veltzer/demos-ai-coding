@@ -5,6 +5,7 @@
 Learn how to use GitHub Copilot to generate large-scale synthetic data for testing, development, and machine learning applications, understanding different generation strategies and data quality considerations.
 
 ## Instructions
+
 1. Create a new Python file called `data_generator.py`
 1. Use Copilot to implement various data generation approaches
 1. Learn about data distributions and correlations
@@ -413,6 +414,7 @@ class SyntheticDataGenerator:
 ```
 
 ## What You'll Learn
+
 - Data generation strategies and techniques
 - Statistical distributions and correlations
 - Performance optimization for large-scale generation
@@ -422,6 +424,7 @@ class SyntheticDataGenerator:
 - Realistic data modeling
 
 ## Success Criteria
+
 - [ ] Generated 1 million records successfully
 - [ ] Data has realistic correlations (age/marriage/children)
 - [ ] Names are diverse and realistic
@@ -576,6 +579,7 @@ def analyze_generated_data(data: List[Dict]):
 ```
 
 ## Reflection Questions
+
 1. How did you ensure data realism?
 1. What correlations were most important?
 1. How did you optimize for performance?
@@ -583,6 +587,7 @@ def analyze_generated_data(data: List[Dict]):
 1. How would you generate even more complex relationships?
 
 ## Real-World Applications
+
 - Testing database applications
 - Machine learning training data
 - Load testing systems
@@ -593,6 +598,7 @@ def analyze_generated_data(data: List[Dict]):
 ## Expected Learning Outcomes
 
 By completing this exercise, you should understand:
+
 - Synthetic data generation principles
 - Statistical distributions and correlations
 - Performance optimization techniques

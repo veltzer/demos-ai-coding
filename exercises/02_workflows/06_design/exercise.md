@@ -5,6 +5,7 @@
 Learn how different approaches to AI-assisted development affect the quality and completeness of the final product. Compare direct implementation versus specification-first design when building complex software systems.
 
 ## Instructions
+
 1. Create two separate implementations of the same build system
 1. Use different AI collaboration approaches for each
 1. Compare the results and learn from the differences
@@ -14,6 +15,7 @@ Learn how different approaches to AI-assisted development affect the quality and
 ## Background: What is a Build System?
 
 A build system automates the compilation and linking of source code into executables. Popular examples include Make, CMake, Bazel, and Ninja. Your tool, "Buildit", will be a simplified version that:
+
 - Reads build configurations from a file
 - Determines dependencies between targets
 - Builds only what's necessary
@@ -49,6 +51,7 @@ Ask Copilot: "Create a detailed technical specification for a C++ build system t
 #### Step 2: Review and Refine Specification
 
 Review the generated specification and ask Copilot to refine it:
+
 - "Add support for parallel builds to the specification"
 - "Include incremental build support based on file timestamps"
 - "Add support for custom build rules and variables"
@@ -243,22 +246,26 @@ private:
 ## Implementation Tasks
 
 ### Task 1: Basic Implementation
+
 1. Parse Buildit files
 1. Build dependency graph
 1. Execute builds in correct order
 1. Handle basic command line arguments
 
 ### Task 2: Timestamp-Based Rebuilds
+
 1. Check file modification times
 1. Only rebuild outdated targets
 1. Handle missing dependencies
 
 ### Task 3: Error Handling
+
 1. Detect circular dependencies
 1. Handle build failures gracefully
 1. Provide meaningful error messages
 
 ### Task 4: Advanced Features
+
 1. Parallel builds
 1. Build caching
 1. Progress reporting
@@ -331,6 +338,7 @@ install: app
 ```
 
 ## What You'll Learn
+
 - Impact of specifications on AI-generated code quality
 - Build system architecture and algorithms
 - Dependency graph management
@@ -343,6 +351,7 @@ install: app
 ## Success Criteria
 
 ### For Both Implementations
+
 - [ ] Correctly parses Buildit files
 - [ ] Builds targets in correct dependency order
 - [ ] Supports incremental builds
@@ -352,6 +361,7 @@ install: app
 - [ ] Can clean build artifacts
 
 ### Additional for Spec-First Approach
+
 - [ ] Has clear architecture documentation
 - [ ] Implements advanced features
 - [ ] Better error messages
@@ -363,18 +373,21 @@ install: app
 After completing both implementations, compare:
 
 ### Code Quality
+
 1. **Architecture**: Which has clearer separation of concerns?
 1. **Modularity**: Which is easier to extend?
 1. **Error Handling**: Which handles edge cases better?
 1. **Documentation**: Which is better documented?
 
 ### Features
+
 1. **Completeness**: Which implements more features?
 1. **Robustness**: Which handles more edge cases?
 1. **Performance**: Which builds faster?
 1. **Usability**: Which has a better user experience?
 
 ### Development Process
+
 1. **Time to First Working Version**: Which was faster?
 1. **Iterations Needed**: How many refinements?
 1. **AI Assistance Quality**: Which approach got better suggestions?
@@ -437,18 +450,21 @@ class BuildStats {
 ## Reflection Questions
 
 ### About the Approaches
+
 1. Which approach produced better initial results?
 1. How did the specification affect the AI's suggestions?
 1. What was missing from the direct approach?
 1. What was over-engineered in the spec approach?
 
 ### About AI Assistance
+
 1. When was Copilot most helpful?
 1. What types of code did it generate best?
 1. Where did you need to intervene most?
 1. How did prompting style affect results?
 
 ### About the Domain
+
 1. What makes build systems complex?
 1. What algorithms are fundamental?
 1. How important is performance?
@@ -457,6 +473,7 @@ class BuildStats {
 ## Real-World Extensions
 
 Consider implementing:
+
 1. **Cross-compilation support**: Target different platforms
 1. **Package management**: Download and manage dependencies
 1. **Distributed builds**: Build across multiple machines
@@ -466,6 +483,7 @@ Consider implementing:
 ## Expected Learning Outcomes
 
 By completing both approaches, you will understand:
+
 - The value of detailed specifications in AI-assisted development
 - How to guide AI tools effectively for complex projects
 - Build system internals and algorithms
@@ -476,6 +494,7 @@ By completing both approaches, you will understand:
 ## Final Comparison Report
 
 Create a report (`comparison.md`) documenting:
+
 1. Implementation timelines for both approaches
 1. Feature completeness comparison
 1. Code quality assessment

@@ -10,6 +10,7 @@ So far the agent has only touched the local machine. Now show it **reaching out 
 ---
 
 ## What pupils should walk away with
+
 - The agent can be given tools that hit the network (WebFetch, WebSearch, HTTP).
 - "Real-time" answers are real, not from training data.
 - The same loop applies — think → call tool → observe → answer.
@@ -17,6 +18,7 @@ So far the agent has only touched the local machine. Now show it **reaching out 
 ---
 
 ## Setup before class
+
 1. Pick **one** stable, public URL with content that's clearly more recent than the model's training cutoff. Good choices:
    - The latest Python release notes page.
    - A library's GitHub releases page.
@@ -50,6 +52,7 @@ from python.org. Tell me the version and the release date.
 ```
 
 The agent will use **WebFetch** (or WebSearch). Watch:
+
 1. It picks a URL — likely `https://www.python.org/downloads/`.
 2. It fetches the page.
 3. It extracts the version and date from the HTML.
@@ -83,6 +86,7 @@ upgrades.md.
 (Make sure you have a `requirements.txt` in the working directory with 2–3 packages, e.g., `requests==2.20.0`.)
 
 The agent will:
+
 1. **Read** requirements.txt (local tool).
 2. **WebFetch** PyPI for each package (network tool).
 3. **Write** upgrades.md (local tool).
@@ -100,6 +104,7 @@ The agent will:
 ---
 
 ## Common pitfalls / things to flag
+
 - **Test the URL before class.** If python.org is having a bad day or your network blocks it, the demo dies.
 - If the agent tries to use search instead of fetch (or vice versa), let it — both are valid. Just narrate which it picked.
 - Keep the requirements.txt small (2–3 lines). Big lists make the demo drag.

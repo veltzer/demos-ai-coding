@@ -7,6 +7,7 @@ Learn how to identify security vulnerabilities, perform security audits, and har
 ## Why Security Matters
 
 Security vulnerabilities can lead to:
+
 - Data breaches and stolen information
 - Financial losses
 - Reputational damage
@@ -16,6 +17,7 @@ Security vulnerabilities can lead to:
 ### Cost of prevention << Cost of breach**
 
 ## Prerequisites
+
 - Understanding of web application architecture
 - Basic knowledge of authentication/authorization
 - Familiarity with SQL and web protocols
@@ -798,6 +800,7 @@ class TestAuthentication:
 ### Pre-Deployment Security Checklist
 
 **Infrastructure:**
+
 - [ ] Use HTTPS everywhere (TLS 1.2+)
 - [ ] Enable HSTS headers
 - [ ] Use secure cookies (HttpOnly, Secure, SameSite)
@@ -808,6 +811,7 @@ class TestAuthentication:
 - [ ] Implement network segmentation
 
 **Authentication & Authorization:**
+
 - [ ] Use strong password hashing (bcrypt/argon2)
 - [ ] Implement 2FA
 - [ ] Session timeout (30 minutes)
@@ -818,6 +822,7 @@ class TestAuthentication:
 - [ ] Role-based access control
 
 **Data Protection:**
+
 - [ ] Encrypt sensitive data at rest
 - [ ] Encrypt data in transit
 - [ ] Sanitize all inputs
@@ -828,6 +833,7 @@ class TestAuthentication:
 - [ ] Secure API keys and secrets
 
 **Monitoring:**
+
 - [ ] Security audit logs
 - [ ] Intrusion detection system
 - [ ] Error logging (no sensitive data)

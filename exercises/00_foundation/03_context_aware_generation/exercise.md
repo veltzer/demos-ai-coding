@@ -5,6 +5,7 @@
 Learn how Copilot uses existing code context to generate relevant and consistent code.
 
 ## Instructions
+
 1. Create a new Python file called `todo_app.py`
 1. Start by defining a data structure for todos
 1. Implement a few functions, then let Copilot suggest similar ones
@@ -51,12 +52,14 @@ def get_todos_by_priority(priority: str):
 ```
 
 ## What You'll Learn
+
 - How Copilot uses existing code patterns to generate consistent code
 - The importance of establishing conventions early in your codebase
 - How data structure choices influence subsequent suggestions
 - Context awareness in code generation
 
 ## Success Criteria
+
 - [ ] Copilot generates functions that work with your existing data structure
 - [ ] The coding style remains consistent across functions
 - [ ] Functions handle the todo list appropriately

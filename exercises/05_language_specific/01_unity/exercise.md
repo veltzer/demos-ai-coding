@@ -5,6 +5,7 @@
 Learn how to use GitHub Copilot to develop Unity games, understanding component-based architecture, game physics, input systems, UI design, and common game mechanics.
 
 ## Instructions
+
 1. Create a new Unity 2D project
 1. Use Copilot to implement a simple platformer game
 1. Learn Unity-specific patterns and best practices
@@ -12,6 +13,7 @@ Learn how to use GitHub Copilot to develop Unity games, understanding component-
 1. Add game state management and scene transitions
 
 ## Prerequisites
+
 - Unity Hub installed (2022.3 LTS or later recommended)
 - Visual Studio Code with Unity extension, or Visual Studio
 - GitHub Copilot extension enabled
@@ -22,6 +24,7 @@ Learn how to use GitHub Copilot to develop Unity games, understanding component-
 ### Part 1: Project Setup
 
 #### Step 1: Create the Project
+
 1. Open Unity Hub
 1. Create new project -> 2D (Core) template
 1. Name it "PlatformerGame"
@@ -913,6 +916,7 @@ public class ObjectPool : MonoBehaviour
 ```
 
 ## What You'll Learn
+
 - Unity component-based architecture
 - 2D physics and collision detection
 - Input handling and player controls
@@ -925,6 +929,7 @@ public class ObjectPool : MonoBehaviour
 - Particle effects
 
 ## Success Criteria
+
 - [ ] Player moves smoothly with jump mechanics
 - [ ] Enemies patrol and chase player
 - [ ] Collectibles work and update UI
@@ -955,6 +960,7 @@ Implement an achievement system with unlockables
 Add touch controls for mobile deployment
 
 ## Real-World Extensions
+
 - Add more levels with increasing difficulty
 - Implement a level selection screen
 - Create different biomes/themes
@@ -966,6 +972,7 @@ Add touch controls for mobile deployment
 ## Expected Learning Outcomes
 
 By completing this exercise, you will understand:
+
 - Unity game development workflow
 - Component-based game architecture
 - 2D game mechanics implementation

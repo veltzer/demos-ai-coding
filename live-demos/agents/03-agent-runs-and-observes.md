@@ -10,6 +10,7 @@ Show the **observe** part of the loop. The agent runs a command, sees the output
 ---
 
 ## What pupils should walk away with
+
 - Agents react to tool output. They don't just execute a fixed plan.
 - A failing command is **information**, not a dead end. The agent reads the error and tries something else.
 - This is what makes an agent feel "alive" compared to a script.
@@ -17,6 +18,7 @@ Show the **observe** part of the loop. The agent runs a command, sees the output
 ---
 
 ## Setup before class
+
 1. Create a project that has a deliberate problem:
 
    ```bash
@@ -59,6 +61,7 @@ The agent will run something like `python greet.py world` and see a `SyntaxError
 ### Step 2 — Watch it react (3 min)
 
 The agent will almost certainly:
+
 1. Read the file.
 2. Notice the stray `!` in the f-string.
 3. Edit the file to fix it.
@@ -77,6 +80,7 @@ no name is given. Run it both ways to confirm.
 ```
 
 Watch the agent:
+
 1. Edit the file.
 2. Run with an argument → success.
 3. Run without an argument → success.
@@ -96,6 +100,7 @@ Watch the agent:
 ---
 
 ## Common pitfalls / things to flag
+
 - If the agent asks permission to run `python`, **approve it**. Don't break the flow.
 - If the agent fixes the bug and forgets to verify by re-running, prompt it: "did you actually run it?" — this is also a teachable moment.
 - Resist explaining the bug to the agent. Let it discover. The discovery **is** the demo.

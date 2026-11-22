@@ -10,6 +10,7 @@ So far the agent has used the **built-in** tools (Read, Write, Bash, WebFetch). 
 ---
 
 ## What pupils should walk away with
+
 - An agent's tools are not fixed — you can add more.
 - MCP is an open protocol; many servers exist (filesystem, github, postgres, slack, puppeteer, etc.).
 - Once installed and configured, the agent **discovers** the new tools automatically.
@@ -64,6 +65,7 @@ It will list the built-ins. Note the absence of anything called "sequential thin
 ### Step 2 — Enable the MCP server and reload (3 min)
 
 On screen, walk through:
+
 1. The config file — show the JSON.
 2. Restarting the agent.
 3. Asking again: "What tools do you have available?" — now the new tool appears.
@@ -113,6 +115,7 @@ This is the **must-say** part:
 ---
 
 ## Common pitfalls / things to flag
+
 - **Test before class.** MCP install can hit weird npm/node version issues. Solving them live is brutal.
 - Keep the config file simple. One server. Don't try to demo five at once.
 - Don't go deep into building an MCP server — that's a separate session. This demo is about *using* them.

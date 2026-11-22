@@ -5,6 +5,7 @@
 Learn how Copilot can help you discover and implement common coding patterns and best practices.
 
 ## Instructions
+
 1. Create a new Python file called `file_manager.py`
 1. Implement file operations using different approaches
 1. Let Copilot suggest improvements and alternative patterns
@@ -74,6 +75,7 @@ class ConfigManager:
 ```
 
 ## What You'll Learn
+
 - Common Python patterns for file handling
 - Different approaches to error handling
 - Context managers and their benefits
@@ -81,6 +83,7 @@ class ConfigManager:
 - How Copilot suggests idiomatic Python code
 
 ## Success Criteria
+
 - [ ] You have multiple working approaches to file reading
 - [ ] You understand the trade-offs between different error handling methods
 - [ ] Your ConfigManager class works correctly
@@ -129,6 +132,7 @@ def process_files_batch(file_list, processor_function):
 ## Reflection Questions
 
 After completing this exercise, consider:
+
 1. Which file reading pattern do you prefer and why?
 1. How did Copilot's suggestions differ from what you might have written?
 1. What new Python patterns did you discover?

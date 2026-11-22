@@ -89,11 +89,13 @@ The MCP service provides three tools:
 ## Troubleshooting
 
 ### Service Not Found
+
 - Ensure the full path in VS Code settings is correct
 - Restart VS Code after configuration changes
 - Check that Node.js is installed and accessible
 
 ### Copilot Not Using Tools
+
 - Make sure GitHub Copilot extension is enabled
 - Try being more explicit: "Use the math tools to calculate..."
 - Check the VS Code Output panel for any error messages
@@ -101,6 +103,7 @@ The MCP service provides three tools:
 ### Debugging
 
 To see if your MCP service is running, you can check the VS Code Output panel:
+
 1. Go to View -> Output
 2. Select "GitHub Copilot" from the dropdown
 3. Look for messages about MCP services
@@ -120,6 +123,7 @@ Here's what a successful interaction looks like:
 ## Next Steps
 
 Once this is working, you can:
+
 - Add more mathematical operations to the service
 - Create MCP services for other domains (file operations, web APIs, etc.)
 - Explore more complex MCP features like resources and prompts

@@ -9,6 +9,7 @@ Master the critical skill of summarizing code, architecture, and systems to prov
 ### The Context Economy Problem
 
 You have limited tokens. Every project decision is:
+
 - **Show full code**: Consume many tokens, risk hitting limits
 - **Summarize**: Save tokens, but might lose crucial details
 - **Skip entirely**: Save maximum tokens, but AI lacks context
@@ -311,6 +312,7 @@ For full schema: models/__init__.py
 You have a complex authentication system. Practice each type:
 
 **Given**: A full authentication system with:
+
 - 5 files (models, services, middleware, utils, config)
 - 800 lines total
 - JWT tokens, refresh tokens, password reset, email verification
@@ -376,6 +378,7 @@ class PaymentProcessor:
 ### The 80/20 Rule
 
 For most tasks:
+
 - 80% of context = summarized
 - 20% of context = full detail (the part being worked on)
 
@@ -408,17 +411,20 @@ Working on: User profile update endpoint
 **Scenario**: Adding a new feature to existing project
 
 **Given**:
+
 - 25 files in project
 - Adding "product reviews" feature
 - Touches 4 files, references 6 others
 
 **Task**:
+
 1. Identify which 20% needs full detail
 2. Summarize the 80%
 3. Structure context using hierarchical approach
 4. Stay under 1000 tokens total
 
 **Measure**:
+
 - Token count: _____
 - 80/20 ratio achieved: Yes/No
 - Is anything missing: _____
@@ -765,6 +771,7 @@ def generate_context(template_type: str, **kwargs) -> str:
 1. **Context generator**: Template-based contexts
 
 **Requirements**:
+
 - Should run in < 5 seconds
 - Output < 500 tokens
 - Capture essential information
@@ -967,6 +974,7 @@ class PaymentProcessor:
 **Task**: Take a complex system and build a 4-layer hierarchy:
 
 Requirements:
+
 - Layer 1: Under 50 tokens
 - Layer 2: Under 150 tokens
 - Layer 3: Under 300 tokens
@@ -1101,6 +1109,7 @@ CREATE TABLE orders (
 1. Infrastructure/deployment
 
 Requirements:
+
 - Each summary: Under 200 tokens
 - Include structure + key details
 - Show one full example per domain
@@ -1306,6 +1315,7 @@ Tests summary:
 1. Code review request
 
 For each:
+
 - Write context using summarization techniques
 - Stay under 1000 tokens
 - Include all necessary information
@@ -1475,6 +1485,7 @@ A: Yes! But review and refine them. AI summaries are starting points.
 **Challenge**: Create the perfect summary for a complex system
 
 **Requirements**:
+
 - Choose a real system (yours or open-source)
 - Create 4-layer hierarchical summary
 - Stay under 1500 tokens total
@@ -1484,6 +1495,7 @@ A: Yes! But review and refine them. AI summaries are starting points.
 - All tasks succeed first try
 
 **Deliverables**:
+
 1. Original system overview (how many files/lines)
 2. Your 4-layer summary
 3. Compression ratio calculation

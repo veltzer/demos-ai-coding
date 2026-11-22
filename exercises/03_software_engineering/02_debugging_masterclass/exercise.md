@@ -7,6 +7,7 @@ Learn systematic debugging techniques using AI assistance. Master reading stack 
 ## The Debugging Mindset
 
 Debugging is **scientific investigation**, not guessing:
+
 1. **Observe** - What is actually happening?
 2. **Hypothesize** - What could cause this?
 3. **Test** - Can I prove/disprove the hypothesis?
@@ -14,6 +15,7 @@ Debugging is **scientific investigation**, not guessing:
 5. **Verify** - Confirm the fix works
 
 ## Prerequisites
+
 - Basic programming knowledge
 - Familiarity with your language's debugger (pdb for Python, debugger for JavaScript)
 - GitHub Copilot or similar AI assistant

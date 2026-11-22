@@ -7,6 +7,7 @@ Master advanced context engineering techniques to dramatically improve AI coding
 ## What Makes Context "Effective"?
 
 Effective context is:
+
 - **Relevant**: Contains only what's needed
 - **Structured**: Organized logically
 - **Complete**: Includes all necessary information
@@ -350,18 +351,21 @@ user_management/
 ```
 
 ## Key Relationships
+
 - API -> Service -> Repository -> Model
 - Validators used by API layer
 - Services handle business logic
 - Repositories handle data access
 
 ## When to include each file
+
 - Working on API: Include services.py, validators.py
 - Working on Service: Include repositories.py, models.py
 - Working on Repository: Include models.py only
 - Working on Validators: Include models.py only
 
 ## Design Patterns
+
 - Repository pattern for data access
 - Service layer for business logic
 - Dependency injection everywhere
@@ -568,6 +572,7 @@ HELP ME:
 Create templates for your most common tasks:
 
 1. **Identify**: What are your 5 most common AI assistance requests?
+
 - [ ] Task 1: _________________
 - [ ] Task 2: _________________
 - [ ] Task 3: _________________
@@ -762,12 +767,14 @@ Take this verbose context and optimize it:
 ```
 
 **Your task**:
+
 1. Reduce to under 500 tokens
 2. Keep all essential information
 3. Maintain clarity
 4. Test: Does AI still understand?
 
 **Measure**:
+
 - Original tokens: _____
 - Optimized tokens: _____
 - Reduction: _____%
@@ -782,6 +789,7 @@ Different tools need different context strategies:
 ### GitHub Copilot (Inline)
 
 **Best Practices**:
+
 - Relies heavily on current file
 - Looks at nearby code
 - Uses comments effectively
@@ -823,6 +831,7 @@ class ProductRepository:
 ### Chat-based AI (Claude, ChatGPT)
 
 **Best Practices**:
+
 - Can handle longer context
 - Benefits from structured prompts
 - Can reference earlier conversation
@@ -859,6 +868,7 @@ EXPLICIT RELATIONSHIPS:
 ### Specialized Copilots (Cursor, Tabnine)
 
 **Best Practices**:
+
 - Workspace-aware
 - Can scan multiple files
 - Learns from your codebase
@@ -1087,6 +1097,7 @@ Exclude:
 **Task**: Create a complete context management system for a project
 
 **Requirements**:
+
 1. Base context document
 2. 3+ context profiles
 3. Context caching strategy
@@ -1207,6 +1218,7 @@ def context_quality_score(context: str, task: str) -> float:
 **Task**: Score context from your last 5 AI interactions
 
 For each interaction:
+
 1. Retrieve the context you provided
 2. Score it using the metrics above
 3. Identify weaknesses
@@ -1456,6 +1468,7 @@ Apply these strategies to:
 ### The Context Golden Ratio
 
 For optimal results:
+
 - 20% Goal/Question (what you want)
 - 50% Relevant Code/Examples (what AI needs)
 - 20% Constraints/Requirements (boundaries)
@@ -1468,6 +1481,7 @@ For optimal results:
 **Scenario**: Add a feature that spans multiple files, requires understanding of architecture, needs to follow patterns, and has specific requirements.
 
 **Your Task**: Craft context that:
+
 1. Scores 90+ on quality metrics
 1. Uses appropriate patterns
 1. Achieves first-try success

@@ -7,6 +7,7 @@ Learn how to practice Test-Driven Development using AI assistance. Understand th
 ## What is TDD?
 
 Test-Driven Development is a software development approach where you:
+
 1. **Red**: Write a failing test first
 1. **Green**: Write minimal code to make the test pass
 1. **Refactor**: Improve the code while keeping tests green
@@ -14,6 +15,7 @@ Test-Driven Development is a software development approach where you:
 With AI assistance, you can focus on writing clear test specifications, and let the AI help implement the functionality.
 
 ## Prerequisites
+
 - Python 3.10+ or JavaScript/TypeScript
 - pytest (Python) or Jest (JavaScript)
 - Basic understanding of testing concepts

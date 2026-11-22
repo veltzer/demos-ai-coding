@@ -10,6 +10,7 @@ Show the agent **using a single, specific tool** to answer a question that requi
 ---
 
 ## What pupils should walk away with
+
 - A tool is a function the model can call. The model picks the tool and the arguments.
 - The tool returns data; the model then writes a natural-language answer based on the data.
 - The model does not "magically know" — it had to look.
@@ -17,6 +18,7 @@ Show the agent **using a single, specific tool** to answer a question that requi
 ---
 
 ## Setup before class
+
 1. Create a small text file the pupils will recognize. For example:
 
    ```bash
@@ -58,6 +60,7 @@ Which item on the list is the most subjective? Explain.
 ```
 
 The agent should pick "dark chocolate (the good kind)" — because *"the good kind"* is subjective. This shows pupils that:
+
 - The tool gave it raw text.
 - The **LLM**, not the tool, did the reasoning.
 
@@ -84,5 +87,6 @@ The agent should say it doesn't know — there's no data about last week. Use th
 ---
 
 ## Common pitfalls / things to flag
+
 - If the agent guesses without reading the file, **call it out** and say "this is hallucination — we want grounded answers." Then re-ask, instructing it to read the file first.
 - Don't add extra files to the directory. One file = one obvious choice = clean demo.

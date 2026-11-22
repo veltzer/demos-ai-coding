@@ -7,6 +7,7 @@ Learn how AI coding assistants handle context windows, understand token limits, 
 ## What is Context in AI Coding?
 
 Context refers to all the information an AI assistant can "see" and use when generating responses:
+
 - Current file content
 - Open files in your editor
 - Selected code snippets
@@ -19,6 +20,7 @@ Context refers to all the information an AI assistant can "see" and use when gen
 ### What are Tokens?
 
 Tokens are the basic units AI models use to process text. Roughly:
+
 - 1 token =~ 4 characters
 - 1 token =~ 0.75 words
 - 100 tokens =~ 75 words
@@ -139,6 +141,7 @@ generate_large_code()
    - Does it only process part of it?
 
 **Reflection Questions**:
+
 - What was the AI's response?
 - Did you hit a limit?
 - How did the AI handle it?
@@ -218,6 +221,7 @@ def calculate_discount(price, customer_type):
 **Task**: Ask Copilot to implement `calculate_discount()` in each scenario.
 
 **Compare**:
+
 - Which gave the best result?
 - Which was most accurate?
 - Did maximum context actually help?
@@ -315,12 +319,14 @@ You have a large legacy file that needs refactoring. Practice chunking:
 ```
 
 **Task**:
+
 1. Identify logical sections
 2. Refactor one section at a time
 3. Keep track of changes
 4. Ensure sections still work together
 
 **Tips**:
+
 - Work on the most independent section first
 - Use clear commit messages for each chunk
 - Test after each chunk
@@ -433,6 +439,7 @@ AI: [Gives complete, contextually perfect solution]
 **Scenario**: You're building a task management system and want AI to help add a new feature.
 
 **Task**:
+
 1. Create a context primer document:
 
 ```markdown
@@ -498,6 +505,7 @@ User: "Here's my entire project [pastes 10,000 lines]
 ```
 
 **Why Bad**:
+
 - Exceeds token limits
 - Dilutes relevant context
 - Wastes processing time
@@ -657,6 +665,7 @@ Success: Yes
 ```
 
 **Analyze**:
+
 - What patterns emerge?
 - What context always helps?
 - What context never helps?
@@ -803,6 +812,7 @@ Create your personal context management toolkit:
 You have a 3000-line legacy file to refactor. How do you manage context?
 
 **Strategy**:
+
 1. Create architecture document
 2. Chunk into logical sections
 3. Refactor one section at a time
@@ -839,6 +849,7 @@ Refactoring Section 1 (lines 1-500): Database access
 You're learning a new framework. How do you build context efficiently?
 
 **Strategy**:
+
 1. Start with official examples
 2. Build minimal working example
 3. Gradually add complexity
@@ -862,6 +873,7 @@ User: "I'm learning FastAPI. Here's the basic example from docs:
 Production bug, need quick context for AI assistance:
 
 **Strategy**:
+
 1. Error message (exact text)
 2. Relevant code (not all code)
 3. Recent changes

@@ -5,6 +5,7 @@
 Learn how function signatures and docstrings help Copilot generate accurate function implementations.
 
 ## Instructions
+
 1. Create a new Python file called `string_utils.py`
 1. Write function signatures with descriptive names and type hints
 1. Add docstrings explaining the function's purpose
@@ -56,12 +57,14 @@ def is_palindrome(text: str) -> bool:
 ```
 
 ## What You'll Learn
+
 - How function signatures guide Copilot's understanding
 - The power of good docstrings for generating accurate code
 - How type hints improve suggestion quality
 - The importance of clear function naming
 
 ## Success Criteria
+
 - [ ] All functions work as described in their docstrings
 - [ ] Copilot generates logical implementations
 - [ ] You understand how signatures influence suggestions

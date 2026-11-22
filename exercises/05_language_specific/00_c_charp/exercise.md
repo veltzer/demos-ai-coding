@@ -5,6 +5,7 @@
 Learn how to use GitHub Copilot to develop modern C# applications, leveraging language features like LINQ, async/await, dependency injection, and object-oriented design patterns.
 
 ## Instructions
+
 1. Create a new C# console application
 1. Use Copilot to implement a task management system
 1. Learn C# best practices and modern patterns
@@ -12,6 +13,7 @@ Learn how to use GitHub Copilot to develop modern C# applications, leveraging la
 1. Add advanced features like search, filtering, and scheduling
 
 ## Prerequisites
+
 - .NET 8.0 SDK or later installed
 - Visual Studio Code or Visual Studio
 - GitHub Copilot extension enabled
@@ -446,6 +448,7 @@ namespace TaskManager
 ```
 
 ## What You'll Learn
+
 - Modern C# language features (LINQ, async/await, pattern matching)
 - Repository pattern implementation
 - Dependency injection principles
@@ -456,6 +459,7 @@ namespace TaskManager
 - SOLID principles in practice
 
 ## Success Criteria
+
 - [ ] Can create tasks from command line
 - [ ] Can list tasks with filtering options
 - [ ] Tasks persist between application runs
@@ -644,6 +648,7 @@ public class TaskService : ITaskService
 ```
 
 ## Real-World Extensions
+
 - Web API version using ASP.NET Core
 - Blazor WebAssembly UI
 - Database support with Entity Framework Core
@@ -654,6 +659,7 @@ public class TaskService : ITaskService
 ## Expected Learning Outcomes
 
 By completing this exercise, you will understand:
+
 - C# best practices and conventions
 - Async programming patterns
 - Repository and service patterns

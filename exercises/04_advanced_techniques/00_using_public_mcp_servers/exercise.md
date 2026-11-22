@@ -7,6 +7,7 @@ Learn how to discover, configure, and use public Model Context Protocol (MCP) se
 ## What is MCP?
 
 The Model Context Protocol (MCP) is an open protocol that enables AI assistants to:
+
 - Access external tools and APIs
 - Query databases and data sources
 - Interact with web services
@@ -16,6 +17,7 @@ The Model Context Protocol (MCP) is an open protocol that enables AI assistants 
 Think of MCP as a way to give your AI assistant "superpowers" by connecting it to external services.
 
 ## Prerequisites
+
 - Claude Code or GitHub Copilot installed
 - Node.js 18+ installed (for most MCP servers)
 - Basic understanding of JSON configuration
@@ -32,6 +34,7 @@ Here are some widely-used public MCP servers:
 #### 1. **Filesystem MCP**
 
 Access local files and directories
+
 - **Repository:** `@modelcontextprotocol/server-filesystem`
 - **Use cases:** Read/write files, search directories, file operations
 - **No API key needed**
@@ -39,6 +42,7 @@ Access local files and directories
 #### 2. **GitHub MCP**
 
 Interact with GitHub repositories
+
 - **Repository:** `@modelcontextprotocol/server-github`
 - **Use cases:** Create issues, PRs, search repos, read code
 - **Requires:** GitHub personal access token
@@ -46,6 +50,7 @@ Interact with GitHub repositories
 #### 3. **Brave Search MCP**
 
 Web search using Brave Search API
+
 - **Repository:** `@modelcontextprotocol/server-brave-search`
 - **Use cases:** Real-time web search, news, information lookup
 - **Requires:** Brave Search API key (free tier available)
@@ -53,6 +58,7 @@ Web search using Brave Search API
 #### 4. **PostgreSQL MCP**
 
 Query and manage PostgreSQL databases
+
 - **Repository:** `@modelcontextprotocol/server-postgres`
 - **Use cases:** Database queries, schema inspection, data analysis
 - **Requires:** PostgreSQL connection string
@@ -60,6 +66,7 @@ Query and manage PostgreSQL databases
 #### 5. **Puppeteer MCP**
 
 Browser automation and web scraping
+
 - **Repository:** `@modelcontextprotocol/server-puppeteer`
 - **Use cases:** Web scraping, screenshots, form filling
 - **No API key needed** (uses local Chrome)
@@ -67,6 +74,7 @@ Browser automation and web scraping
 #### 6. **Google Drive MCP**
 
 Access Google Drive files
+
 - **Repository:** `@modelcontextprotocol/server-gdrive`
 - **Use cases:** Read/search Drive files, list folders
 - **Requires:** Google OAuth credentials
@@ -74,6 +82,7 @@ Access Google Drive files
 #### 7. **Slack MCP**
 
 Interact with Slack workspaces
+
 - **Repository:** `@modelcontextprotocol/server-slack`
 - **Use cases:** Send messages, read channels, search conversations
 - **Requires:** Slack bot token
@@ -81,6 +90,7 @@ Interact with Slack workspaces
 #### 8. **Sequential Thinking MCP**
 
 Advanced reasoning and problem-solving
+
 - **Repository:** `@modelcontextprotocol/server-sequential-thinking`
 - **Use cases:** Complex problem decomposition, step-by-step reasoning
 - **No API key needed**
@@ -88,6 +98,7 @@ Advanced reasoning and problem-solving
 #### 9. **Memory MCP**
 
 Persistent memory for conversations
+
 - **Repository:** `@modelcontextprotocol/server-memory`
 - **Use cases:** Remember facts across sessions, build knowledge base
 - **No API key needed**
@@ -95,6 +106,7 @@ Persistent memory for conversations
 #### 10. **Fetch MCP**
 
 HTTP requests and API calls
+
 - **Repository:** `@modelcontextprotocol/server-fetch`
 - **Use cases:** Call REST APIs, download web content
 - **No API key needed** (unless target APIs require auth)
@@ -244,18 +256,21 @@ Edit VS Code settings (`.vscode/settings.json` or user settings):
 ## Part 4: Getting API Keys
 
 ### Brave Search API
+
 1. Go to [Brave Search API](https://brave.com/search/api/)
 1. Sign up for free tier (2,000 queries/month)
 1. Create an API key
 1. Add to your MCP config
 
 ### GitHub Personal Access Token
+
 1. Go to [GitHub token settings](https://github.com/settings/tokens)
 1. Click "Generate new token (classic)"
 1. Select scopes: `repo`, `read:org`, `read:user`
 1. Copy token and add to MCP config
 
 ### Google Drive OAuth
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 1. Create a new project
 1. Enable Google Drive API
@@ -264,6 +279,7 @@ Edit VS Code settings (`.vscode/settings.json` or user settings):
 1. Configure in MCP settings
 
 ### Slack Bot Token
+
 1. Go to [Slack app dashboard](https://api.slack.com/apps)
 1. Create a new app
 1. Add bot token scopes: `channels:read`, `chat:write`, `users:read`
@@ -722,6 +738,7 @@ main().catch((error) => {
 **Error:** "MCP server 'xyz' not responding"
 
 **Solutions:**
+
 1. Check the command path is correct
 2. Verify npx can access the package: `npx @modelcontextprotocol/server-filesystem --help`
 3. Try absolute paths instead of npx
@@ -732,6 +749,7 @@ main().catch((error) => {
 **Error:** "Invalid API key" or "Authentication failed"
 
 **Solutions:**
+
 1. Verify API key is correct (no extra spaces)
 2. Check key hasn't expired
 3. Verify key has necessary permissions
@@ -742,6 +760,7 @@ main().catch((error) => {
 **Error:** "EACCES: permission denied"
 
 **Solutions:**
+
 1. Check file/directory permissions
 2. For filesystem MCP, ensure paths in config are accessible
 3. Run with appropriate user permissions
@@ -752,6 +771,7 @@ main().catch((error) => {
 **Error:** Server exits immediately or crashes
 
 **Solutions:**
+
 1. Check server logs (stderr output)
 2. Verify all required environment variables are set
 3. Test server manually: `npx @modelcontextprotocol/server-xyz`
@@ -762,6 +782,7 @@ main().catch((error) => {
 **Error:** "Rate limit exceeded"
 
 **Solutions:**
+
 1. Check API usage limits
 2. Implement caching for repeated queries
 3. Upgrade to higher API tier

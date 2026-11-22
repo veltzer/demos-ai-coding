@@ -7,6 +7,7 @@ Learn how to systematically refactor legacy code using AI assistance. Identify c
 ## What is Legacy Code?
 
 Legacy code is code that:
+
 - Works but is hard to understand
 - Lacks tests
 - Has accumulated technical debt
@@ -16,6 +17,7 @@ Legacy code is code that:
 **Michael Feathers' Definition:** "Legacy code is code without tests."
 
 ## Prerequisites
+
 - Understanding of SOLID principles
 - Familiarity with design patterns
 - Basic testing knowledge

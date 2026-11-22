@@ -10,6 +10,7 @@ Introduce the pupils to the very basic idea: an **agent** is an LLM that can tak
 ---
 
 ## What pupils should walk away with
+
 - An agent = LLM + tools + a loop ("think → act → observe → think again").
 - Without tools, the LLM can only produce text. With tools, it can read files, run commands, search the web, etc.
 - Today's demos use Claude Code (or GitHub Copilot Agent Mode) as the agent.
@@ -17,6 +18,7 @@ Introduce the pupils to the very basic idea: an **agent** is an LLM that can tak
 ---
 
 ## Setup before class
+
 1. Open a terminal in an **empty scratch directory** (e.g., `/tmp/agent-demo`).
 2. Have a browser tab open to a regular chat (claude.ai or ChatGPT) on a second screen.
 3. Have Claude Code (or your agent of choice) ready to launch in the terminal.
@@ -50,6 +52,7 @@ Pupils will see the agent **call a tool** (probably `Bash` running `ls ~`), get 
 ### Step 3 — Narrate the loop (2 min)
 
 Point at the screen and name the parts as they appear:
+
 1. **Think** — "The model decides it needs to run `ls`."
 2. **Act** — "It calls the Bash tool."
 3. **Observe** — "It reads the output that came back."
@@ -68,6 +71,7 @@ That four-step cycle is the entire idea of an agent. Everything else in this cou
 ---
 
 ## Common pitfalls / things to flag
+
 - Don't go deep on prompt engineering yet — that's a later demo.
 - If the agent asks for permission to run `ls`, **approve it** and tell pupils that permission prompts are a safety feature; we'll see them throughout.
 - Resist showing fancy stuff. The point of this demo is the *contrast* between chat and agent.

@@ -10,6 +10,7 @@ Show the agent **choosing between tools** and **chaining them**: read something,
 ---
 
 ## What pupils should walk away with
+
 - The agent picks tools dynamically — Read for input, Write for output.
 - Multiple tool calls in one turn is normal; that's the loop running multiple times.
 - The agent's "thinking" connects the tools together.
@@ -17,6 +18,7 @@ Show the agent **choosing between tools** and **chaining them**: read something,
 ---
 
 ## Setup before class
+
 1. Create a small CSV file:
 
    ```bash
@@ -47,6 +49,7 @@ result into a file called ranked.md as a markdown numbered list.
 ```
 
 While it works, **narrate** to the class what each tool call does as it happens:
+
 - "It's reading scores.csv now → that's the **Read** tool."
 - "It's writing ranked.md now → that's the **Write** tool."
 - "Notice it didn't ask me anything in between — it figured out the steps."
@@ -90,5 +93,6 @@ The agent will reuse what it already knows (it remembers the data from earlier i
 ---
 
 ## Common pitfalls / things to flag
+
 - If the agent decides to `cat` and `sort` via Bash instead of doing it in the model's head, **that's also fine** — point out it made a different choice and both are valid.
 - Don't overload the demo with a giant file. Five rows is enough; pupils need to see the whole thing on screen.
