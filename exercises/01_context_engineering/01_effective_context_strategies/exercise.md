@@ -354,7 +354,7 @@ user_management/
 - Services handle business logic
 - Repositories handle data access
 
-## When to include each file:
+## When to include each file
 - Working on API: Include services.py, validators.py
 - Working on Service: Include repositories.py, models.py
 - Working on Repository: Include models.py only
