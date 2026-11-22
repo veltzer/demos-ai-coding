@@ -227,13 +227,13 @@ def calculate_discount(price, customer_type):
 
 ### Strategy 1: Selective File Opening
 
-### Bad Practice
+### Bad Practice: Selective File Opening
 
 ```txt
 Opening 20 files in your editor hoping AI uses them all
 ```
 
-### Good Practice
+### Good Practice: Selective File Opening
 
 ```txt
 Open only 2-3 most relevant files:
@@ -244,7 +244,7 @@ Open only 2-3 most relevant files:
 
 ### Strategy 2: Code Comments as Context
 
-### Bad Practice
+### Bad Practice: Code Comments as Context
 
 ```python
 def process_data(data):
@@ -252,7 +252,7 @@ def process_data(data):
     pass
 ```
 
-### Good Practice
+### Good Practice: Code Comments as Context
 
 ```python
 def process_data(data):
