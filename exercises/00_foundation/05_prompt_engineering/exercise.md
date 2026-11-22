@@ -59,12 +59,14 @@ def sort_dicts_by_key(data: list[dict], key: str, reverse: bool = False) -> list
 ### Principle 2: Provide Context
 
 **Bad Prompt:**
+
 ```python
 # Calculate total
 def calculate_total(items):
 ```
 
 **Good Prompt:**
+
 ```python
 # E-commerce shopping cart system
 # Calculate the total price of items in a shopping cart
@@ -259,6 +261,7 @@ def longest_common_substring(str1: str, str2: str, case_sensitive: bool = True) 
 Explicitly state what to avoid or requirements that must be met.
 
 **Example:**
+
 ```python
 # Create a password validation function
 #
@@ -388,6 +391,7 @@ class TodoList:
 ```
 
 **Step 2 - Add requirements:**
+
 ```python
 # Enhance the TodoList class to:
 # - Support priority levels (low, medium, high)
@@ -397,6 +401,7 @@ class TodoList:
 ```
 
 **Step 3 - Add persistence:**
+
 ```python
 # Add persistence to TodoList:
 # - Save to JSON file
@@ -406,6 +411,7 @@ class TodoList:
 ```
 
 **Step 4 - Add search:**
+
 ```python
 # Add search capabilities:
 # - Search by text in title/description
@@ -855,12 +861,14 @@ def celsius_to_fahrenheit(celsius: float) -> float:
 ### Mistake 2: Assuming Context
 
 **Don't:**
+
 ```python
 # Fix the bug
 def calculate_total(items):
 ```
 
 **Do:**
+
 ```python
 # Bug: The function doesn't handle negative quantities correctly
 # Expected: Negative quantities should raise ValueError
@@ -876,12 +884,14 @@ def calculate_total(items):
 ### Mistake 3: No Success Criteria
 
 **Don't:**
+
 ```python
 # Optimize this function
 def search_data(data, query):
 ```
 
 **Do:**
+
 ```python
 # Optimize this function to handle 1M+ records
 # Current performance: ~5 seconds for 100K records
@@ -903,12 +913,14 @@ def search_data(data, query):
 ### Mistake 4: Ignoring Error Handling
 
 **Don't:**
+
 ```python
 # Read file and parse JSON
 def load_config():
 ```
 
 **Do:**
+
 ```python
 # Read configuration file and parse JSON
 #
@@ -925,12 +937,14 @@ def load_config(config_path: str = "config.json") -> dict:
 ### Mistake 5: No Examples
 
 **Don't:**
+
 ```python
 # Parse command line arguments
 def parse_args():
 ```
 
 **Do:**
+
 ```python
 # Parse command line arguments
 #
@@ -984,6 +998,7 @@ Create a personal library of prompts for common tasks. Here's a template:
 ```
 
 ### URL Validator
+
 ```python
 # [Your template]
 ```

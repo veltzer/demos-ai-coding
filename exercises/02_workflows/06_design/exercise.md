@@ -89,6 +89,7 @@ all: main.exe
 ### Core Components to Implement
 
 #### 1. Parser Module
+
 ```cpp
 // Ask Copilot: "Implement a parser for Buildit files"
 class BuildfileParser {
@@ -115,6 +116,7 @@ private:
 ```
 
 #### 2. Dependency Graph
+
 ```cpp
 // Ask Copilot: "Create a dependency graph for build targets"
 class DependencyGraph {
@@ -133,6 +135,7 @@ private:
 ```
 
 #### 3. Build Executor
+
 ```cpp
 // Ask Copilot: "Implement build execution with timestamp checking"
 class BuildExecutor {
@@ -155,6 +158,7 @@ private:
 ```
 
 #### 4. Command Line Interface
+
 ```cpp
 // Ask Copilot: "Create a rich CLI for the build tool"
 class CLI {
@@ -179,6 +183,7 @@ public:
 ### Advanced Features
 
 #### Parallel Build Support
+
 ```cpp
 // Ask Copilot: "Add parallel build execution using thread pool"
 class ParallelExecutor {
@@ -195,6 +200,7 @@ private:
 ```
 
 #### File Watching (Incremental Builds)
+
 ```cpp
 // Ask Copilot: "Implement file watching for automatic rebuilds"
 class FileWatcher {
@@ -209,6 +215,7 @@ private:
 ```
 
 #### Build Cache
+
 ```cpp
 // Ask Copilot: "Add build caching to avoid redundant compilations"
 class BuildCache {
@@ -287,6 +294,7 @@ install: app
 ```
 
 ### Test Scenarios
+
 ```bash
 # Basic build
 ./buildit
@@ -380,6 +388,7 @@ release: app
 
 ### Challenge 2: Pattern Rules
 Implement pattern matching:
+
 ```makefile
 %.o: %.cpp
     $(CC) $(FLAGS) -c $< -o $@
@@ -390,6 +399,7 @@ Implement pattern matching:
 
 ### Challenge 3: Include Directives
 Support including other Buildit files:
+
 ```makefile
 include common.buildit
 include platform/$(OS).buildit

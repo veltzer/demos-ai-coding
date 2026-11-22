@@ -169,6 +169,7 @@ Discuss with Copilot:
 
 ### Test Setup
 Create test files with known word counts:
+
 ```bash
 echo "one two three four five" > test1.txt  # 5 words
 echo "six seven eight" > test2.txt          # 3 words
@@ -176,6 +177,7 @@ echo "nine ten" > test3.txt                 # 2 words
 ```
 
 ### Test Cases
+
 ```python
 # Test 1: Basic counting
 ./word_counter.py test1.txt test2.txt test3.txt
@@ -198,6 +200,7 @@ echo "additional words" >> test1.txt
 
 ### Challenge 1: Smart Cache Strategies
 Implement different caching strategies:
+
 ```python
 class CacheStrategy:
     """Base class for cache strategies."""
@@ -214,6 +217,7 @@ class SizeLimitedCache(CacheStrategy):
 
 ### Challenge 2: Configuration Management
 Add configuration file support:
+
 ```python
 # word_counter_config.yaml
 cache:
@@ -232,6 +236,7 @@ output:
 
 ### Challenge 3: Plugin Architecture
 Create a plugin system for word counting algorithms:
+
 ```python
 class WordCountPlugin:
     """Base class for word counting plugins."""

@@ -182,6 +182,7 @@ Write natural language descriptions of complex systems and see how well Copilot 
 ```
 
 ### Challenge 3: Timeline Diagrams
+
 ```mermaid
 gantt
     title Software Project Timeline

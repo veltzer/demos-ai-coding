@@ -468,6 +468,7 @@ def test_calculate_shipping_heavy_and_far():
 **Exercise 2.2:** Refactor in tiny steps.
 
 **Before:**
+
 ```python
 def process_data(data):
     result = []
@@ -478,6 +479,7 @@ def process_data(data):
 ```
 
 **Step 2a - Extract variable:**
+
 ```python
 def process_data(data):
     result = []
@@ -489,6 +491,7 @@ def process_data(data):
 ```
 
 **Step 2b - Extract method:**
+
 ```python
 def is_valid_item(item):
     return item['status'] == 'active' and item['value'] > 0
@@ -502,6 +505,7 @@ def process_data(data):
 ```
 
 **Step 2c - Use list comprehension:**
+
 ```python
 def is_valid_item(item):
     return item['status'] == 'active' and item['value'] > 0

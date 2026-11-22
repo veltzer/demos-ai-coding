@@ -50,6 +50,7 @@ The agent will use the **Read** tool (or `cat` via Bash) on `shopping-list.txt` 
 (Answer: it probably used `ls` first, or noticed only one `.txt` file exists. Highlight that the agent **explored** before acting.)
 
 ### Step 2 — Ask something that requires reasoning over the file (3 min)
+
 ```txt
 Which item on the list is the most subjective? Explain.
 ```

@@ -21,6 +21,7 @@ Learn how to use GitHub Copilot to create a complete, production-ready blog on G
 ### Part 1: Repository Setup
 
 #### Step 1: Create Your Special Repository
+
 ```bash
 # The repository MUST be named: [your-username].github.io
 # Example: if your username is "johndoe", create: johndoe.github.io
@@ -48,6 +49,7 @@ Ask Copilot Chat these questions to understand your options:
 ### Part 2: Choose Your Approach
 
 #### Option A: Jekyll (GitHub Pages Native)
+
 ```ruby
 # Ask Copilot to help create:
 # _config.yml - Jekyll configuration
@@ -59,6 +61,7 @@ Ask Copilot Chat these questions to understand your options:
 ```
 
 #### Option B: MkDocs (Documentation-Focused)
+
 ```yaml
 # Ask Copilot to help create:
 # mkdocs.yml - MkDocs configuration
@@ -70,6 +73,7 @@ Ask Copilot Chat these questions to understand your options:
 ```
 
 #### Option C: Hugo (Static Site Generator)
+
 ```toml
 # Ask Copilot to help create:
 # config.toml - Hugo configuration
@@ -80,6 +84,7 @@ Ask Copilot Chat these questions to understand your options:
 ```
 
 #### Option D: Plain HTML/CSS/JS
+
 ```html
 <!-- Ask Copilot to help create: -->
 <!-- index.html - Homepage -->
@@ -169,6 +174,7 @@ tags: [github, jekyll, blogging]
 
 #### Custom Theme Development
 Ask Copilot to help create:
+
 ```scss
 // _sass/custom.scss
 // Custom styling for your blog
@@ -190,6 +196,7 @@ $font-family: 'Segoe UI', system-ui, sans-serif;
 ```
 
 #### Add Interactive Features
+
 ```javascript
 // assets/js/search.js
 // Ask Copilot: "Create a search feature for Jekyll blog posts"
@@ -205,6 +212,7 @@ class BlogSearch {
 ```
 
 #### Create Custom Layouts
+
 ```html
 <!-- _layouts/custom-post.html -->
 <!-- Ask Copilot: "Create a custom Jekyll post layout with reading time and share buttons" -->
@@ -284,6 +292,7 @@ excerpt: ""
 ```
 
 #### Categories and Tags System
+
 ```html
 <!-- categories.html -->
 <!-- Ask Copilot: "Create a categories page for Jekyll blog" -->
@@ -309,6 +318,7 @@ permalink: /categories/
 ### Part 6: SEO and Analytics
 
 #### SEO Optimization
+
 ```html
 <!-- _includes/seo.html -->
 <!-- Ask Copilot: "Create SEO meta tags for Jekyll blog" -->
@@ -319,6 +329,7 @@ permalink: /categories/
 ```
 
 #### Google Analytics Integration
+
 ```html
 <!-- _includes/analytics.html -->
 <!-- Ask Copilot: "Add Google Analytics to Jekyll blog" -->
@@ -507,6 +518,7 @@ touch docs/blog/.authors.yml
 
 #### Step 3: Blog Authors Configuration
 Create `docs/blog/.authors.yml`:
+
 ```yaml
 authors:
   yourname:
@@ -608,6 +620,7 @@ jobs:
 ```
 
 #### Step 6: Local Development
+
 ```bash
 # Install MkDocs locally
 pip install mkdocs-material
@@ -628,6 +641,7 @@ mkdocs gh-deploy
 
 ##### Custom CSS
 Create `docs/assets/stylesheets/custom.css`:
+
 ```css
 /* Ask Copilot: "Create custom CSS for MkDocs Material theme" */
 :root {
@@ -673,6 +687,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 ##### Blog Index Template
 Create `overrides/blog-index.html`:
+
 ```html
 <!-- Ask Copilot: "Create a custom blog index template for MkDocs" -->
 {% extends "base.html" %}
@@ -748,6 +763,7 @@ Create `overrides/blog-index.html`:
 
 ### Challenge 1: Comment System
 Implement a comment system without a backend:
+
 ```javascript
 // Using utterances (GitHub issues as comments)
 // Or Disqus, or staticman
@@ -756,6 +772,7 @@ Implement a comment system without a backend:
 
 ### Challenge 2: Newsletter Integration
 Add email subscription:
+
 ```html
 <!-- Integrate with Mailchimp, ConvertKit, or similar -->
 <!-- Ask Copilot: "Add newsletter signup form to Jekyll blog" -->
@@ -763,6 +780,7 @@ Add email subscription:
 
 ### Challenge 3: Multi-language Support
 Make your blog multilingual:
+
 ```yaml
 # _config.yml
 languages: ["en", "es", "fr"]
@@ -772,6 +790,7 @@ default_lang: "en"
 
 ### Challenge 4: Progressive Web App
 Convert to PWA:
+
 ```json
 // manifest.json
 {
@@ -786,6 +805,7 @@ Convert to PWA:
 ## Troubleshooting Common Issues
 
 ### Issue 1: Page Not Building
+
 ```bash
 # Check build errors
 # Look at Actions tab in GitHub
@@ -794,6 +814,7 @@ Convert to PWA:
 ```
 
 ### Issue 2: CSS Not Loading
+
 ```yaml
 # In _config.yml, ensure:
 baseurl: ""  # or "/repository-name" if not using username.github.io
@@ -801,6 +822,7 @@ url: "https://username.github.io"
 ```
 
 ### Issue 3: Posts Not Showing
+
 ```markdown
 # Ensure posts follow naming convention:
 # YYYY-MM-DD-title.md

@@ -18,6 +18,7 @@ Write comments and let Copilot generate code for a simple calculator that can:
 - Take user input for operation choice and numbers
 
 ## Example Starting Comment
+
 ```python
 # Simple calculator program
 # Function to add two numbers

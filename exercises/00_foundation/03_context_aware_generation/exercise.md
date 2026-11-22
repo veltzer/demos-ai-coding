@@ -70,6 +70,7 @@ def search_todos(keyword: str):
 ```
 
 ## Test Your Todo App
+
 ```python
 # Test the todo app
 add_todo("Learn Copilot", "high")

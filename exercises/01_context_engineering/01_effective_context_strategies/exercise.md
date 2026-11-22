@@ -1321,6 +1321,7 @@ Can you find it?
 ```
 
 **Fix**: Be specific about the problem
+
 ```python
 """
 Problem: Users can't log in after password reset
@@ -1380,6 +1381,7 @@ Here's all my code: [10,000 lines]
 Help!
 """
 ```
+
 Anti-pattern: _______________
 Fix: _______________
 
@@ -1391,6 +1393,7 @@ Remember that API we talked about last week?
 Can you add authentication to it?
 """
 ```
+
 Anti-pattern: _______________
 Fix: _______________
 
@@ -1407,6 +1410,7 @@ Here's what I'm planning: [future code]
 Which one should I use?
 """
 ```
+
 Anti-pattern: _______________
 Fix: _______________
 

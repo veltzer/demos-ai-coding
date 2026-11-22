@@ -20,6 +20,7 @@ Learn how to use GitHub Copilot to develop modern C# applications, leveraging la
 ### Part 1: Project Setup
 
 #### Step 1: Create the Project
+
 ```bash
 # Create a new console application
 dotnet new console -n TaskManager
@@ -457,6 +458,7 @@ namespace TaskManager
 ## Test Scenarios
 
 ### Basic Operations
+
 ```bash
 # Add tasks
 dotnet run -- add --title "Write documentation" --priority High --due 2024-12-31

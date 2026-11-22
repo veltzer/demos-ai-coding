@@ -266,6 +266,7 @@ Edit VS Code settings (`.vscode/settings.json` or user settings):
 ### Exercise 5.1: Filesystem Operations
 
 **Setup Filesystem MCP:**
+
 ```json
 {
   "mcpServers": {
@@ -316,6 +317,7 @@ Ask your AI: "Using the filesystem tools, list all .py files in the projects dir
 ### Exercise 5.2: Web Search with Brave
 
 **Setup Brave Search MCP:**
+
 ```json
 {
   "mcpServers": {
@@ -365,6 +367,7 @@ Ask your AI: "Using the filesystem tools, list all .py files in the projects dir
 ### Exercise 5.3: GitHub Integration
 
 **Setup GitHub MCP:**
+
 ```json
 {
   "mcpServers": {
@@ -414,6 +417,7 @@ Ask your AI: "Using the filesystem tools, list all .py files in the projects dir
 ### Exercise 5.4: Database Queries
 
 **Setup PostgreSQL MCP:**
+
 ```json
 {
   "mcpServers": {
@@ -463,6 +467,7 @@ Ask your AI: "Using the filesystem tools, list all .py files in the projects dir
 ### Exercise 5.5: Web Scraping with Puppeteer
 
 **Setup Puppeteer MCP:**
+
 ```json
 {
   "mcpServers": {
@@ -758,6 +763,7 @@ main().catch((error) => {
 ### Security
 
 1. **Never commit API keys** to version control
+
    ```bash
    # Add to .gitignore
    echo "mcp-config.json" >> .gitignore
@@ -765,6 +771,7 @@ main().catch((error) => {
    ```
 
 1. **Use environment variables**
+
    ```bash
    # Store keys in .env file
    export BRAVE_API_KEY="your-key"
@@ -772,6 +779,7 @@ main().catch((error) => {
    ```
 
 1. **Limit filesystem access**
+
    ```json
    // Only allow specific directories
    {

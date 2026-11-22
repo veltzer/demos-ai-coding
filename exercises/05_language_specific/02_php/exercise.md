@@ -22,6 +22,7 @@ Learn how to use GitHub Copilot to develop modern PHP web applications, implemen
 ### Part 1: Project Setup
 
 #### Step 1: Initialize Project
+
 ```bash
 # Create project directory
 mkdir blog-api
@@ -1004,6 +1005,7 @@ $app->run();
 ## Test Scenarios
 
 ### Authentication Tests
+
 ```bash
 # Register new user
 curl -X POST http://localhost:8000/api/auth/register \
@@ -1029,6 +1031,7 @@ curl -X GET http://localhost:8000/api/auth/me \
 ```
 
 ### Post Tests
+
 ```bash
 # List posts with pagination
 curl -X GET "http://localhost:8000/api/posts?page=1&per_page=10&status=published"

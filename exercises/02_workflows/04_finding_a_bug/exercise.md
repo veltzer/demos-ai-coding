@@ -40,6 +40,7 @@ Use these strategies to find bugs:
 
 #### Strategy 1: Static Analysis
 Ask Copilot to analyze specific files:
+
 ```python
 # For each major module, ask:
 "Review pytconf/config.py for potential bugs"
@@ -49,6 +50,7 @@ Ask Copilot to analyze specific files:
 ```
 
 #### Strategy 2: Error Handling Analysis
+
 ```python
 # Look for missing or incorrect error handling:
 "Find all exception handling in the codebase"
@@ -58,6 +60,7 @@ Ask Copilot to analyze specific files:
 ```
 
 #### Strategy 3: Edge Case Detection
+
 ```python
 # Common edge cases to check:
 "What happens with None/null inputs?"
@@ -69,6 +72,7 @@ Ask Copilot to analyze specific files:
 ### Part 3: Common Bug Patterns to Search For
 
 #### Pattern 1: Configuration Parsing Issues
+
 ```python
 # Areas to investigate:
 - Type conversion errors
@@ -79,6 +83,7 @@ Ask Copilot to analyze specific files:
 ```
 
 #### Pattern 2: State Management Problems
+
 ```python
 # Check for:
 - Mutable default arguments
@@ -88,6 +93,7 @@ Ask Copilot to analyze specific files:
 ```
 
 #### Pattern 3: String and Path Handling
+
 ```python
 # Look for:
 - OS-specific path separators
@@ -100,6 +106,7 @@ Ask Copilot to analyze specific files:
 ### Part 4: Specific Bug Investigation Tasks
 
 #### Task 1: Type Annotation Issues
+
 ```python
 # Ask Copilot:
 "Find all functions missing type hints"
@@ -109,6 +116,7 @@ Ask Copilot to analyze specific files:
 ```
 
 #### Task 2: Documentation Discrepancies
+
 ```python
 # Investigate:
 "Find docstrings that don't match implementation"
@@ -118,6 +126,7 @@ Ask Copilot to analyze specific files:
 ```
 
 #### Task 3: Test Coverage Gaps
+
 ```python
 # Analyze:
 "What code paths are not tested?"

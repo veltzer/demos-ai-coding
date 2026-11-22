@@ -184,6 +184,7 @@ After completing this exercise:
 
 ## Additional Testing
 Compile and run your code to see the difference:
+
 ```bash
 gcc -o calculator calculator.c
 ./calculator

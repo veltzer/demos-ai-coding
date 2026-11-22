@@ -28,6 +28,7 @@ Infrastructure as Code (IaC) means managing and provisioning infrastructure thro
 **Scenario:** Containerize a Python Flask application
 
 **Application Code (app.py):**
+
 ```python
 from flask import Flask, jsonify
 import os
@@ -543,6 +544,7 @@ Also create:
 ```
 
 **ingress.yaml:**
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -577,6 +579,7 @@ spec:
 ```
 
 **certificate.yaml:**
+
 ```yaml
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -592,6 +595,7 @@ spec:
 ```
 
 **networkpolicy.yaml:**
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -675,6 +679,7 @@ Include proper tagging, variables, and outputs.
 ```
 
 **main.tf:**
+
 ```hcl
 terraform {
   required_version = ">= 1.0"
@@ -709,6 +714,7 @@ provider "aws" {
 ```
 
 **variables.tf:**
+
 ```hcl
 variable "aws_region" {
   description = "AWS region"
@@ -766,6 +772,7 @@ variable "db_password" {
 ```
 
 **vpc.tf:**
+
 ```hcl
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
@@ -907,6 +914,7 @@ resource "aws_security_group" "redis" {
 ```
 
 **rds.tf:**
+
 ```hcl
 resource "aws_db_subnet_group" "main" {
   name       = "${var.project_name}-db-subnet"
@@ -953,6 +961,7 @@ resource "aws_db_instance" "postgresql" {
 ```
 
 **elasticache.tf:**
+
 ```hcl
 resource "aws_elasticache_subnet_group" "main" {
   name       = "${var.project_name}-cache-subnet"
@@ -990,6 +999,7 @@ resource "aws_elasticache_replication_group" "redis" {
 ```
 
 **outputs.tf:**
+
 ```hcl
 output "alb_dns_name" {
   description = "DNS name of the load balancer"

@@ -124,6 +124,7 @@ def calculate_discount(price, discount_percent):
 ### Exercise 1.2: JavaScript Stack Trace
 
 **The Bug:**
+
 ```javascript
 // server.js
 const express = require('express');
@@ -241,6 +242,7 @@ def find_duplicates(items):
     - It adds duplicate every time, not just first occurrence
 
 1. **The fix:**
+
 ```python
 def find_duplicates(items):
     seen = set()

@@ -860,6 +860,7 @@ class TestRetryHandler:
 ### Anti-Pattern 1: Testing Implementation Details
 
 **Bad:**
+
 ```python
 def test_user_repository_uses_correct_sql():
     """Don't test SQL queries directly."""
@@ -869,6 +870,7 @@ def test_user_repository_uses_correct_sql():
 ```
 
 **Good:**
+
 ```python
 def test_user_repository_returns_active_users():
     """Test the behavior, not how it's done."""
@@ -880,6 +882,7 @@ def test_user_repository_returns_active_users():
 ### Anti-Pattern 2: Fragile Tests (Too Many Mocks)
 
 **Bad:**
+
 ```python
 def test_order_processing():
     # Too many mocks = fragile test
