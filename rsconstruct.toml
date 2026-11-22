@@ -103,4 +103,5 @@ src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniq
 
 [processor.checker.oxlint]
 src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniques/01_your_own_mcp_server"]
-args = ["-c", ".oxlintrc.json"]
+args = ["-c", ".oxlintrc.repo.json"]
+dep_inputs = [".oxlintrc.repo.json"]
