@@ -1,9 +1,11 @@
 # Code Review and Bug Detection with Copilot
 
 ## Learning Objective
+
 Learn how GitHub Copilot can identify subtle bugs, security issues, and code quality problems that might be missed in manual reviews. This exercise focuses on signal safety and memory management issues.
 
 ## Background
+
 Signal handlers in C have strict requirements about which functions are "async-signal-safe." Many common functions, including `malloc()`, `printf()`, and others, are NOT safe to call from signal handlers and can cause undefined behavior, deadlocks, or crashes.
 
 ## Instructions
@@ -15,6 +17,7 @@ Signal handlers in C have strict requirements about which functions are "async-s
 ## Your Task
 
 ### Step 1: Basic Implementation
+
 Write a C application with these requirements:
 - Asks user for two numbers in a loop
 - Prints the sum of the numbers
@@ -132,6 +135,7 @@ void sigint_handler(int sig) {
 ## Advanced Challenges
 
 ### Challenge 1: Multiple Signal Types
+
 Extend the code to handle multiple signals (SIGTERM, SIGUSR1) and ask Copilot to review:
 
 ```c
@@ -145,6 +149,7 @@ void sigterm_handler(int sig) {
 ```
 
 ### Challenge 2: Thread Safety
+
 Add pthread usage and ask Copilot about signal handling in multithreaded programs:
 
 ```c
@@ -157,6 +162,7 @@ void* worker_thread(void* arg) {
 ```
 
 ### Challenge 3: Complete Rewrite
+
 Ask Copilot Chat: "Rewrite this program using modern best practices for signal handling"
 
 ## Key Concepts to Discuss with Copilot
@@ -168,6 +174,7 @@ Ask Copilot Chat: "Rewrite this program using modern best practices for signal h
 1. **signalfd() (Linux)**: Modern signal handling approaches
 
 ## Real-World Applications
+
 This type of bug is common in:
 - System daemons and services
 - Network servers
@@ -176,6 +183,7 @@ This type of bug is common in:
 - Any C/C++ application that needs graceful shutdown
 
 ## Reflection Questions
+
 After completing this exercise:
 1. What other functions might be problematic in signal handlers?
 1. How would you test for signal safety issues?
@@ -183,6 +191,7 @@ After completing this exercise:
 1. How does Copilot's knowledge of system programming compare to higher-level languages?
 
 ## Additional Testing
+
 Compile and run your code to see the difference:
 
 ```bash
@@ -192,6 +201,7 @@ gcc -o calculator calculator.c
 ```
 
 ## Resources for Further Learning
+
 Ask Copilot about:
 - The complete list of async-signal-safe functions (POSIX.1-2008)
 - Signal handling best practices in modern C

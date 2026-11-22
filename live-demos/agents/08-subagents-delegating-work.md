@@ -1,6 +1,7 @@
 # Demo 08 — Subagents: Agents That Spawn Agents
 
 ## Goal of this demo
+
 Show that an agent can **delegate** to other agents. The main agent becomes an orchestrator: it decides what to do itself and what to hand off. This is the leap from "one agent doing things" to "agents collaborating."
 
 **Estimated time:** 15–18 minutes
@@ -31,9 +32,11 @@ Show that an agent can **delegate** to other agents. The main agent becomes an o
 ## Live script
 
 ### Step 1 — Set the scene (2 min)
+
 > "Imagine I want to know three things about this codebase: how big is it, what's the test coverage like, and what's the most complex file. If I asked one agent to do all three serially, it would take a while and fill its memory with details I won't reuse."
 
 ### Step 2 — The single-agent approach (anti-pattern) (3 min)
+
 Ask the main agent directly:
 
 ```txt
@@ -44,6 +47,7 @@ how many tests exist, and which file has the most functions defined.
 Let it work. It will read lots of files, run lots of commands. Watch the context grow. Notice that **all of those file contents are now in the main conversation** — even though we won't need them again.
 
 ### Step 3 — The subagent approach (6 min)
+
 Now ask:
 
 ```txt
@@ -64,6 +68,7 @@ Watch what happens:
 - "**Composable.** The summary is just three short answers — the heavy lifting stayed in the subagents."
 
 ### Step 4 — Show context savings (3 min)
+
 Compare (verbally or by glancing at the conversation length):
 - Single-agent run: long, lots of file contents in scrollback.
 - Subagent run: short, only the three answers.
@@ -71,6 +76,7 @@ Compare (verbally or by glancing at the conversation length):
 > "If the next thing I ask is *unrelated*, the main agent in scenario two has more room to think. That's not a small thing — context is the agent's working memory."
 
 ### Step 5 — When NOT to use subagents (2 min)
+
 Be honest:
 - Subagents start fresh — they don't know what the parent knows. You have to brief them.
 - For trivial tasks, the briefing overhead isn't worth it.
@@ -81,6 +87,7 @@ Be honest:
 ---
 
 ## Question to throw at the class
+
 > "If a subagent makes a wrong assumption, the main agent doesn't know. How do you protect against that?"
 
 (Expected: write very specific subagent prompts; ask for sources/evidence in the answer; for important work, run two subagents and compare. Good lead-in to the next demo.)

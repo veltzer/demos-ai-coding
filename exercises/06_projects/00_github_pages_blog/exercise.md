@@ -1,6 +1,7 @@
 # Real-World Exercise: Building a GitHub Pages Blog with Copilot
 
 ## Learning Objective
+
 Learn how to use GitHub Copilot to create a complete, production-ready blog on GitHub Pages from scratch, including theme selection, customization, content management, and deployment automation.
 
 ## Prerequisites
@@ -37,6 +38,7 @@ Learn how to use GitHub Copilot to create a complete, production-ready blog on G
 ```
 
 #### Step 2: Initial Setup Questions for Copilot
+
 Ask Copilot Chat these questions to understand your options:
 
 ```txt
@@ -97,6 +99,7 @@ Ask Copilot Chat these questions to understand your options:
 ### Part 3: Jekyll Implementation (Recommended)
 
 #### Step 1: Basic Jekyll Setup
+
 Create `_config.yml`:
 
 ```yaml
@@ -127,6 +130,7 @@ linkedin_username: yourprofile
 ```
 
 #### Step 2: Create Homepage
+
 Create `index.md`:
 
 ```markdown
@@ -147,6 +151,7 @@ This is where I share my thoughts on coding, technology, and software developmen
 ```
 
 #### Step 3: Create Your First Blog Post
+
 Create `_posts/2024-01-15-my-first-post.md`:
 
 ```markdown
@@ -173,6 +178,7 @@ tags: [github, jekyll, blogging]
 ### Part 4: Advanced Customization
 
 #### Custom Theme Development
+
 Ask Copilot to help create:
 
 ```scss
@@ -248,6 +254,7 @@ class BlogSearch {
 ### Part 5: Content Management
 
 #### Blog Post Template Generator
+
 Create a script to generate new posts:
 
 ```python
@@ -346,6 +353,7 @@ permalink: /categories/
 ### Part 7: Deployment and Automation
 
 #### GitHub Actions for Continuous Deployment
+
 Create `.github/workflows/build-and-deploy.yml`:
 
 ```yaml
@@ -385,6 +393,7 @@ yourdomain.com
 MkDocs is excellent for technical blogs and documentation sites. It's Python-based and offers powerful features with minimal setup.
 
 #### Step 1: MkDocs Setup
+
 Create `mkdocs.yml`:
 
 ```yaml
@@ -517,6 +526,7 @@ touch docs/blog/.authors.yml
 ```
 
 #### Step 3: Blog Authors Configuration
+
 Create `docs/blog/.authors.yml`:
 
 ```yaml
@@ -529,6 +539,7 @@ authors:
 ```
 
 #### Step 4: Create Your First Blog Post
+
 Create `docs/blog/posts/first-post.md`:
 
 ```markdown
@@ -566,6 +577,7 @@ MkDocs makes it easy to create beautiful documentation and blogs.
 ```
 
 #### Step 5: GitHub Actions Deployment
+
 Create `.github/workflows/deploy-mkdocs.yml`:
 
 ```yaml
@@ -640,6 +652,7 @@ mkdocs gh-deploy
 #### Step 7: Advanced MkDocs Features
 
 ##### Custom CSS
+
 Create `docs/assets/stylesheets/custom.css`:
 
 ```css
@@ -663,6 +676,7 @@ Create `docs/assets/stylesheets/custom.css`:
 ```
 
 ##### JavaScript Enhancements
+
 Create `docs/assets/javascripts/custom.js`:
 
 ```javascript
@@ -686,6 +700,7 @@ document.addEventListener('DOMContentLoaded', function() {
 ```
 
 ##### Blog Index Template
+
 Create `overrides/blog-index.html`:
 
 ```html
@@ -762,6 +777,7 @@ Create `overrides/blog-index.html`:
 ## Advanced Challenges
 
 ### Challenge 1: Comment System
+
 Implement a comment system without a backend:
 
 ```javascript
@@ -771,6 +787,7 @@ Implement a comment system without a backend:
 ```
 
 ### Challenge 2: Newsletter Integration
+
 Add email subscription:
 
 ```html
@@ -779,6 +796,7 @@ Add email subscription:
 ```
 
 ### Challenge 3: Multi-language Support
+
 Make your blog multilingual:
 
 ```yaml
@@ -789,6 +807,7 @@ default_lang: "en"
 ```
 
 ### Challenge 4: Progressive Web App
+
 Convert to PWA:
 
 ```json
@@ -878,6 +897,7 @@ Regular tasks to keep your blog running:
 - Web accessibility guidelines
 
 ## Expected Learning Outcomes
+
 By completing this exercise, you will:
 - Have a live, professional blog
 - Understand static site generation

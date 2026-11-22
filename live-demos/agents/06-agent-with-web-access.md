@@ -1,6 +1,7 @@
 # Demo 06 — Reaching Outside: Web and External Data
 
 ## Goal of this demo
+
 So far the agent has only touched the local machine. Now show it **reaching out to the world** — fetching a web page, checking real-time information, grounding its answer in something fresh. This is where the agent stops being a closed box.
 
 **Estimated time:** 12 minutes
@@ -28,6 +29,7 @@ So far the agent has only touched the local machine. Now show it **reaching out 
 ## Live script
 
 ### Step 1 — Show the limit (2 min)
+
 Without using any tool, ask:
 
 ```txt
@@ -39,6 +41,7 @@ The agent will answer based on training data — and will usually **flag** that 
 > "It told us 'as of my training data.' That's the polite way of saying 'I'm guessing'."
 
 ### Step 2 — Same question, with permission to fetch (4 min)
+
 Now ask:
 
 ```txt
@@ -56,6 +59,7 @@ The agent will use **WebFetch** (or WebSearch). Watch:
 > "Now it didn't guess. It went and looked. The answer is grounded in something we can verify."
 
 ### Step 3 — Show the failure mode (3 min)
+
 Ask something only available behind a login or paywall:
 
 ```txt
@@ -67,6 +71,7 @@ The agent will refuse or fail — no credentials, no access. Use this to make th
 > "Web access ≠ omniscience. The agent only sees what the tool can see. Public pages, yes. Your authenticated accounts, no — unless you give it a tool that has those credentials."
 
 ### Step 4 — Combine local and web (3 min)
+
 Bring the two worlds together:
 
 ```txt
@@ -87,6 +92,7 @@ The agent will:
 ---
 
 ## Question to throw at the class
+
 > "If the agent fetches a webpage, can the webpage tell the agent to do something bad?"
 
 (Expected: yes — this is **prompt injection**. Web content is *untrusted input*. Mention it briefly; it's a topic worth its own session.)

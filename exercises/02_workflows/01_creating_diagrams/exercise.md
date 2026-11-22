@@ -1,6 +1,7 @@
 # Exercise 6: Creating Diagrams with Copilot
 
 ## Learning Objective
+
 Learn how to use GitHub Copilot to generate various types of diagrams using Mermaid syntax, ASCII art, and diagram-as-code approaches.
 
 ## Instructions
@@ -161,12 +162,14 @@ Practice using Copilot Chat for diagram creation:
 ## Advanced Challenges
 
 ### Challenge 1: Documentation Enhancement
+
 Take an existing codebase and use Copilot to generate diagrams that explain:
 - The overall architecture
 - Data flow between components
 - API interaction patterns
 
 ### Challenge 2: Diagram from Description
+
 Write natural language descriptions of complex systems and see how well Copilot can create accurate diagrams:
 
 ```markdown
@@ -198,6 +201,7 @@ gantt
 1. **Iterate**: Use Copilot Chat to refine and improve your diagrams
 
 ## Diagram Types Reference
+
 Learn when to use each type:
 - **Flowcharts**: Process flows, decision trees
 - **Sequence Diagrams**: API interactions, user workflows
@@ -207,6 +211,7 @@ Learn when to use each type:
 - **Gantt Charts**: Project timelines, scheduling
 
 ## Real-World Applications
+
 Practice creating diagrams for:
 - System design interviews
 - Technical documentation

@@ -1,6 +1,7 @@
 # Security Audit & Hardening with AI: Building Secure Applications
 
 ## Learning Objective
+
 Learn how to identify security vulnerabilities, perform security audits, and harden applications using AI assistance. Master OWASP Top 10 vulnerabilities, secure coding practices, and security testing.
 
 ## Why Security Matters

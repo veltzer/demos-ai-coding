@@ -1,6 +1,7 @@
 # Infrastructure as Code with AI: Building Cloud Infrastructure
 
 ## Learning Objective
+
 Learn how to use AI assistance to create, manage, and deploy cloud infrastructure using Infrastructure as Code (IaC) tools like Terraform, Docker, Kubernetes, and CI/CD pipelines.
 
 ## What is Infrastructure as Code?

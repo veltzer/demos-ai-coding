@@ -1,6 +1,7 @@
 # Debugging Masterclass with AI: Finding and Fixing Bugs Systematically
 
 ## Learning Objective
+
 Learn systematic debugging techniques using AI assistance. Master reading stack traces, forming hypotheses, using debuggers effectively, and creating minimal reproductions of bugs.
 
 ## The Debugging Mindset

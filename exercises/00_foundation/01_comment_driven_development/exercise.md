@@ -1,6 +1,7 @@
 # Comment-Driven Development with Copilot
 
 ## Learning Objective
+
 Learn how to use descriptive comments to guide Copilot in generating the code you need.
 
 ## Instructions
@@ -10,6 +11,7 @@ Learn how to use descriptive comments to guide Copilot in generating the code yo
 1. Accept or modify the suggestions as needed
 
 ## Your Task
+
 Write comments and let Copilot generate code for a simple calculator that can:
 - Add two numbers
 - Subtract two numbers  

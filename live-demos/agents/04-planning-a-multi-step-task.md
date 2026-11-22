@@ -1,6 +1,7 @@
 # Demo 04 — Planning a Multi-Step Task
 
 ## Goal of this demo
+
 Show that for non-trivial work, an agent doesn't just dive in — it **plans first**, then executes. Make pupils see the difference between "do everything at once" and "lay out the steps, then walk them."
 
 **Estimated time:** 12–15 minutes
@@ -29,6 +30,7 @@ Show that for non-trivial work, an agent doesn't just dive in — it **plans fir
 ## Live script
 
 ### Step 1 — Anti-pattern: vague request, no plan (3 min)
+
 Type a deliberately under-specified request:
 
 ```txt
@@ -42,6 +44,7 @@ Let the agent start producing code. After ~30 seconds, **stop it** (or let it fi
 The point: vague request → the agent guessed. The result might be okay but it's not *yours*.
 
 ### Step 2 — Same task, but plan first (5 min)
+
 Reset to a clean directory. Type:
 
 ```txt
@@ -67,6 +70,7 @@ remove command. Then go ahead.
 ```
 
 ### Step 3 — Watch it execute the *agreed* plan (4 min)
+
 Now it will write the code matching the corrected plan. **Pupils see:**
 - Files created exactly as planned.
 - No surprise scope creep.
@@ -82,11 +86,13 @@ python todo.py list
 ```
 
 ### Step 4 — Make the meta-point (2 min)
+
 > "The first version was the agent's idea. The second version was *our* idea, executed by the agent. That's the difference. Plans turn the agent into a builder, not a designer."
 
 ---
 
 ## Question to throw at the class
+
 > "When is planning *not* worth it? When should I just let the agent dive in?"
 
 (Expected: trivial tasks, throwaway scripts, when you genuinely don't care. Planning has a cost — use it when the cost of a wrong direction is high.)

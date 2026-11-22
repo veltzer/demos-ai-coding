@@ -1,6 +1,7 @@
 # Demo 01 — An Agent With One Tool
 
 ## Goal of this demo
+
 Show the agent **using a single, specific tool** to answer a question that requires looking at real data. Slow it down so pupils can see one tool call clearly.
 
 **Estimated time:** 7–10 minutes
@@ -36,6 +37,7 @@ Show the agent **using a single, specific tool** to answer a question that requi
 ## Live script
 
 ### Step 1 — Ask a question that needs the file (2 min)
+
 Type to the agent:
 
 ```txt
@@ -60,6 +62,7 @@ The agent should pick "dark chocolate (the good kind)" — because *"the good ki
 - The **LLM**, not the tool, did the reasoning.
 
 ### Step 3 — Show the boundary (2 min)
+
 Ask something the file **cannot** answer:
 
 ```txt
@@ -73,6 +76,7 @@ The agent should say it doesn't know — there's no data about last week. Use th
 ---
 
 ## Question to throw at the class
+
 > "If I want the agent to answer 'what did I buy last week?', what would I have to give it?"
 
 (Expected answers: a history file, a database tool, access to a receipts folder. This sets up the next demos.)

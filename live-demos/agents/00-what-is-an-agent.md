@@ -1,6 +1,7 @@
 # Demo 00 — What Is an Agent?
 
 ## Goal of this demo
+
 Introduce the pupils to the very basic idea: an **agent** is an LLM that can take actions in the world, not just talk. Before showing actions, contrast with a plain chat so the difference lands.
 
 **Estimated time:** 5–7 minutes
@@ -25,6 +26,7 @@ Introduce the pupils to the very basic idea: an **agent** is an LLM that can tak
 ## Live script
 
 ### Step 1 — The "no tools" baseline (2 min)
+
 On the **browser chat** (not the agent), type:
 
 ```txt
@@ -36,6 +38,7 @@ Show the answer. The model will say something like *"I can't access your filesys
 > "The model has no hands. It can talk, but it cannot look. That's a chat."
 
 ### Step 2 — Same question, to the agent (2 min)
+
 Switch to the terminal, launch Claude Code, and ask exactly the same thing:
 
 ```txt
@@ -45,6 +48,7 @@ What files are in my home directory right now?
 Pupils will see the agent **call a tool** (probably `Bash` running `ls ~`), get a real result, and answer with the actual files.
 
 ### Step 3 — Narrate the loop (2 min)
+
 Point at the screen and name the parts as they appear:
 1. **Think** — "The model decides it needs to run `ls`."
 2. **Act** — "It calls the Bash tool."
@@ -56,6 +60,7 @@ That four-step cycle is the entire idea of an agent. Everything else in this cou
 ---
 
 ## Question to throw at the class
+
 > "What's the difference between an agent that runs `ls` and a script that runs `ls`?"
 
 (Expected: the agent **chose** to run `ls`; nobody told it which command. That's the LLM-driven decision-making.)

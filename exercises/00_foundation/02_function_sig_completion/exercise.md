@@ -1,6 +1,7 @@
 # Function Signature Completion with Copilot
 
 ## Learning Objective
+
 Learn how function signatures and docstrings help Copilot generate accurate function implementations.
 
 ## Instructions
@@ -11,6 +12,7 @@ Learn how function signatures and docstrings help Copilot generate accurate func
 1. Test the generated functions
 
 ## Your Task
+
 Create the following function signatures and let Copilot implement them:
 
 ```python
@@ -66,6 +68,7 @@ def is_palindrome(text: str) -> bool:
 - [ ] Functions handle edge cases appropriately
 
 ## Test Your Functions
+
 Add these test cases to verify your functions work:
 
 ```python

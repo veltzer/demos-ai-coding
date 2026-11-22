@@ -1,6 +1,7 @@
 # Memory Extension for AI Assistants
 
 ## Learning Objective
+
 Learn how to extend AI assistant memory capabilities beyond single conversations using persistent storage, vector databases, and memory management techniques. Understand how to implement short-term, long-term, and semantic memory systems.
 
 ## Why Memory Extension Matters

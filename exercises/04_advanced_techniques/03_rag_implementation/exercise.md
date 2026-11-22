@@ -1,6 +1,7 @@
 # RAG (Retrieval-Augmented Generation) Implementation
 
 ## Learning Objective
+
 Learn how to implement Retrieval-Augmented Generation (RAG) systems to enhance AI assistants with domain-specific knowledge. Build systems that can search, retrieve, and use relevant context from large document collections to provide accurate, source-backed responses.
 
 ## What is RAG?

@@ -1,6 +1,7 @@
 # Synthetic Data Generation with Copilot: Creating Realistic Test Data
 
 ## Learning Objective
+
 Learn how to use GitHub Copilot to generate large-scale synthetic data for testing, development, and machine learning applications, understanding different generation strategies and data quality considerations.
 
 ## Instructions
@@ -15,6 +16,7 @@ Learn how to use GitHub Copilot to generate large-scale synthetic data for testi
 ### Part 1: Basic Data Generation
 
 #### Step 1: Simple Random Generation
+
 Start with a basic implementation:
 
 ```python
@@ -50,6 +52,7 @@ for i in range(10):
 ```
 
 #### Step 2: Realistic Name Generation
+
 Enhance with more realistic names:
 
 ```python
@@ -87,6 +90,7 @@ class NameGenerator:
 ### Part 2: Correlated Data Generation
 
 #### Step 1: Age-Dependent Attributes
+
 Create realistic correlations:
 
 ```python
@@ -429,6 +433,7 @@ class SyntheticDataGenerator:
 ## Advanced Challenges
 
 ### Challenge 1: Time Series Data
+
 Generate people with life events over time:
 
 ```python
@@ -452,6 +457,7 @@ class LifeEventGenerator:
 ```
 
 ### Challenge 2: Relationship Networks
+
 Create interconnected family structures:
 
 ```python
@@ -466,6 +472,7 @@ class FamilyNetworkGenerator:
 ```
 
 ### Challenge 3: Geographic Distribution
+
 Generate population with realistic geographic distribution:
 
 ```python
@@ -487,6 +494,7 @@ class GeographicPopulationGenerator:
 ```
 
 ### Challenge 4: Industry-Specific Data
+
 Generate domain-specific synthetic data:
 
 ```python
@@ -583,6 +591,7 @@ def analyze_generated_data(data: List[Dict]):
 - Statistical analysis and research
 
 ## Expected Learning Outcomes
+
 By completing this exercise, you should understand:
 - Synthetic data generation principles
 - Statistical distributions and correlations

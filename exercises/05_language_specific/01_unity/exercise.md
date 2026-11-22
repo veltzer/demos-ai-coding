@@ -1,6 +1,7 @@
 # Unity Game Development with Copilot: Building a 2D Platformer
 
 ## Learning Objective
+
 Learn how to use GitHub Copilot to develop Unity games, understanding component-based architecture, game physics, input systems, UI design, and common game mechanics.
 
 ## Instructions
@@ -27,6 +28,7 @@ Learn how to use GitHub Copilot to develop Unity games, understanding component-
 1. Configure Visual Studio Code as external editor (Edit -> Preferences -> External Tools)
 
 #### Step 2: Setup Project Structure
+
 Create the following folder structure in Assets:
 
 ```txt
@@ -47,6 +49,7 @@ Assets/
 ### Part 2: Player Controller
 
 #### Step 1: Basic Player Movement
+
 Create `Scripts/Player/PlayerController.cs`:
 
 ```csharp
@@ -110,6 +113,7 @@ public class PlayerController : MonoBehaviour
 ```
 
 #### Step 2: Player Animation
+
 Create `Scripts/Player/PlayerAnimator.cs`:
 
 ```csharp
@@ -153,6 +157,7 @@ public class PlayerAnimator : MonoBehaviour
 ```
 
 #### Step 3: Player Health System
+
 Create `Scripts/Player/PlayerHealth.cs`:
 
 ```csharp
@@ -214,6 +219,7 @@ public class PlayerHealth : MonoBehaviour
 ### Part 3: Enemy System
 
 #### Step 1: Base Enemy Class
+
 Create `Scripts/Enemies/Enemy.cs`:
 
 ```csharp
@@ -279,6 +285,7 @@ public abstract class Enemy : MonoBehaviour
 ```
 
 #### Step 2: Patrolling Enemy
+
 Create `Scripts/Enemies/PatrolEnemy.cs`:
 
 ```csharp
@@ -322,6 +329,7 @@ public class PatrolEnemy : Enemy
 ```
 
 #### Step 3: Flying Enemy
+
 Create `Scripts/Enemies/FlyingEnemy.cs`:
 
 ```csharp
@@ -362,6 +370,7 @@ public class FlyingEnemy : Enemy
 ### Part 4: Collectibles and Power-ups
 
 #### Step 1: Collectible Base Class
+
 Create `Scripts/Collectibles/Collectible.cs`:
 
 ```csharp
@@ -407,6 +416,7 @@ public abstract class Collectible : MonoBehaviour
 ```
 
 #### Step 2: Specific Collectibles
+
 Create `Scripts/Collectibles/Coin.cs`:
 
 ```csharp
@@ -472,6 +482,7 @@ public class PowerUp : Collectible
 ### Part 5: Game Manager
 
 #### Step 1: Singleton Game Manager
+
 Create `Scripts/Managers/GameManager.cs`:
 
 ```csharp
@@ -548,6 +559,7 @@ public class GameManager : MonoBehaviour
 ```
 
 #### Step 2: Audio Manager
+
 Create `Scripts/Managers/AudioManager.cs`:
 
 ```csharp
@@ -607,6 +619,7 @@ public class AudioManager : MonoBehaviour
 ### Part 6: UI System
 
 #### Step 1: HUD
+
 Create `Scripts/UI/HUDManager.cs`:
 
 ```csharp
@@ -664,6 +677,7 @@ public class HUDManager : MonoBehaviour
 ```
 
 #### Step 2: Pause Menu
+
 Create `Scripts/UI/PauseMenu.cs`:
 
 ```csharp
@@ -721,6 +735,7 @@ public class PauseMenu : MonoBehaviour
 ```
 
 #### Step 3: Game Over Screen
+
 Create `Scripts/UI/GameOverScreen.cs`:
 
 ```csharp
@@ -771,6 +786,7 @@ public class GameOverScreen : MonoBehaviour
 ### Part 7: Advanced Features
 
 #### Feature 1: Camera Controller
+
 Create `Scripts/CameraController.cs`:
 
 ```csharp
@@ -818,6 +834,7 @@ public class CameraController : MonoBehaviour
 ```
 
 #### Feature 2: Checkpoint System
+
 Create `Scripts/Checkpoint.cs`:
 
 ```csharp
@@ -855,6 +872,7 @@ public class Checkpoint : MonoBehaviour
 ```
 
 #### Feature 3: Object Pooling
+
 Create `Scripts/ObjectPool.cs`:
 
 ```csharp
@@ -921,15 +939,19 @@ public class ObjectPool : MonoBehaviour
 ## Advanced Challenges
 
 ### Challenge 1: Boss Battle
+
 Create a multi-phase boss enemy with attack patterns
 
 ### Challenge 2: Level Editor
+
 Create an in-game level editor with save/load functionality
 
 ### Challenge 3: Achievements
+
 Implement an achievement system with unlockables
 
 ### Challenge 4: Mobile Controls
+
 Add touch controls for mobile deployment
 
 ## Real-World Extensions
@@ -942,6 +964,7 @@ Add touch controls for mobile deployment
 - Create tutorials and onboarding
 
 ## Expected Learning Outcomes
+
 By completing this exercise, you will understand:
 - Unity game development workflow
 - Component-based game architecture

@@ -1,6 +1,7 @@
 # Summarization Techniques: The Art of Context Compression
 
 ## Learning Objective
+
 Master the critical skill of summarizing code, architecture, and systems to provide AI with efficient, high-quality context. Learn when to summarize versus when to show full detail, and develop systematic approaches to context compression.
 
 ## Why Summarization Matters

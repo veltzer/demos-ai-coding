@@ -1,6 +1,7 @@
 # Test-Driven Development (TDD) with AI: Red-Green-Refactor
 
 ## Learning Objective
+
 Learn how to practice Test-Driven Development using AI assistance. Understand the red-green-refactor cycle, write tests before implementation, and use AI to generate code that passes your specifications.
 
 ## What is TDD?

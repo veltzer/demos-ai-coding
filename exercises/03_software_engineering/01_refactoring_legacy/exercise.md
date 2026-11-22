@@ -1,6 +1,7 @@
 # Refactoring Legacy Code with AI: From Chaos to Clean
 
 ## Learning Objective
+
 Learn how to systematically refactor legacy code using AI assistance. Identify code smells, apply refactoring patterns, maintain backward compatibility, and improve code quality while preserving functionality.
 
 ## What is Legacy Code?

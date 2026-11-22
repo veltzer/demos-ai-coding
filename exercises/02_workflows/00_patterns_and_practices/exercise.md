@@ -1,6 +1,7 @@
 # Learning Code Patterns and Best Practices with Copilot
 
 ## Learning Objective
+
 Learn how Copilot can help you discover and implement common coding patterns and best practices.
 
 ## Instructions
@@ -12,6 +13,7 @@ Learn how Copilot can help you discover and implement common coding patterns and
 ## Your Task
 
 ### Part 1: Basic File Operations
+
 Start by writing a comment for a basic file reading function:
 
 ```python
@@ -34,6 +36,7 @@ def read_file_lines(filename):
 ```
 
 ### Part 2: Error Handling Patterns
+
 Let Copilot help you implement different error handling approaches:
 
 ```python
@@ -48,6 +51,7 @@ def read_file_with_logging(filename):
 ```
 
 ### Part 3: Configuration Management
+
 Start this pattern and let Copilot suggest the implementation:
 
 ```python
@@ -83,6 +87,7 @@ class ConfigManager:
 - [ ] You can identify which patterns are most appropriate for different use cases
 
 ## Comparison Exercise
+
 Create a simple test to compare the different file reading approaches:
 
 ```python
@@ -96,6 +101,7 @@ for filename in test_files:
 ```
 
 ## Advanced Challenge
+
 Ask Copilot to help you implement:
 
 1. **Async File Operations**
@@ -121,6 +127,7 @@ def process_files_batch(file_list, processor_function):
 ```
 
 ## Reflection Questions
+
 After completing this exercise, consider:
 1. Which file reading pattern do you prefer and why?
 1. How did Copilot's suggestions differ from what you might have written?

@@ -99,6 +99,7 @@ The MCP service provides three tools:
 - Check the VS Code Output panel for any error messages
 
 ### Debugging
+
 To see if your MCP service is running, you can check the VS Code Output panel:
 1. Go to View -> Output
 2. Select "GitHub Copilot" from the dropdown

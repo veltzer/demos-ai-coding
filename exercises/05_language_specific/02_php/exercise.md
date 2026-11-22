@@ -1,6 +1,7 @@
 # PHP Web Development with Copilot: Building a RESTful Blog API
 
 ## Learning Objective
+
 Learn how to use GitHub Copilot to develop modern PHP web applications, implementing RESTful APIs, database operations, authentication, and following MVC architecture patterns.
 
 ## Instructions
@@ -45,6 +46,7 @@ composer require --dev squizlabs/php_codesniffer
 ```
 
 #### Step 2: Project Structure
+
 Create the following directory structure:
 
 ```txt
@@ -68,6 +70,7 @@ blog-api/
 ```
 
 #### Step 3: Environment Configuration
+
 Create `.env.example`:
 
 ```env
@@ -93,6 +96,7 @@ CACHE_DRIVER=file
 ### Part 2: Database Setup
 
 #### Step 1: Database Configuration
+
 Create `config/database.php`:
 
 ```php
@@ -121,6 +125,7 @@ return $capsule;
 ```
 
 #### Step 2: Database Migrations
+
 Create `migrations/001_create_users_table.php`:
 
 ```php
@@ -194,6 +199,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 ### Part 3: Models
 
 #### Step 1: User Model
+
 Create `src/Models/User.php`:
 
 ```php
@@ -263,6 +269,7 @@ class User extends Model
 ```
 
 #### Step 2: Post Model
+
 Create `src/Models/Post.php`:
 
 ```php
@@ -350,6 +357,7 @@ class Post extends Model
 ### Part 4: Controllers
 
 #### Step 1: Base Controller
+
 Create `src/Controllers/BaseController.php`:
 
 ```php
@@ -389,6 +397,7 @@ abstract class BaseController
 ```
 
 #### Step 2: Auth Controller
+
 Create `src/Controllers/AuthController.php`:
 
 ```php
@@ -453,6 +462,7 @@ class AuthController extends BaseController
 ```
 
 #### Step 3: Post Controller
+
 Create `src/Controllers/PostController.php`:
 
 ```php
@@ -536,6 +546,7 @@ class PostController extends BaseController
 ### Part 5: Middleware
 
 #### Step 1: JWT Authentication Middleware
+
 Create `src/Middleware/AuthMiddleware.php`:
 
 ```php
@@ -565,6 +576,7 @@ class AuthMiddleware
 ```
 
 #### Step 2: CORS Middleware
+
 Create `src/Middleware/CorsMiddleware.php`:
 
 ```php
@@ -586,6 +598,7 @@ class CorsMiddleware
 ```
 
 #### Step 3: Rate Limiting Middleware
+
 Create `src/Middleware/RateLimitMiddleware.php`:
 
 ```php
@@ -618,6 +631,7 @@ class RateLimitMiddleware
 ### Part 6: Services
 
 #### Step 1: JWT Service
+
 Create `src/Services/JWTService.php`:
 
 ```php
@@ -663,6 +677,7 @@ class JWTService
 ```
 
 #### Step 2: Cache Service
+
 Create `src/Services/CacheService.php`:
 
 ```php
@@ -723,6 +738,7 @@ class CacheService
 ```
 
 #### Step 3: Email Service
+
 Create `src/Services/EmailService.php`:
 
 ```php
@@ -766,6 +782,7 @@ class EmailService
 ### Part 7: Repositories
 
 #### Step 1: Post Repository
+
 Create `src/Repositories/PostRepository.php`:
 
 ```php
@@ -837,6 +854,7 @@ class PostRepository
 ### Part 8: Validators
 
 #### Step 1: Post Validator
+
 Create `src/Validators/PostValidator.php`:
 
 ```php
@@ -1068,6 +1086,7 @@ curl -X DELETE http://localhost:8000/api/posts/1 \
 ## Advanced Challenges
 
 ### Challenge 1: Image Upload
+
 Implement image upload for posts with resizing and CDN integration:
 
 ```php
@@ -1082,6 +1101,7 @@ class ImageService
 ```
 
 ### Challenge 2: Full-Text Search
+
 Implement advanced search with Elasticsearch or database full-text search:
 
 ```php
@@ -1096,6 +1116,7 @@ class SearchService
 ```
 
 ### Challenge 3: API Documentation
+
 Add OpenAPI/Swagger documentation:
 
 ```php
@@ -1103,6 +1124,7 @@ Add OpenAPI/Swagger documentation:
 ```
 
 ### Challenge 4: WebSocket Notifications
+
 Add real-time notifications using WebSockets:
 
 ```php
@@ -1110,6 +1132,7 @@ Add real-time notifications using WebSockets:
 ```
 
 ### Challenge 5: GraphQL Alternative
+
 Create GraphQL endpoint alongside REST API:
 
 ```php
@@ -1129,6 +1152,7 @@ Create GraphQL endpoint alongside REST API:
 - Implement API analytics
 
 ## Expected Learning Outcomes
+
 By completing this exercise, you will understand:
 - Modern PHP application architecture
 - RESTful API design and implementation

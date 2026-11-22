@@ -1,6 +1,7 @@
 # Design with Copilot: Building a C/C++ Build System
 
 ## Learning Objective
+
 Learn how different approaches to AI-assisted development affect the quality and completeness of the final product. Compare direct implementation versus specification-first design when building complex software systems.
 
 ## Instructions
@@ -11,6 +12,7 @@ Learn how different approaches to AI-assisted development affect the quality and
 1. Build a working build system tool
 
 ## Background: What is a Build System?
+
 A build system automates the compilation and linking of source code into executables. Popular examples include Make, CMake, Bazel, and Ninja. Your tool, "Buildit", will be a simplified version that:
 - Reads build configurations from a file
 - Determines dependencies between targets
@@ -20,6 +22,7 @@ A build system automates the compilation and linking of source code into executa
 ## Your Task
 
 ### Approach 1: Direct Implementation
+
 Create a directory called `buildit-direct/` and implement the tool using only this specification:
 
 ```txt
@@ -36,12 +39,15 @@ The tool should be written in C/C++.
 Ask Copilot: "Build a C++ build system tool based on this specification"
 
 ### Approach 2: Specification-First Design
+
 Create a directory called `buildit-spec/` and follow this process:
 
 #### Step 1: Generate Detailed Specification
+
 Ask Copilot: "Create a detailed technical specification for a C++ build system tool called Buildit with the following basic requirements: [paste the paragraph]. Include architecture, file formats, algorithms, and implementation details."
 
 #### Step 2: Review and Refine Specification
+
 Review the generated specification and ask Copilot to refine it:
 - "Add support for parallel builds to the specification"
 - "Include incremental build support based on file timestamps"
@@ -49,11 +55,13 @@ Review the generated specification and ask Copilot to refine it:
 - "Include dependency graph visualization"
 
 #### Step 3: Implement Based on Specification
+
 Use the refined specification to guide implementation.
 
 ## Detailed Requirements
 
 ### Buildit File Format
+
 The `Buildit` file should support:
 
 ```makefile
@@ -259,6 +267,7 @@ private:
 ## Test Cases
 
 ### Test Buildit File
+
 Create `test/Buildit`:
 
 ```makefile
@@ -374,6 +383,7 @@ After completing both implementations, compare:
 ## Advanced Challenges
 
 ### Challenge 1: Build Flavors
+
 Support different build configurations:
 
 ```makefile
@@ -387,6 +397,7 @@ release: app
 ```
 
 ### Challenge 2: Pattern Rules
+
 Implement pattern matching:
 
 ```makefile
@@ -398,6 +409,7 @@ Implement pattern matching:
 ```
 
 ### Challenge 3: Include Directives
+
 Support including other Buildit files:
 
 ```makefile
@@ -406,6 +418,7 @@ include platform/$(OS).buildit
 ```
 
 ### Challenge 4: Build Statistics
+
 Track and report build metrics:
 
 ```cpp

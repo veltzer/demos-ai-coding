@@ -1,6 +1,7 @@
 # Finding and Fixing Bugs with Copilot: Real Repository Analysis
 
 ## Learning Objective
+
 Learn how to use GitHub Copilot to analyze existing codebases, identify potential bugs, understand code architecture, and propose fixes for real-world issues.
 
 ## Instructions
@@ -20,11 +21,13 @@ cd pytconf
 ```
 
 ### Option 2: Browse Online
+
 Visit: [pytconf](https://github.com/veltzer/pytconf)
 
 ## Your Task
 
 ### Part 1: Initial Code Exploration
+
 Start by understanding what pytconf does:
 
 ```python
@@ -36,9 +39,11 @@ Start by understanding what pytconf does:
 ```
 
 ### Part 2: Systematic Bug Hunt
+
 Use these strategies to find bugs:
 
 #### Strategy 1: Static Analysis
+
 Ask Copilot to analyze specific files:
 
 ```python
@@ -201,6 +206,7 @@ def test_bug_fix():
 ## Guided Bug Discovery Examples
 
 ### Example 1: Mutable Default Arguments
+
 Ask Copilot: "Find all functions with mutable default arguments"
 
 ```python
@@ -218,6 +224,7 @@ def process_config(options=None):
 ```
 
 ### Example 2: Resource Management
+
 Ask Copilot: "Find file operations without proper cleanup"
 
 ```python
@@ -233,6 +240,7 @@ def read_config(path):
 ```
 
 ### Example 3: Type Safety
+
 Ask Copilot: "Find type inconsistencies in function signatures"
 
 ```python
@@ -250,6 +258,7 @@ def get_value(key: str) -> Optional[str]:
 ## Advanced Challenges
 
 ### Challenge 1: Security Audit
+
 Perform a security-focused review:
 
 ```python
@@ -262,6 +271,7 @@ Perform a security-focused review:
 ```
 
 ### Challenge 2: Performance Analysis
+
 Look for performance issues:
 
 ```python
@@ -274,6 +284,7 @@ Look for performance issues:
 ```
 
 ### Challenge 3: Concurrency Issues
+
 Search for threading problems:
 
 ```python
@@ -337,6 +348,7 @@ Ask Copilot to evaluate:
 - Ask for test cases that might fail
 
 ## Documentation Tasks
+
 After finding bugs:
 1. Create GitHub issues for each bug
 1. Write clear reproduction steps
@@ -359,6 +371,7 @@ After finding bugs:
 1. Apply learnings to your own projects
 
 ## Expected Learning Outcomes
+
 By completing this exercise, you should be able to:
 - Navigate unfamiliar codebases efficiently
 - Identify common bug patterns quickly

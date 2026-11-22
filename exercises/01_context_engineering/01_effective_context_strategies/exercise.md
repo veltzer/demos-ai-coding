@@ -1,6 +1,7 @@
 # Effective Context Strategies: Mastering AI-Assisted Development
 
 ## Learning Objective
+
 Master advanced context engineering techniques to dramatically improve AI coding assistant effectiveness. Learn proven strategies for structuring context, managing multi-file projects, and building context systems that scale.
 
 ## What Makes Context "Effective"?

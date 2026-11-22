@@ -1,6 +1,7 @@
 # Demo 07 — Extending the Agent: MCP Servers
 
 ## Goal of this demo
+
 So far the agent has used the **built-in** tools (Read, Write, Bash, WebFetch). Now show pupils that you can **plug in new tools** via MCP (Model Context Protocol) — and the agent will start using them as if they'd always been there.
 
 **Estimated time:** 15 minutes
@@ -16,6 +17,7 @@ So far the agent has used the **built-in** tools (Read, Write, Bash, WebFetch). 
 ---
 
 ## Setup before class
+
 **Do this before pupils arrive — installation live is risky.**
 
 1. Pick **one** MCP server that's reliable and impressive. Good first choices:
@@ -50,6 +52,7 @@ So far the agent has used the **built-in** tools (Read, Write, Bash, WebFetch). 
 ## Live script
 
 ### Step 1 — Show the "before" (2 min)
+
 With the MCP server *disabled* (or using a fresh session that hasn't loaded it), ask the agent:
 
 ```txt
@@ -59,6 +62,7 @@ What tools do you have available?
 It will list the built-ins. Note the absence of anything called "sequential thinking."
 
 ### Step 2 — Enable the MCP server and reload (3 min)
+
 On screen, walk through:
 1. The config file — show the JSON.
 2. Restarting the agent.
@@ -68,6 +72,7 @@ On screen, walk through:
 > "We didn't retrain the model. We didn't change the agent. We just gave it a new tool, and it knows how to use it."
 
 ### Step 3 — Use the new tool (5 min)
+
 Give the agent a problem that benefits from structured reasoning:
 
 ```txt
@@ -79,6 +84,7 @@ Walk through your reasoning step by step.
 Watch the agent invoke the new MCP tool. The thinking will be more structured than usual — that's the value. Read a few of the steps aloud.
 
 ### Step 4 — Mention the ecosystem (3 min)
+
 Show pupils the breadth without installing more. Just *talk through* a few:
 
 - **GitHub MCP** — agent can list issues, open PRs.
@@ -91,6 +97,7 @@ Show pupils the breadth without installing more. Just *talk through* a few:
 > "If your team has a system, you can probably wrap it as an MCP server, and now the agent can talk to it. The agent's reach is whatever you give it."
 
 ### Step 5 — A note on trust (2 min)
+
 This is the **must-say** part:
 
 > "Every MCP server you install can read your conversations and run code. Treat them like browser extensions — install only what you trust, from sources you trust."
@@ -98,6 +105,7 @@ This is the **must-say** part:
 ---
 
 ## Question to throw at the class
+
 > "If you could give the agent **one** custom tool for your job, what would it be?"
 
 (Great class discussion. Common answers: query our internal API, read our ticket system, deploy to staging. Many of these can become real MCP servers — see Demo 08 setup.)

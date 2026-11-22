@@ -1,6 +1,7 @@
 # Demo 09 — Multi-Agent Orchestration: A Real Workflow
 
 ## Goal of this demo
+
 Bring everything together. An **orchestrator** agent coordinates **specialist** subagents (researcher, coder, reviewer) to deliver an end-to-end result. This is what real agentic systems look like, and it's the capstone of the course.
 
 **Estimated time:** 25–30 minutes
@@ -54,6 +55,7 @@ The orchestrator never writes code itself. It just **dispatches** and **integrat
 ## Live script
 
 ### Step 1 — Set the scene (3 min)
+
 Tell the class:
 
 > "We're going to build a small command-line tool that converts a JSON file into a CSV file. Sounds easy. Let's do it the *grown-up* way: research a good library first, then write the code, then have someone independent review it."
@@ -61,6 +63,7 @@ Tell the class:
 > "I'll do all three with one agent, but the agent is going to delegate to specialists for each phase. I (the human) am going to act like a project manager who only talks to the orchestrator."
 
 ### Step 2 — Kick off with an explicit orchestration request (4 min)
+
 Type:
 
 ```txt
@@ -90,6 +93,7 @@ Run this as an orchestrated workflow:
 This prompt is doing a lot. Read it carefully on screen with the class before sending.
 
 ### Step 3 — Watch each phase (10 min)
+
 Narrate as it runs:
 
 **Researcher phase:**
@@ -114,6 +118,7 @@ Narrate as it runs:
 - The fixes appear in `json2csv.py`.
 
 ### Step 4 — Make the architecture visible (3 min)
+
 Point at the diagram. Trace the actual flow that just happened:
 
 > "The orchestrator made four delegations. It never wrote a line of code itself. It never read PyPI itself. Its job was *routing and integration*."
@@ -121,6 +126,7 @@ Point at the diagram. Trace the actual flow that just happened:
 > "The researcher knew nothing about coding standards. The coder knew nothing about reviewing. The reviewer knew nothing about library selection. Each one had a clean job."
 
 ### Step 5 — The big lesson (3 min)
+
 Step back. This is the closing message of the entire course:
 
 > "An agent is an LLM with tools and a loop."
@@ -130,11 +136,13 @@ Step back. This is the closing message of the entire course:
 > "What we just built is a tiny version of how real agentic products work — code review bots, research assistants, customer-support pipelines. Same shape. More agents. More tools. Same loop."
 
 ### Step 6 — Open the floor (5 min+)
+
 Ask pupils to design their own multi-agent workflow on paper for **5 minutes**, for any task they want — onboarding a new hire, planning a trip, writing a blog post, triaging bugs. Have a few share. Sketch their graphs on the board.
 
 ---
 
 ## Question to throw at the class
+
 > "What goes wrong if the orchestrator and the workers are the *same* agent on the same prompt?"
 
 (Expected: no specialization, context bloats, the 'reviewer' is biased toward the code 'they' wrote, no parallelism. This is why specialists matter — even when they're all the same model under the hood.)

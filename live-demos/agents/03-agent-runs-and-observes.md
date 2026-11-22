@@ -1,6 +1,7 @@
 # Demo 03 — Run, Fail, React
 
 ## Goal of this demo
+
 Show the **observe** part of the loop. The agent runs a command, sees the output, **and changes its plan based on what came back**. This is the moment pupils realize agents are not scripts.
 
 **Estimated time:** 10–12 minutes
@@ -40,6 +41,7 @@ Show the **observe** part of the loop. The agent runs a command, sees the output
 ## Live script
 
 ### Step 1 — Ask the agent to run it (2 min)
+
 Type:
 
 ```txt
@@ -55,6 +57,7 @@ The agent will run something like `python greet.py world` and see a `SyntaxError
 > "What's the agent going to do?"
 
 ### Step 2 — Watch it react (3 min)
+
 The agent will almost certainly:
 1. Read the file.
 2. Notice the stray `!` in the f-string.
@@ -65,6 +68,7 @@ The agent will almost certainly:
 **Narrate as it happens.** Especially highlight the moment it goes from *"the run failed"* to *"let me look at the source"*. That decision is the agent.
 
 ### Step 3 — Try a harder failure (4 min)
+
 Without resetting, ask:
 
 ```txt
@@ -84,6 +88,7 @@ Watch the agent:
 ---
 
 ## Question to throw at the class
+
 > "What if the error message had been misleading? What if Python had said 'permission denied' when actually the bug was in the source code?"
 
 (Expected: the agent might have gone down a wrong path. Good agents are still fooled by bad error messages — same as humans. This is honest framing.)

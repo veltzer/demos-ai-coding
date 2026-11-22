@@ -1,6 +1,7 @@
 # Using Public MCP Servers: Extending AI Capabilities
 
 ## Learning Objective
+
 Learn how to discover, configure, and use public Model Context Protocol (MCP) servers to extend AI assistants with external tools, data sources, and APIs. Understand the MCP ecosystem and how to integrate various services.
 
 ## What is MCP?
@@ -29,60 +30,70 @@ Think of MCP as a way to give your AI assistant "superpowers" by connecting it t
 Here are some widely-used public MCP servers:
 
 #### 1. **Filesystem MCP**
+
 Access local files and directories
 - **Repository:** `@modelcontextprotocol/server-filesystem`
 - **Use cases:** Read/write files, search directories, file operations
 - **No API key needed**
 
 #### 2. **GitHub MCP**
+
 Interact with GitHub repositories
 - **Repository:** `@modelcontextprotocol/server-github`
 - **Use cases:** Create issues, PRs, search repos, read code
 - **Requires:** GitHub personal access token
 
 #### 3. **Brave Search MCP**
+
 Web search using Brave Search API
 - **Repository:** `@modelcontextprotocol/server-brave-search`
 - **Use cases:** Real-time web search, news, information lookup
 - **Requires:** Brave Search API key (free tier available)
 
 #### 4. **PostgreSQL MCP**
+
 Query and manage PostgreSQL databases
 - **Repository:** `@modelcontextprotocol/server-postgres`
 - **Use cases:** Database queries, schema inspection, data analysis
 - **Requires:** PostgreSQL connection string
 
 #### 5. **Puppeteer MCP**
+
 Browser automation and web scraping
 - **Repository:** `@modelcontextprotocol/server-puppeteer`
 - **Use cases:** Web scraping, screenshots, form filling
 - **No API key needed** (uses local Chrome)
 
 #### 6. **Google Drive MCP**
+
 Access Google Drive files
 - **Repository:** `@modelcontextprotocol/server-gdrive`
 - **Use cases:** Read/search Drive files, list folders
 - **Requires:** Google OAuth credentials
 
 #### 7. **Slack MCP**
+
 Interact with Slack workspaces
 - **Repository:** `@modelcontextprotocol/server-slack`
 - **Use cases:** Send messages, read channels, search conversations
 - **Requires:** Slack bot token
 
 #### 8. **Sequential Thinking MCP**
+
 Advanced reasoning and problem-solving
 - **Repository:** `@modelcontextprotocol/server-sequential-thinking`
 - **Use cases:** Complex problem decomposition, step-by-step reasoning
 - **No API key needed**
 
 #### 9. **Memory MCP**
+
 Persistent memory for conversations
 - **Repository:** `@modelcontextprotocol/server-memory`
 - **Use cases:** Remember facts across sessions, build knowledge base
 - **No API key needed**
 
 #### 10. **Fetch MCP**
+
 HTTP requests and API calls
 - **Repository:** `@modelcontextprotocol/server-fetch`
 - **Use cases:** Call REST APIs, download web content

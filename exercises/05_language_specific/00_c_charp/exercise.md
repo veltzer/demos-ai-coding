@@ -1,6 +1,7 @@
 # C# Development with Copilot: Building a Task Management System
 
 ## Learning Objective
+
 Learn how to use GitHub Copilot to develop modern C# applications, leveraging language features like LINQ, async/await, dependency injection, and object-oriented design patterns.
 
 ## Instructions
@@ -32,6 +33,7 @@ dotnet add package System.CommandLine
 ```
 
 #### Step 2: Define the Domain Models
+
 Create `Models/Task.cs`:
 
 ```csharp
@@ -74,6 +76,7 @@ namespace TaskManager.Models
 ### Part 2: Repository Pattern
 
 #### Step 1: Define the Interface
+
 Create `Repositories/ITaskRepository.cs`:
 
 ```csharp
@@ -97,6 +100,7 @@ namespace TaskManager.Repositories
 ```
 
 #### Step 2: Implement File-Based Repository
+
 Create `Repositories/JsonTaskRepository.cs`:
 
 ```csharp
@@ -140,6 +144,7 @@ namespace TaskManager.Repositories
 ### Part 3: Business Logic Layer
 
 #### Step 1: Create Service Interface
+
 Create `Services/ITaskService.cs`:
 
 ```csharp
@@ -162,6 +167,7 @@ namespace TaskManager.Services
 ```
 
 #### Step 2: Implement Task Service
+
 Create `Services/TaskService.cs`:
 
 ```csharp
@@ -207,6 +213,7 @@ namespace TaskManager.Services
 ### Part 4: Command Line Interface
 
 #### Step 1: Setup Command Line Parser
+
 Update `Program.cs`:
 
 ```csharp
@@ -264,6 +271,7 @@ return await rootCommand.InvokeAsync(args);
 ### Part 5: Advanced Features
 
 #### Feature 1: Task Filtering with LINQ
+
 Create `Extensions/TaskExtensions.cs`:
 
 ```csharp
@@ -304,6 +312,7 @@ namespace TaskManager.Extensions
 ```
 
 #### Feature 2: Task Scheduling with Recurring Tasks
+
 Create `Models/RecurringTask.cs`:
 
 ```csharp
@@ -334,6 +343,7 @@ namespace TaskManager.Models
 ```
 
 #### Feature 3: Notifications and Reminders
+
 Create `Services/NotificationService.cs`:
 
 ```csharp
@@ -369,6 +379,7 @@ namespace TaskManager.Services
 ```
 
 #### Feature 4: Export to Multiple Formats
+
 Create `Services/ExportService.cs`:
 
 ```csharp
@@ -490,6 +501,7 @@ dotnet run -- export --format csv --output tasks.csv
 ## Advanced Challenges
 
 ### Challenge 1: Task Dependencies
+
 Implement task dependencies where tasks can't be completed until their dependencies are done:
 
 ```csharp
@@ -506,6 +518,7 @@ public class TaskItem
 ```
 
 ### Challenge 2: Task Templates
+
 Create reusable task templates:
 
 ```csharp
@@ -525,6 +538,7 @@ public class TaskTemplate
 ```
 
 ### Challenge 3: Time Tracking
+
 Add time tracking to tasks:
 
 ```csharp
@@ -543,6 +557,7 @@ public class TaskTimeEntry
 ```
 
 ### Challenge 4: Task Collaboration
+
 Add user assignment and collaboration features:
 
 ```csharp
@@ -568,6 +583,7 @@ public class TaskComment
 ## Code Quality Improvements
 
 ### Unit Testing
+
 Create `TaskManager.Tests/TaskServiceTests.cs`:
 
 ```csharp
@@ -601,6 +617,7 @@ public class TaskServiceTests
 ```
 
 ### Logging
+
 Add logging throughout the application:
 
 ```csharp
@@ -635,6 +652,7 @@ public class TaskService : ITaskService
 - Docker containerization
 
 ## Expected Learning Outcomes
+
 By completing this exercise, you will understand:
 - C# best practices and conventions
 - Async programming patterns

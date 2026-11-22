@@ -1,6 +1,7 @@
 # Context-Aware Code Generation with Copilot
 
 ## Learning Objective
+
 Learn how Copilot uses existing code context to generate relevant and consistent code.
 
 ## Instructions
@@ -10,6 +11,7 @@ Learn how Copilot uses existing code context to generate relevant and consistent
 1. Observe how Copilot maintains consistency with your existing code style
 
 ## Your Task
+
 Build a simple todo list manager. Start with this foundation:
 
 ```python
@@ -61,6 +63,7 @@ def get_todos_by_priority(priority: str):
 - [ ] Error handling follows similar patterns
 
 ## Advanced Challenge
+
 After implementing the basic functions, try starting this function signature and see how Copilot completes it:
 
 ```python

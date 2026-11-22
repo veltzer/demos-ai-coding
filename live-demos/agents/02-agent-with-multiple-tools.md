@@ -1,6 +1,7 @@
 # Demo 02 — An Agent With Multiple Tools
 
 ## Goal of this demo
+
 Show the agent **choosing between tools** and **chaining them**: read something, transform it, write the result. This is the first demo where the agent does real work end-to-end.
 
 **Estimated time:** 10 minutes
@@ -37,6 +38,7 @@ Show the agent **choosing between tools** and **chaining them**: read something,
 ## Live script
 
 ### Step 1 — A task that requires multiple tools (4 min)
+
 Type:
 
 ```txt
@@ -50,6 +52,7 @@ While it works, **narrate** to the class what each tool call does as it happens:
 - "Notice it didn't ask me anything in between — it figured out the steps."
 
 ### Step 2 — Verify together (2 min)
+
 Open `ranked.md` in the editor (or `cat` it). Pupils should see:
 
 ```markdown
@@ -64,6 +67,7 @@ Open `ranked.md` in the editor (or `cat` it). Pupils should see:
 > "The sorting wasn't done by a tool. The Read gave it data, the Write put data on disk. The **sorting happened in the model's head.**"
 
 ### Step 3 — A small variation to show flexibility (3 min)
+
 Without resetting, ask:
 
 ```txt
@@ -78,6 +82,7 @@ The agent will reuse what it already knows (it remembers the data from earlier i
 ---
 
 ## Question to throw at the class
+
 > "What would happen if I asked it to sort 1 million rows? Would it still do the sort 'in its head'?"
 
 (Expected: at some point you want the agent to *call a sort tool* — e.g., run `sort` via Bash — instead of doing it itself. That's a great teaser for tool design.)

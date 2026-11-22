@@ -1,6 +1,7 @@
 # Understanding Context Limits: Working Within AI Boundaries
 
 ## Learning Objective
+
 Learn how AI coding assistants handle context windows, understand token limits, and develop strategies to work effectively within these constraints. Master the art of providing just enough context without overwhelming the AI or hitting token limits.
 
 ## What is Context in AI Coding?

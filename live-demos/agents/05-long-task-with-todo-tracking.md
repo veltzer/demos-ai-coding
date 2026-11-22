@@ -1,6 +1,7 @@
 # Demo 05 — Long Tasks and Todo Tracking
 
 ## Goal of this demo
+
 Show what happens when a task has **many steps that take real time**. The agent breaks the work into a checklist, marks items done as it goes, and you (the human) can see progress. This is how agents avoid getting lost on long jobs.
 
 **Estimated time:** 15 minutes
@@ -43,6 +44,7 @@ Show what happens when a task has **many steps that take real time**. The agent 
 ## Live script
 
 ### Step 1 — Give a task with many obvious sub-tasks (3 min)
+
 Type:
 
 ```txt
@@ -63,6 +65,7 @@ Read it out loud to the class. Items will look something like:
 - Add Makefile with test and lint targets
 
 ### Step 2 — Watch items flip from pending → in_progress → completed (8 min)
+
 This is the heart of the demo. As the agent works, the list updates live. **Narrate the rhythm:**
 
 - "It just marked 'add type hints' as in-progress."
@@ -76,6 +79,7 @@ This is the heart of the demo. As the agent works, the list updates live. **Narr
 (Answer: kind of — it would see the files on disk. The todo list itself is in the conversation context. This is a good moment to mention that **state lives in the workspace**, not in the agent's head.)
 
 ### Step 3 — Verify the result (3 min)
+
 Open the new files and walk through them:
 - `calc.py` — type-hinted, docstrings, raises on divide-by-zero.
 - `tests/test_calc.py` — has tests for each function and the error case.
@@ -93,6 +97,7 @@ If pytest isn't installed, the test run will fail — which is itself a great te
 ---
 
 ## Question to throw at the class
+
 > "Why a todo list? Why not just remember it all?"
 
 (Expected: long tasks → easy to lose track, easy to miss an item, easy for an interruption to derail. The list is **external memory** for the agent and a **status display** for you.)

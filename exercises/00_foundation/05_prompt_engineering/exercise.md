@@ -1,6 +1,7 @@
 # Prompt Engineering: Mastering AI Communication
 
 ## Learning Objective
+
 Learn how to craft effective prompts to get the best results from AI coding assistants. Understand different prompting techniques, when to use them, and how to iteratively refine prompts for optimal code generation.
 
 ## Instructions

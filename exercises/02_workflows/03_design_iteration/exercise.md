@@ -1,6 +1,7 @@
 # Design Iteration with Copilot: Building a Robust File Word Counter
 
 ## Learning Objective
+
 Learn how to iteratively improve code design using GitHub Copilot, implementing caching strategies, error handling, and performance optimizations through progressive enhancements.
 
 ## Instructions
@@ -13,6 +14,7 @@ Learn how to iteratively improve code design using GitHub Copilot, implementing 
 ## Your Task
 
 ### Part 1: Basic Implementation
+
 Start by implementing a simple word counter with Copilot's help:
 
 ```python
@@ -48,6 +50,7 @@ Total: 7822 words
 ```
 
 ### Part 2: Add Memory Cache
+
 Now enhance with an in-memory cache. Ask Copilot to help you implement:
 
 ```python
@@ -73,6 +76,7 @@ class WordCounter:
 ```
 
 ### Part 3: Add Persistent Cache
+
 Enhance with persistent caching across program runs:
 
 ```python
@@ -103,6 +107,7 @@ class PersistentWordCounter(WordCounter):
 ```
 
 ### Part 4: Advanced Features
+
 Ask Copilot to help add these enhancements:
 
 ```python
@@ -134,6 +139,7 @@ class AdvancedWordCounter(PersistentWordCounter):
 ## Critical Questions to Explore
 
 ### Cache Invalidation
+
 Ask Copilot these questions and implement solutions:
 1. "How should we detect if a file has changed since it was cached?"
 2. "What happens if a file is deleted after being cached?"
@@ -141,6 +147,7 @@ Ask Copilot these questions and implement solutions:
 4. "How do we handle symbolic links and duplicate files?"
 
 ### Performance Considerations
+
 Discuss with Copilot:
 1. "What's the optimal cache size limit?"
 2. "When should we evict cache entries?"
@@ -168,6 +175,7 @@ Discuss with Copilot:
 ## Test Scenarios
 
 ### Test Setup
+
 Create test files with known word counts:
 
 ```bash
@@ -199,6 +207,7 @@ echo "additional words" >> test1.txt
 ## Advanced Challenges
 
 ### Challenge 1: Smart Cache Strategies
+
 Implement different caching strategies:
 
 ```python
@@ -216,6 +225,7 @@ class SizeLimitedCache(CacheStrategy):
 ```
 
 ### Challenge 2: Configuration Management
+
 Add configuration file support:
 
 ```python
@@ -235,6 +245,7 @@ output:
 ```
 
 ### Challenge 3: Plugin Architecture
+
 Create a plugin system for word counting algorithms:
 
 ```python
@@ -252,6 +263,7 @@ class RegexWordCount(WordCountPlugin):
 ```
 
 ## Code Review Questions
+
 After implementation, ask Copilot to review:
 1. "Are there any race conditions in the parallel processing?"
 1. "Is the cache thread-safe?"
@@ -259,6 +271,7 @@ After implementation, ask Copilot to review:
 1. "How can we optimize memory usage for large file sets?"
 
 ## Real-World Applications
+
 This pattern applies to:
 - Build systems (detecting changed source files)
 - Static site generators (regenerating only changed pages)
@@ -281,6 +294,7 @@ This pattern applies to:
 1. **Compare Approaches**: Ask for alternative implementations
 
 ## Expected Learning Outcomes
+
 By completing this exercise, you should understand:
 - How to guide AI through iterative design improvements
 - Common caching patterns and their trade-offs

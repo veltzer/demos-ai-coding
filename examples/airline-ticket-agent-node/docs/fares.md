@@ -1,6 +1,7 @@
 # Fare Types and Pricing
 
 ## Fare families
+
 We sell four fare types on most routes.
 
 **Basic** is the lowest price. Seats are assigned automatically at check-in, no
@@ -17,6 +18,7 @@ at any time, priority boarding and a full refund if cancelled before departure.
 two checked bags, priority everything and fully flexible conditions.
 
 ## How prices move
+
 Fares generally rise as the departure date approaches. The cheapest fares are
 typically found between four and eight weeks before travel. Tuesday and
 Wednesday departures usually cost less than Friday and Sunday departures, and
@@ -27,6 +29,7 @@ July and August -- carry significantly higher fares, often double the low
 season price on the same route.
 
 ## Taxes and surcharges
+
 Displayed prices include all mandatory taxes and airport charges. Payment by
 credit card carries no additional fee. Optional extras such as seat selection,
 extra baggage and travel insurance are added at the final stage of booking.
