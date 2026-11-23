@@ -3,9 +3,12 @@
 # Security test suite for the audit exercise. `app` resolves when pytest runs
 # from the code/ directory; pylint lints from the repo root and cannot see it.
 # Several tests are intentionally left as stubs for the reader to complete.
-# pylint: disable=missing-module-docstring,import-error,unnecessary-pass
 
-from app import app  # type: ignore[import-not-found] # pyrefly: ignore[missing-import]
+import importlib
+
+# The learner's `app` module is not part of the exercise skeleton, so it is
+# imported dynamically: the type checker cannot be asked to resolve it.
+app = importlib.import_module("app").app
 
 
 class TestSecurityHeaders:

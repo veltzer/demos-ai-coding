@@ -12,10 +12,9 @@ The modules you need to install to make this work are `passpy` and `anthropic`
 # These demos are deliberately flat single-file scripts: the driver code sits
 # at module level so the whole agent loop reads top to bottom. That makes a
 # helper's parameter shadow the module-level name it is called with.
-# pylint: disable=redefined-outer-name
 
 
-import datetime
+import datetime as dt
 import json
 
 import anthropic
@@ -92,7 +91,7 @@ SLOTS = ("departure_city", "destination_city", "date")
 
 def ask(messages):
     """Send the conversation and return the parsed structured reply."""
-    today = datetime.datetime.now(datetime.UTC).date().isoformat()
+    today = dt.datetime.now(dt.UTC).date().isoformat()
     response = client.messages.create(
         model=MODEL,
         max_tokens=16000,

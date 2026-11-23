@@ -1,7 +1,6 @@
 # The corrected counterpart to buggy/race_condition.py. The shared global is
 # kept so the diff against the buggy version is purely the added lock - that
 # contrast is the lesson, so `global` stays.
-# pylint: disable=missing-module-docstring,global-statement
 
 import threading
 import time
@@ -10,7 +9,7 @@ balance = 0
 lock = threading.Lock()
 
 def deposit_fixed(amount):
-    global balance  # noqa: PLW0603  teaching: the shared global is the lesson
+    global balance  # noqa: PLW0603  teaching: kept from the buggy version so the diff is only the lock
     with lock:
         current = balance
         time.sleep(0.001)
@@ -19,7 +18,7 @@ def deposit_fixed(amount):
 
 # Test to verify fix
 def test_race_condition_fixed():
-    global balance  # noqa: PLW0603  teaching: the shared global is the lesson
+    global balance  # noqa: PLW0603  teaching: kept from the buggy version so the diff is only the lock
     balance = 0
 
     threads = []

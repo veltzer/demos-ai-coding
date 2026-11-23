@@ -1,7 +1,6 @@
 # This is the "before" half of a refactoring exercise: a deliberately bad
 # snippet the reader is asked to improve. It is an excerpt, not a runnable
 # module, so the database driver it calls is never imported.
-# pylint: disable=missing-module-docstring,missing-function-docstring
 
 from typing import Any
 

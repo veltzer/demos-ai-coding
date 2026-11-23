@@ -31,7 +31,7 @@ def get_user():
     user_id = validate_user_id(user_id_str)
     if user_id is None:
         security_logger.warning(
-            f"Invalid user ID attempt: {user_id_str} from {request.remote_addr}"
+            "Invalid user ID attempt: %s from %s", user_id_str, request.remote_addr
         )
         return jsonify({'error': 'Invalid user ID'}), 400
 
@@ -58,7 +58,7 @@ def get_user():
 
     except sqlite3.Error as e:
         # Log error but don't expose details to user
-        logging.getLogger(__name__).error(f"Database error: {e}")
+        logging.getLogger(__name__).error("Database error: %s", e)
         return jsonify({'error': 'Internal server error'}), 500
 
     finally:

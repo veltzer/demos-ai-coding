@@ -2,14 +2,13 @@
 # mutated via `global` is the whole point - the unsynchronised read-modify-write
 # is the bug the reader is asked to find, so pylint's objection is noted and
 # deliberately kept.
-# pylint: disable=missing-module-docstring,global-statement
 
 import threading
 
 balance = 0
 
 def deposit(amount):
-    global balance  # noqa: PLW0603  teaching: the shared global is the lesson
+    global balance  # noqa: PLW0603  teaching: the unsynchronised global is the race the reader is asked to find
     current = balance
     # Imagine another thread runs here!
     balance = current + amount
@@ -21,7 +20,7 @@ def deposit(amount):
 
 # Test to expose race condition
 def test_race_condition():
-    global balance  # noqa: PLW0603  teaching: the shared global is the lesson
+    global balance  # noqa: PLW0603  teaching: the test resets the same shared global the race corrupts
     balance = 0
 
     threads = []

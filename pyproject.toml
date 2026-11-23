@@ -24,6 +24,7 @@ dev = [
     "pyrefly",
     "pytest",
     "ruff",
+    "types-bleach",
 ]
 
 [tool.uv]
@@ -33,6 +34,8 @@ package = false
 [tool.pyrefly]
 # Type checking (rsconstruct's pyrefly processor), with pyrefly's default
 # error set. "." on the search path is mypy's implicit current directory.
+# Warnings fail the check like errors (pyrefly lets them pass by default).
+min-severity = "warn"
 search-path = [
     ".",
     # Each live example is a standalone project whose package lives in its own app/ folder.
@@ -40,10 +43,17 @@ search-path = [
     "live-examples/05_hooks_beat_instructions/app",
     "live-examples/07_choosing_the_right_model/app",
     "live-examples/08_intent_to_production/app",
+    # The TDD exercise's tests import `src.<module>` from its code/ folder.
+    "exercises/03_software_engineering/00_tdd_with_ai/code",
 ]
 # Loose scripts import their siblings: search each importing file's folder.
 enable-fallback-search-path = true
 # Third-party libraries without type information.
+# passpy ships no type information and has no stubs package.
+replace-imports-with-any = [
+    "passpy",
+    "passpy.*",
+]
 ignore-missing-imports = [
     "anthropic.*",
     "bleach.*",

@@ -47,7 +47,7 @@ def total(history, lines):
     try:
         return price_order(store, order).total
     # The code under test is AI-written and may raise anything: report it, don't crash.
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:  # noqa: BLE001  teaching: acceptance harness must report any exception raised by the AI-written code under test
         return f"{type(e).__name__}: {e}"
 
 

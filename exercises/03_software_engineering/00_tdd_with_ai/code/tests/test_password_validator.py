@@ -3,8 +3,6 @@
 # and cannot resolve that, and setup_method is standard pytest style.
 # The tests are written first and reference methods PasswordValidator does not
 # have yet - that is the point of the exercise, so no-member is expected here.
-# pylint: disable=missing-module-docstring,import-error,attribute-defined-outside-init
-# pylint: disable=no-member
 
 from src.password_validator import PasswordValidator
 

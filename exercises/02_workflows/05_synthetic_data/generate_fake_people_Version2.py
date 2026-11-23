@@ -127,11 +127,9 @@ def write_parquet(path: str, rows: Iterator[dict[str, object]], chunk_size: int 
             "age": [],
             "number_of_children": [],
         }
-        count = 0
-        for row in rows:
+        for count, row in enumerate(rows, start=1):
             for k, col in batch.items():
                 col.append(row[k])
-            count += 1  # noqa: SIM113 - batch counter, not a sequence index
 
             if count % chunk_size == 0:
                 table = pa.Table.from_pydict(batch, schema=schema)

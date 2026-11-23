@@ -51,7 +51,6 @@ def search():
 # templates/search.html
 # Shown inline as a triple-quoted block so the exercise stays a single file;
 # in a real app this is a separate template.
-# pylint: disable-next=pointless-string-statement
 """
 <!DOCTYPE html>
 <html>

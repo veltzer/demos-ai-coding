@@ -24,7 +24,7 @@ def half_even():
                 and round_cents(Decimal("2.665")) == Decimal("2.66")
                 and round_cents(Decimal("2.675")) == Decimal("2.68")
                 and round_cents(Decimal("1.236")) == Decimal("1.24"))
-    except Exception:  # noqa: BLE001
+    except Exception:  # noqa: BLE001  teaching: acceptance harness must report any exception raised by the AI-written code under test
         return False
 
 

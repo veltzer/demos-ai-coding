@@ -37,7 +37,7 @@ def run(fn, payments, company="NORTHWIND1", seq=7):
     # The code under test is AI-written and may raise anything: report it, don't crash.
     try:
         return fn(payments, company, DAY, seq)
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:  # noqa: BLE001  teaching: acceptance harness must report any exception raised by the AI-written code under test
         return f"{type(e).__name__}: {e}"
 
 

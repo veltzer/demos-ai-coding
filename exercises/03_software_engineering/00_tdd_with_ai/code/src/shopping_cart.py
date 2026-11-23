@@ -5,7 +5,6 @@ Every method below is an intentionally empty stub: filling them in until the
 tests pass IS the exercise. The type checker is therefore told not to
 object to the missing return statements here.
 """
-# pyrefly: ignore-errors[bad-return]
 
 
 

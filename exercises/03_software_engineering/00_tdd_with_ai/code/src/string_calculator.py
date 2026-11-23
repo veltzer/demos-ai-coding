@@ -7,6 +7,6 @@ tests pass IS the exercise.
 """
 
 class StringCalculator:
-    def add(self, numbers: str) -> int:  # noqa: ARG002  teaching: the empty stub is the exercise
+    def add(self, numbers: str) -> int:  # noqa: ARG002  teaching: the empty stub is the exercise; implementing it uses the argument
         # Implement this method to pass all tests
         return 0

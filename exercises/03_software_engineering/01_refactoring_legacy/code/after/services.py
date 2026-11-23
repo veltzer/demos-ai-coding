@@ -4,7 +4,6 @@
 This is a structural sketch showing how the god class splits into focused
 collaborators; the method bodies are deliberately elided.
 """
-# pyrefly: ignore-errors[bad-return]
 
 class EmailService:
     def send_welcome_email(self, user_email: str, user_name: str):
@@ -22,5 +21,5 @@ class UserService:
     def create_user(self, data: dict) -> int:
         self.validator.validate_email(data['email'])
         # ... orchestrates the operations
-        # pylint: disable=unnecessary-pass  # body elided in the sketch
+  # body elided in the sketch
         return 0

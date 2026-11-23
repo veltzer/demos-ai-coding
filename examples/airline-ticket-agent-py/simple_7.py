@@ -13,10 +13,9 @@ The modules you need to install to make this work are `passpy` and `anthropic`
 # These demos are deliberately flat single-file scripts: the driver code sits
 # at module level so the whole agent loop reads top to bottom. That makes a
 # helper's parameter shadow the module-level name it is called with.
-# pylint: disable=redefined-outer-name
 
 
-import datetime
+import datetime as dt
 import json
 import os
 import re
@@ -148,7 +147,7 @@ def read_preferences(filename, allowed):
 
 def ask(messages, allowed):
     """Run the turn to completion, servicing tool calls, and return the reply."""
-    today = datetime.datetime.now(datetime.UTC).date().isoformat()
+    today = dt.datetime.now(dt.UTC).date().isoformat()
     # Tools and structured output can't drive the same call, so let the model
     # finish its tool calls first, then ask for the structured reply.
     while True:

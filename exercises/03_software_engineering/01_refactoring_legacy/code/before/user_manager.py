@@ -4,8 +4,6 @@
 # is asked to split into focused collaborators. It is an excerpt, not a
 # runnable module, so the six services it constructs are never imported. The
 # class doing too much is the lesson, not a defect to fix here.
-# pylint: disable=missing-module-docstring,missing-class-docstring
-# pylint: disable=missing-function-docstring,too-many-instance-attributes,too-few-public-methods
 
 from typing import Any
 
@@ -39,7 +37,7 @@ class UserManager:
 
         # Hash password
         # Buried mid-method rather than at the top - another smell to spot.
-        import hashlib  # pylint: disable=import-outside-toplevel  # noqa: PLC0415  teaching: the buried import is a smell to spot
+        import hashlib  # noqa: PLC0415  teaching: the mid-method import is one of the smells to refactor away
         hashed = hashlib.md5(data['password'].encode()).hexdigest()
         data['password'] = hashed
 
@@ -59,14 +57,14 @@ class UserManager:
         # Create session
         # Assigned and then dropped on the floor - one of the smells the
         # reader is meant to spot, so it is kept rather than cleaned up.
-        session_id = self.session_store.create(user_id)  # noqa: F841  # pylint: disable=unused-variable
+        session_id = self.session_store.create(user_id)  # noqa: F841  teaching: the dropped session id is one of the smells to spot
 
         # Upload default avatar
         avatar_url = self.file_storage.upload_default_avatar(user_id)
         self.db.update("users", user_id, {"avatar_url": avatar_url})
 
         # Log action
-        self.logger.info(f"User created: {user_id}")
+        self.logger.info("User created: %s", user_id)
 
         return user_id
 
