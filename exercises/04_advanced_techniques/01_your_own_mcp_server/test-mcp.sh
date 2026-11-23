@@ -15,13 +15,13 @@ if ! command -v node &> /dev/null; then
 fi
 
 # Check if the MCP service file exists
-if [ ! -f "math-mcp-service.js" ]; then
+if [[ ! -f "math-mcp-service.js" ]]; then
     echo "❌ Error: math-mcp-service.js not found in current directory"
     exit 1
 fi
 
 # Check if dependencies are installed
-if [ ! -d "node_modules" ]; then
+if [[ ! -d "node_modules" ]]; then
     echo "❌ Error: node_modules not found. Run 'npm install' first"
     exit 1
 fi
