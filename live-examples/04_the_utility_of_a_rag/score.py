@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Score the three answer sets against the known answers.
 
 Usage: score.py <questions.json> <label>=<stats.json> ...

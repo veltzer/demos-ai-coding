@@ -28,6 +28,7 @@ import re
 import anthropic
 import chromadb
 import passpy
+from anthropic.types import ToolParam
 
 MODEL = "claude-opus-5"
 
@@ -86,7 +87,7 @@ For every user message, do all of these at once:
 
 REFUSAL = "Sorry, I only deal with airline ticket sales."
 
-REPLY_SCHEMA = {
+REPLY_SCHEMA: dict[str, object] = {
     "type": "object",
     "properties": {
         "on_topic": {
@@ -122,7 +123,7 @@ REPLY_SCHEMA = {
 
 SLOTS = ("departure_city", "destination_city", "date")
 
-POLICY_TOOL = {
+POLICY_TOOL: ToolParam = {
     "name": "search_policy",
     "description": (
         "Search the airline's policy documents for passages relevant to a "
@@ -144,7 +145,7 @@ POLICY_TOOL = {
     },
 }
 
-PREFS_TOOL = {
+PREFS_TOOL: ToolParam = {
     "name": "read_preferences",
     "description": (
         "Read the customer's saved flight preferences from a file they named. "
@@ -169,10 +170,11 @@ def search_policy(query):
     """Search the indexed policy documents and return the matching passages."""
     print(f"[vector db query: {query!r}]")
     found = collection.query(query_texts=[query], n_results=POLICY_RESULTS)
+    documents, metadatas, distances = found["documents"], found["metadatas"], found["distances"]
+    if documents is None or metadatas is None or distances is None:
+        return "No matching passages found in the policy documents."
     passages = []
-    for document, metadata, distance in zip(
-        found["documents"][0], found["metadatas"][0], found["distances"][0]
-    ):
+    for document, metadata, distance in zip(documents[0], metadatas[0], distances[0], strict=True):
         print(f"[  hit {distance:.3f} {metadata['source']} -- {metadata['section']}]")
         passages.append(f"From {metadata['source']} ({metadata['section']}):\n{document}")
     if not passages:
@@ -238,7 +240,7 @@ def ask(messages, allowed):
         max_tokens=16000,
         system=AGENT_SYSTEM.format(today=today),
         output_config={"format": {"type": "json_schema", "schema": REPLY_SCHEMA}},
-        messages=messages + [{"role": "user", "content": "Report the structured reply."}],
+        messages=[*messages, {"role": "user", "content": "Report the structured reply."}],
     )
     text = "".join(b.text for b in response.content if b.type == "text")
     return json.loads(text)

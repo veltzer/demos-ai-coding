@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Hidden acceptance check for the bank file, one check per rule of the spec.
 
 Compares each part of the AI's output with a reference implementation, on
@@ -9,6 +9,7 @@ all of them. The AI never sees this file.
 Usage: check.py <app-dir>   (imports that copy of ledger, one copy per process)
 """
 
+import importlib
 import sys
 from datetime import date
 from pathlib import Path
@@ -17,9 +18,10 @@ APP = Path(sys.argv[1]).resolve()
 sys.path.insert(0, str(APP))
 sys.path.insert(1, str(Path(__file__).parent))
 
-import reference
-from ledger.bankfile import export_bank_file
-from ledger.models import BankPayment
+# The ledger under test is chosen at run time (argv), so it is imported by name.
+reference = importlib.import_module("reference")
+export_bank_file = importlib.import_module("ledger.bankfile").export_bank_file
+BankPayment = importlib.import_module("ledger.models").BankPayment
 
 RESULTS = []
 DAY = date(2026, 11, 2)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """A deliberately small RAG retriever: BM25 over markdown sections.
 
 No embeddings, no vector database, no dependencies: retrieval is the idea,
@@ -80,8 +80,8 @@ def cmd_prompt(corpus, questions_file, mode, out_file):
     parts = [PREAMBLE]
     if mode == "full":
         parts.append("Here is the company's entire internal wiki:")
-        for path in sorted(Path(corpus).rglob("*.md")):
-            parts.append(f"=== {path.relative_to(corpus)} ===\n{path.read_text()}")
+        parts.extend(f"=== {path.relative_to(corpus)} ===\n{path.read_text()}"
+                     for path in sorted(Path(corpus).rglob("*.md")))
     elif mode == "rag":
         cs = chunks(corpus)
         index = BM25(cs)

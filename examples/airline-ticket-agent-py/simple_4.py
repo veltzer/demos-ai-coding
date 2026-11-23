@@ -40,7 +40,7 @@ For every user message, do two things at once:
 
 REFUSAL = "Sorry, I only deal with airline ticket sales."
 
-REPLY_SCHEMA = {
+REPLY_SCHEMA: dict[str, object] = {
     "type": "object",
     "properties": {
         "on_topic": {

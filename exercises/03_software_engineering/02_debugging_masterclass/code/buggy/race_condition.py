@@ -9,7 +9,7 @@ import threading
 balance = 0
 
 def deposit(amount):
-    global balance
+    global balance  # noqa: PLW0603  teaching: the shared global is the lesson
     current = balance
     # Imagine another thread runs here!
     balance = current + amount
@@ -21,7 +21,7 @@ def deposit(amount):
 
 # Test to expose race condition
 def test_race_condition():
-    global balance
+    global balance  # noqa: PLW0603  teaching: the shared global is the lesson
     balance = 0
 
     threads = []

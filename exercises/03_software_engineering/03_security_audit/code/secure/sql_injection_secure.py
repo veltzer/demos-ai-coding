@@ -35,8 +35,8 @@ def get_user():
         )
         return jsonify({'error': 'Invalid user ID'}), 400
 
+    conn = sqlite3.connect('app.db')
     try:
-        conn = sqlite3.connect('app.db')
         cursor = conn.cursor()
 
         # Use parameterized query (prevents SQL injection)

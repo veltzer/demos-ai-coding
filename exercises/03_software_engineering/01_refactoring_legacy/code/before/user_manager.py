@@ -4,9 +4,18 @@
 # is asked to split into focused collaborators. It is an excerpt, not a
 # runnable module, so the six services it constructs are never imported. The
 # class doing too much is the lesson, not a defect to fix here.
-# ruff: noqa: F821
-# pylint: disable=undefined-variable,missing-module-docstring,missing-class-docstring
+# pylint: disable=missing-module-docstring,missing-class-docstring
 # pylint: disable=missing-function-docstring,too-many-instance-attributes,too-few-public-methods
+
+from typing import Any
+
+# Placeholders for the six services the excerpt leaves out.
+MySQLConnection: Any = None
+RedisConnection: Any = None
+SMTPService: Any = None
+Logger: Any = None
+SessionStore: Any = None
+S3Storage: Any = None
 
 
 class UserManager:
@@ -30,7 +39,7 @@ class UserManager:
 
         # Hash password
         # Buried mid-method rather than at the top - another smell to spot.
-        import hashlib  # pylint: disable=import-outside-toplevel
+        import hashlib  # pylint: disable=import-outside-toplevel  # noqa: PLC0415  teaching: the buried import is a smell to spot
         hashed = hashlib.md5(data['password'].encode()).hexdigest()
         data['password'] = hashed
 

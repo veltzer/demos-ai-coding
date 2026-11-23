@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Hidden acceptance check for the LOYALTY discount.
 
 Every check is a business rule that is written down in docs/ and CLAUDE.md
@@ -7,6 +7,7 @@ but that the code alone does not reveal. The AI never sees this file.
 Usage: check.py <app-dir>   (imports that copy of the shop, one copy per process)
 """
 
+import importlib
 import re
 import subprocess
 import sys
@@ -15,9 +16,11 @@ from pathlib import Path
 APP = Path(sys.argv[1]).resolve()
 sys.path.insert(0, str(APP))
 
-from shop.models import Customer, Line, Order, Status
-from shop.pricing import price_order
-from shop.store import Store
+# The shop under test is chosen at run time (argv), so it is imported by name.
+_models = importlib.import_module("shop.models")
+Customer, Line, Order, Status = _models.Customer, _models.Line, _models.Order, _models.Status
+price_order = importlib.import_module("shop.pricing").price_order
+Store = importlib.import_module("shop.store").Store
 
 RESULTS = []
 IMPORTS_LEGACY = re.compile(r"^\s*(from\s+(shop\.)?\.?legacy|from\s+shop\s+import\s+legacy|import\s+shop\.legacy)",

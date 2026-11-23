@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Show a prompt to the audience as a readable box instead of a quoted
 command line.
 

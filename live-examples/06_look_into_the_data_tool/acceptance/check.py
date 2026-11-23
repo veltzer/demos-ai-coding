@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Hidden acceptance check for revenue.sql.
 
 Besides comparing with a reference query, each data quirk gets its own

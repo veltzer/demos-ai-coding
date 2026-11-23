@@ -10,7 +10,7 @@ balance = 0
 lock = threading.Lock()
 
 def deposit_fixed(amount):
-    global balance
+    global balance  # noqa: PLW0603  teaching: the shared global is the lesson
     with lock:
         current = balance
         time.sleep(0.001)
@@ -19,7 +19,7 @@ def deposit_fixed(amount):
 
 # Test to verify fix
 def test_race_condition_fixed():
-    global balance
+    global balance  # noqa: PLW0603  teaching: the shared global is the lesson
     balance = 0
 
     threads = []

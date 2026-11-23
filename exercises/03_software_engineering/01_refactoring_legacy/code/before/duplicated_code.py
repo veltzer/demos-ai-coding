@@ -1,8 +1,12 @@
 # This is the "before" half of a refactoring exercise: a deliberately bad
 # snippet the reader is asked to improve. It is an excerpt, not a runnable
 # module, so the database driver it calls is never imported.
-# ruff: noqa: F821
-# pylint: disable=undefined-variable,missing-module-docstring,missing-function-docstring
+# pylint: disable=missing-module-docstring,missing-function-docstring
+
+from typing import Any
+
+# Placeholder for the database driver the excerpt leaves out.
+mysql: Any = None
 
 
 def get_active_users():

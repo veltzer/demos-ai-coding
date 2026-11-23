@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Render `claude -p --output-format stream-json --verbose` as a live,
 audience-readable log: one line per tool call, the assistant's prose dimmed,
 a green line whenever an edit ticks a "- [x]" box in a markdown file, a red

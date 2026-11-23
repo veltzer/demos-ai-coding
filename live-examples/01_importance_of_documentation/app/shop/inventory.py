@@ -3,14 +3,14 @@
 from shop import settings
 
 
-class OutOfStock(Exception):
+class OutOfStockError(Exception):
     pass
 
 
 def reserve(store, order):
     for line in order.lines:
         if store.stock.get(line.sku, 0) < line.qty:
-            raise OutOfStock(line.sku)
+            raise OutOfStockError(line.sku)
     for line in order.lines:
         store.stock[line.sku] -= line.qty
 

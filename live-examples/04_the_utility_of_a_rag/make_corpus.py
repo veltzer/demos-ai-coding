@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Generate the internal wiki of Quillstack, a company that does not exist.
 
 Everything is fictional and generated from a fixed seed, so no model can
@@ -62,7 +62,7 @@ def make_teams():
     return teams
 
 
-def make_services(teams):
+def make_services():
     names = RNG.sample([f"{p}-{s}" for p in PREFIXES for s in SUFFIXES], 160)
     ports = RNG.sample(range(7000, 7999), 160)
     services = {}
@@ -255,7 +255,7 @@ def main():
         (corpus / sub).mkdir(parents=True, exist_ok=True)
 
     teams = make_teams()
-    services = make_services(teams)
+    services = make_services()
     errors = make_errors(services)
     for name, t in teams.items():
         write_team(corpus / "teams" / f"{slug(name)}.md", name, t, services)

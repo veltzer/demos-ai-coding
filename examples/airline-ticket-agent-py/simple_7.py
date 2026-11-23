@@ -23,6 +23,7 @@ import re
 
 import anthropic
 import passpy
+from anthropic.types import ToolParam
 
 MODEL = "claude-opus-5"
 
@@ -69,7 +70,7 @@ For every user message, do all of these at once:
 
 REFUSAL = "Sorry, I only deal with airline ticket sales."
 
-REPLY_SCHEMA = {
+REPLY_SCHEMA: dict[str, object] = {
     "type": "object",
     "properties": {
         "on_topic": {
@@ -105,7 +106,7 @@ REPLY_SCHEMA = {
 
 SLOTS = ("departure_city", "destination_city", "date")
 
-PREFS_TOOL = {
+PREFS_TOOL: ToolParam = {
     "name": "read_preferences",
     "description": (
         "Read the customer's saved flight preferences from a file they named. "
@@ -181,7 +182,7 @@ def ask(messages, allowed):
         max_tokens=16000,
         system=AGENT_SYSTEM.format(today=today),
         output_config={"format": {"type": "json_schema", "schema": REPLY_SCHEMA}},
-        messages=messages + [{"role": "user", "content": "Report the structured reply."}],
+        messages=[*messages, {"role": "user", "content": "Report the structured reply."}],
     )
     text = "".join(b.text for b in response.content if b.type == "text")
     return json.loads(text)

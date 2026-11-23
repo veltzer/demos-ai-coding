@@ -5,9 +5,8 @@
 The method body is an intentionally empty stub: implementing it until the
 tests pass IS the exercise.
 """
-# pyrefly: ignore-errors[bad-return]
 
 class StringCalculator:
-    def add(self, numbers: str) -> int:
+    def add(self, numbers: str) -> int:  # noqa: ARG002  teaching: the empty stub is the exercise
         # Implement this method to pass all tests
         return 0

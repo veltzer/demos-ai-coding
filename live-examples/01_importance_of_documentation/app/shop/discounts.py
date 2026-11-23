@@ -19,5 +19,5 @@ def welcome(store, order):
 
 
 @rule("BULK")
-def bulk(store, order):
+def bulk(_store, order):
     return settings.BULK_DISCOUNT_CENTS if order.items >= settings.BULK_MIN_ITEMS else 0

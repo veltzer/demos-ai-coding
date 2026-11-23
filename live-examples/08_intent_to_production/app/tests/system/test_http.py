@@ -79,6 +79,7 @@ def test_nothing_else_is_served(url: str, path: str) -> None:
 
 def test_a_whole_game_against_hard_ends_without_a_win_for_x(url: str) -> None:
     board, status = [""] * 9, "playing"
+    answer: dict = {}
     while status == "playing":
         cell = board.index("")
         code, answer = post(f"{url}/api/move", {"board": board, "cell": cell, "level": "hard"})

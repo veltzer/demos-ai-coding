@@ -31,12 +31,15 @@ dev = [
 package = false
 
 [tool.pyrefly]
-# Type checking (rsconstruct's pyrefly processor). preset = "legacy" is
-# pyrefly's mypy-compatible behavior; "." on the search path is mypy's
-# implicit current directory.
-preset = "legacy"
+# Type checking (rsconstruct's pyrefly processor), with pyrefly's default
+# error set. "." on the search path is mypy's implicit current directory.
 search-path = [
     ".",
+    # Each live example is a standalone project whose package lives in its own app/ folder.
+    "live-examples/01_importance_of_documentation/app",
+    "live-examples/05_hooks_beat_instructions/app",
+    "live-examples/07_choosing_the_right_model/app",
+    "live-examples/08_intent_to_production/app",
 ]
 # Loose scripts import their siblings: search each importing file's folder.
 enable-fallback-search-path = true

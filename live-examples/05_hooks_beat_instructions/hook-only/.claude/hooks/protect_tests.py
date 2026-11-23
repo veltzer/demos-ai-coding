@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """PreToolUse hook: nothing may change files under tests/.
 
 Exit code 2 blocks the tool call and hands the message on stderr back to
@@ -28,10 +28,8 @@ def bash_writes_tests(command):
         return False
     if PY_WRITE.search(command):
         return True
-    for segment in re.split(r"&&|\|\||[;|\n]", command):
-        if TESTS_PATH.search(segment) and WRITE_OPS.search(segment):
-            return True
-    return False
+    return any(TESTS_PATH.search(segment) and WRITE_OPS.search(segment)
+               for segment in re.split(r"&&|\|\||[;|\n]", command))
 
 
 def touches_tests(event):

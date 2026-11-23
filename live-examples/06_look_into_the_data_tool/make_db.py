@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Build shop.db, a replica of a (fictional) production database.
 
 The schema is exactly what app/schema.sql says. The surprises are in the

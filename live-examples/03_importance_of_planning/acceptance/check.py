@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Hidden acceptance check for the `report` feature.
 
 These are the decisions the "product owner" had in mind but never wrote into

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Print a scoreboard of claude runs from the --stats files stream.py writes.
 
 Usage: scoreboard.py ROW... where ROW is "label|score|stats.json[,stats.json...]".

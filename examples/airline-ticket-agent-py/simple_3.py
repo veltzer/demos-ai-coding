@@ -40,7 +40,7 @@ REFUSAL = "Sorry, I only deal with airline ticket sales."
 
 # A JSON schema makes the classifier's answer machine-readable, so the client
 # can branch on a boolean instead of string-matching prose.
-CLASSIFIER_SCHEMA = {
+CLASSIFIER_SCHEMA: dict[str, object] = {
     "type": "object",
     "properties": {
         "on_topic": {

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Render a markdown plan with checkboxes as a coloured checklist with a
 progress bar per phase and overall.
 

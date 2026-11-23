@@ -14,11 +14,11 @@ def test_password_must_be_at_least_8_characters():
     validator = PasswordValidator()
 
     # Should fail
-    assert not validator.validate("abc123")
-    assert validator.get_errors() == ["Password must be at least 8 characters"]
+    assert not validator.validate("abc123")  # pyrefly: ignore[missing-attribute]  teaching: test-first, the class is not implemented yet
+    assert validator.get_errors() == ["Password must be at least 8 characters"]  # pyrefly: ignore[missing-attribute]  teaching: test-first, the class is not implemented yet
 
     # Should pass
-    assert validator.validate("abc12345")
-    assert validator.get_errors() == []
+    assert validator.validate("abc12345")  # pyrefly: ignore[missing-attribute]  teaching: test-first, the class is not implemented yet
+    assert validator.get_errors() == []  # pyrefly: ignore[missing-attribute]  teaching: test-first, the class is not implemented yet
 
 # Run this test - it should FAIL because we haven't written PasswordValidator yet

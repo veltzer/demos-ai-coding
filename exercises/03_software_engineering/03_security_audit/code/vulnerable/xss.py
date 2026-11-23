@@ -9,7 +9,7 @@ def search():
     query = request.args.get('query', '')
 
     # XSS vulnerability!
-    html = f"""
+    return f"""
     <html>
         <body>
             <h1>Search Results for: {query}</h1>
@@ -17,8 +17,6 @@ def search():
         </body>
     </html>
     """
-
-    return html
 
 # Attack: /search?query=<script>alert('XSS')</script>
 # Executes JavaScript in victim's browser!

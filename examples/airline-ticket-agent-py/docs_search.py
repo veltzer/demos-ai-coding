@@ -23,7 +23,10 @@ def search(query, n_results=RESULTS):
     client = chromadb.PersistentClient(path=str(DB_DIR))
     collection = client.get_collection(COLLECTION)
     found = collection.query(query_texts=[query], n_results=n_results)
-    return zip(found["documents"][0], found["metadatas"][0], found["distances"][0])
+    documents, metadatas, distances = found["documents"], found["metadatas"], found["distances"]
+    if documents is None or metadatas is None or distances is None:
+        return []
+    return list(zip(documents[0], metadatas[0], distances[0], strict=True))
 
 
 def main():

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """A tiny expense tracker. Expenses live in expenses.csv next to this file."""
 
 import argparse
