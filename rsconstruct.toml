@@ -32,7 +32,7 @@ src_dirs = ["exercises"]
 # ─── toml / yaml / json ──────────────────────────────────────────────────────
 
 [processor.checker.taplo]
-src_files = [".rumdl.toml", "pyproject.toml", "rsconstruct.toml"]
+src_files = [".ruff.toml", ".rumdl.toml", "live-examples/08_intent_to_production/app/pyproject.toml", "pyproject.toml", "rsconstruct.toml"]
 
 # ─── repo-specific configuration ────────────────────────────────────────────
 
