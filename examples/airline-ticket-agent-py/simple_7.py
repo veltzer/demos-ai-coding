@@ -19,10 +19,13 @@ import datetime as dt
 import json
 import os
 import re
+from typing import TYPE_CHECKING
 
 import anthropic
 import passpy
-from anthropic.types import ToolParam
+
+if TYPE_CHECKING:
+    from anthropic.types import ToolParam
 
 MODEL = "claude-opus-5"
 

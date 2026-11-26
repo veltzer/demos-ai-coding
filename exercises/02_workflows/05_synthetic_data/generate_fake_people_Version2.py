@@ -6,7 +6,10 @@ import csv
 import os
 import random
 import sys
-from collections.abc import Iterator
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 try:
     from faker import Faker

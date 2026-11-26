@@ -9,12 +9,14 @@ request, notification, and response.
 
 import argparse
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from mcp.server.context import CallNext, HandlerResult, ServerRequestContext
 from mcp.server.mcpserver import MCPServer
 from mcp.shared.exceptions import MCPError
 from pydantic import BaseModel, ValidationError
+
+if TYPE_CHECKING:
+    from mcp.server.context import CallNext, HandlerResult, ServerRequestContext
 
 logger = logging.getLogger("calculator")
 
