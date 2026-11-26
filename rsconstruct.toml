@@ -110,3 +110,7 @@ src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniq
 src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniques/01_your_own_mcp_server"]
 args = ["-c", ".oxlintrc.repo.json"]
 dep_inputs = [".oxlintrc.repo.json"]
+
+# lint the Lua configuration with luacheck (policy: .luacheckrc)
+[processor.checker.iluacheck]
+src_dirs = ["config"]
