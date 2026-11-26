@@ -60,3 +60,6 @@ ignore-missing-imports = [
     "passpy.*",
     "pyarrow.*",
 ]
+
+[tool.pyrefly.errors]
+no-any-return = "error"

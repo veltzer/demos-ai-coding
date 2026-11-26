@@ -9,4 +9,5 @@ class UserRepository:
         return self.db.query("SELECT * FROM users WHERE email = ?", email)
 
     def create(self, user_data: dict) -> int:
-        return self.db.insert("users", user_data)
+        user_id: int = self.db.insert("users", user_data)
+        return user_id
