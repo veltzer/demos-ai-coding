@@ -73,6 +73,7 @@ def generate_people(
     n: int,
     locale: str,
     seed: int | None,
+    *,
     with_progress: bool = True
 ) -> Iterator[dict[str, object]]:
     rng = random.Random(seed)
