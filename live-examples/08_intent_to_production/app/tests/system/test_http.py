@@ -38,6 +38,8 @@ def url() -> Iterator[str]:
     finally:
         process.terminate()
         process.wait(timeout=5)
+        if process.stdout is not None:
+            process.stdout.close()
 
 
 def get(url: str) -> tuple[int, str, str]:
@@ -45,7 +47,8 @@ def get(url: str) -> tuple[int, str, str]:
         with urllib.request.urlopen(url, timeout=2) as response:
             return response.status, response.headers["Content-Type"], response.read().decode()
     except urllib.error.HTTPError as error:
-        return error.code, error.headers["Content-Type"], error.read().decode()
+        with error:
+            return error.code, error.headers["Content-Type"], error.read().decode()
 
 
 def post(url: str, body: object) -> tuple[int, dict]:
@@ -55,7 +58,8 @@ def post(url: str, body: object) -> tuple[int, dict]:
         with urllib.request.urlopen(request, timeout=2) as response:
             return response.status, json.load(response)
     except urllib.error.HTTPError as error:
-        return error.code, json.load(error)
+        with error:
+            return error.code, json.load(error)
 
 
 def test_health(url: str) -> None:

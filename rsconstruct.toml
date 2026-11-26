@@ -31,6 +31,10 @@ src_dirs = ["exercises"]
 
 # ─── toml / yaml / json ──────────────────────────────────────────────────────
 
+# run the tests of the examples with pytest (policy: [tool.pytest.ini_options])
+[processor.checker.pytest]
+src_dirs = ["live-examples/01_importance_of_documentation/app/tests", "live-examples/05_hooks_beat_instructions/app/tests", "live-examples/08_intent_to_production/app/tests"]
+
 [processor.checker.taplo]
 src_files = [".ruff.toml", ".rumdl.toml", "live-examples/08_intent_to_production/app/pyproject.toml", "pyproject.toml", "rsconstruct.toml"]
 
