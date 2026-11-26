@@ -54,12 +54,6 @@ replace-imports-with-any = [
     "passpy",
     "passpy.*",
 ]
-ignore-missing-imports = [
-    "anthropic.*",
-    "bleach.*",
-    "passpy.*",
-    "pyarrow.*",
-]
 
 [tool.pyrefly.errors]
 no-any-return = "error"
