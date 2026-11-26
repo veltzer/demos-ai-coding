@@ -102,12 +102,20 @@ src_dirs = ["exercises/03_software_engineering/04_infrastructure_as_code/code/do
 # ─── json ────────────────────────────────────────────────────────────────────
 
 [processor.checker.ijsonlint]
-src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniques/01_your_own_mcp_server"]
+src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniques/01_your_own_mcp_server", "live-examples"]
 
 # ─── javascript ──────────────────────────────────────────────────────────────
 
+# the pages and stylesheets of the live examples
+[processor.checker.itidy]
+src_dirs = ["live-examples"]
+
+[processor.checker.biome]
+src_dirs = ["live-examples"]
+src_extensions = [".css"]
+
 [processor.checker.oxlint]
-src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniques/01_your_own_mcp_server"]
+src_dirs = ["examples/airline-ticket-agent-node", "exercises/04_advanced_techniques/01_your_own_mcp_server", "live-examples"]
 args = ["-c", ".oxlintrc.repo.json"]
 dep_inputs = [".oxlintrc.repo.json"]
 
