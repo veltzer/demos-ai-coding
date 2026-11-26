@@ -126,3 +126,8 @@ dep_inputs = [".oxlintrc.repo.json"]
 # lint the Lua configuration with luacheck (policy: .luacheckrc)
 [processor.checker.iluacheck]
 src_dirs = ["config"]
+
+# every lint suppression names a rule and says why (see the fleet's CLAUDE.md)
+[processor.checker.suppressions]
+src_dirs = [".github", "config", "examples", "exercises", "live-demos/agents", "live-examples"]
+src_files = [".hadolint.yaml", ".yamllint.yaml", "CLAUDE.md", "README.md"]
