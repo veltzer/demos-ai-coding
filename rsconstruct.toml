@@ -132,3 +132,12 @@ src_dirs = ["config"]
 [processor.checker.suppressions]
 src_dirs = [".github", "config", "examples", "exercises", "live-demos/agents", "live-examples"]
 src_files = [".hadolint.yaml", ".yamllint.yaml", "CLAUDE.md", "README.md"]
+
+# ─── terraform ───────────────────────────────────────────────────────────────
+
+# every Terraform file parses and is formatted as `terraform fmt` formats it
+[processor.checker.script.terraform_fmt]
+command = "terraform"
+args = ["fmt", "-check", "-diff", "-no-color"]
+src_dirs = ["exercises/03_software_engineering/04_infrastructure_as_code/code/terraform"]
+src_extensions = [".tf", ".tfvars"]
