@@ -19,9 +19,10 @@ def validate_user_id(user_id: str) -> int | None:
         uid = int(user_id)
         if uid <= 0:
             raise ValueError("User ID must be positive")
-        return uid
     except (ValueError, TypeError):
         return None
+    else:
+        return uid
 
 @app.route('/user')
 def get_user():
@@ -56,9 +57,9 @@ def get_user():
             }
         })
 
-    except sqlite3.Error as e:
+    except sqlite3.Error:
         # Log error but don't expose details to user
-        logging.getLogger(__name__).error("Database error: %s", e)
+        logging.getLogger(__name__).exception("Database error")
         return jsonify({'error': 'Internal server error'}), 500
 
     finally:
