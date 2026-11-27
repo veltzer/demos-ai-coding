@@ -10,15 +10,19 @@ The module you need to install to make this work is `chromadb`
 
 import pathlib
 import sys
+from typing import TYPE_CHECKING
 
 import chromadb
+
+if TYPE_CHECKING:
+    from chromadb.api.types import Metadata
 
 DB_DIR = pathlib.Path(__file__).parent / "chroma_db"
 COLLECTION = "flights"
 RESULTS = 3
 
 
-def search(query, n_results=RESULTS):
+def search(query: str, n_results: int = RESULTS) -> list[tuple[str, Metadata, float]]:
     """Return the closest indexed sections to the query."""
     client = chromadb.PersistentClient(path=str(DB_DIR))
     collection = client.get_collection(COLLECTION)

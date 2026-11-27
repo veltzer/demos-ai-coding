@@ -119,7 +119,7 @@ assert api_key is not None
 api_key = api_key.rstrip()
 client = anthropic.Anthropic(api_key=api_key)
 
-messages = []
+messages: list[anthropic.types.MessageParam] = []
 print("Ask me about airline tickets. Type 'exit' or 'quit' (or Ctrl-D) to stop.")
 while True:
     try:

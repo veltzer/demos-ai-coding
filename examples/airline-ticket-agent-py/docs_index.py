@@ -12,8 +12,12 @@ The module you need to install to make this work is `chromadb`
 
 import pathlib
 import re
+from typing import TYPE_CHECKING
 
 import chromadb
+
+if TYPE_CHECKING:
+    from chromadb.api.types import Metadata
 
 DOCS_DIR = pathlib.Path(__file__).parent / "docs"
 DB_DIR = pathlib.Path(__file__).parent / "chroma_db"
@@ -41,7 +45,9 @@ def main():
         client.delete_collection(COLLECTION)
     collection = client.create_collection(COLLECTION)
 
-    ids, documents, metadatas = [], [], []
+    ids: list[str] = []
+    documents: list[str] = []
+    metadatas: list[Metadata] = []
     for path in sorted(DOCS_DIR.glob("*.md")):
         for number, (heading, chunk) in enumerate(chunks_of(path)):
             ids.append(f"{path.stem}:{number}")
