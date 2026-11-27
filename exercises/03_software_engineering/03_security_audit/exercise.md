@@ -14,7 +14,7 @@ Security vulnerabilities can lead to:
 - Legal liability
 - System downtime
 
-### Cost of prevention << Cost of breach**
+**Cost of prevention << Cost of breach.**
 
 ## Prerequisites
 
