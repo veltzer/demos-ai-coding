@@ -1,7 +1,8 @@
 # tests/test_security.py
 #
-# Security test suite for the audit exercise. `app` resolves when pytest runs
-# from the code/ directory; pylint lints from the repo root and cannot see it.
+# Security test suite for the audit exercise. It tests the hardened `app.py`
+# the learner writes in the code/ directory, and is run from there; until that
+# file exists the suite cannot be collected.
 # Several tests are intentionally left as stubs for the reader to complete.
 
 import importlib

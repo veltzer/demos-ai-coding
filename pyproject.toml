@@ -4,14 +4,17 @@ version = "0.0.0"
 requires-python = ">=3.14"
 dependencies = [
     "anthropic",
+    "bcrypt",
     "bleach",
     "chromadb",
     "faker",
     "flask",
+    "flask-limiter",
     "markupsafe",
     "mcp",
     "passpy",
     "pyarrow",
+    "pyotp",
     "pytest",
 ]
 

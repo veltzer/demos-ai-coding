@@ -221,6 +221,7 @@ from flask_limiter.util import get_remote_address
 import bcrypt
 import pyotp
 import secrets
+import sqlite3
 import time
 from datetime import datetime, timedelta
 import logging
@@ -435,9 +436,10 @@ def login():
             )
             return jsonify({'error': 'Invalid 2FA code'}), 401
 
-        # Successful login - regenerate session ID (prevent session fixation)
+        # Successful login - drop whatever the session held before it
+        # (prevent session fixation). Flask's cookie session has no ID to
+        # regenerate; with a server-side store (Flask-Session), issue a new one.
         session.clear()
-        session.regenerate()  # If using Flask-Session
 
         # Set session data
         session['user_id'] = user_id
