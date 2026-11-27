@@ -38,7 +38,7 @@ Examples:
 Different AI tools have different context windows:
 
 | Tool | Context Window | Equivalent |
-|------|----------------|------------|
+| ------ | ---------------- | ------------ |
 | GPT-4 Turbo | 128K tokens | ~96,000 words or ~300 pages |
 | Claude Sonnet 3.5 | 200K tokens | ~150,000 words or ~460 pages |
 | GitHub Copilot | 8K tokens | ~6,000 words or ~18 pages |

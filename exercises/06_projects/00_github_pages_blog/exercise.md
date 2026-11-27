@@ -745,7 +745,7 @@ Create `overrides/blog-index.html`:
 #### MkDocs vs Jekyll Comparison
 
 | Feature | MkDocs | Jekyll |
-|---------|---------|---------|
+| --------- | --------- | --------- |
 | Language | Python | Ruby |
 | Build Speed | Fast | Moderate |
 | Theme Options | Material, ReadTheDocs, etc. | Many themes available |

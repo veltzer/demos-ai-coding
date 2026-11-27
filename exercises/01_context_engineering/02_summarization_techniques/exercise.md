@@ -334,7 +334,7 @@ You have a complex authentication system. Practice each type:
 ### The Decision Matrix
 
 | Scenario | Summarize | Show Detail |
-|----------|-----------|-------------|
+| ---------- | ----------- | ------------- |
 | Establishing context | v | |
 | Showing pattern to follow | | v |
 | Multiple similar files | v | |

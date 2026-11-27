@@ -45,14 +45,14 @@ parallelism onto dependent steps creates races, duplicated effort, and confusion
 Before launching anything, classify the work. Ask: **does step B need the result
 of step A?**
 
-| Work shape                                          | Parallel? |
-| --------------------------------------------------- | --------- |
-| Search 8 directories for the same pattern           | ✅ yes     |
-| Summarize 5 unrelated modules                       | ✅ yes     |
-| Review a diff from 4 independent angles             | ✅ yes     |
-| Refactor a function, then update its callers        | ❌ no — sequential |
-| Read a file, then edit it based on what you read    | ❌ no — sequential |
-| Run migrations that must apply in order             | ❌ no — sequential |
+| Work shape                                       | Parallel?          |
+| ------------------------------------------------ | ------------------ |
+| Search 8 directories for the same pattern        | ✅ yes             |
+| Summarize 5 unrelated modules                    | ✅ yes             |
+| Review a diff from 4 independent angles          | ✅ yes             |
+| Refactor a function, then update its callers     | ❌ no — sequential |
+| Read a file, then edit it based on what you read | ❌ no — sequential |
+| Run migrations that must apply in order          | ❌ no — sequential |
 
 ### The golden rule
 
