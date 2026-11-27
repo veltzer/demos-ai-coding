@@ -1,5 +1,9 @@
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from repositories import UserRepository
+    from validators import UserValidator
 
 # services.py
 """Refactored service layer extracted from before/user_manager.py.
@@ -9,13 +13,13 @@ collaborators; the method bodies are deliberately elided.
 """
 
 class EmailService:
-    def send_welcome_email(self, user_email: str, user_name: str):
+    def send_welcome_email(self, user_email: str, user_name: str) -> None:
         # Focused on email sending only
         pass
 
 
 class UserService:
-    def __init__(self, repository, validator, email_service, cache):
+    def __init__(self, repository: UserRepository, validator: UserValidator, email_service: EmailService, cache: Any) -> None:
         self.repository = repository
         self.validator = validator
         self.email_service = email_service

@@ -1,7 +1,7 @@
 """XSS-safe counterpart to vulnerable/xss.py: escapes and sanitises user input."""
 
 import bleach
-from flask import Flask, render_template, request
+from flask import Flask, Response, render_template, request
 from markupsafe import Markup
 
 app = Flask(__name__)
@@ -13,7 +13,7 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # Content Security Policy
 @app.after_request
-def add_security_headers(response):
+def add_security_headers(response: Response):
     """Add security headers to all responses."""
     response.headers['Content-Security-Policy'] = (
         "default-src 'self'; "
@@ -42,7 +42,7 @@ def sanitize_html(html: str) -> str:
     )
 
 @app.route('/search')
-def search():
+def search() -> str:
     query = request.args.get('query', '')
 
     # Jinja2 auto-escapes by default
@@ -67,7 +67,7 @@ def search():
 """
 
 @app.route('/comment', methods=['POST'])
-def submit_comment():
+def submit_comment() -> str:
     """Accept user comments with HTML sanitization."""
     comment = request.form.get('comment', '')
 

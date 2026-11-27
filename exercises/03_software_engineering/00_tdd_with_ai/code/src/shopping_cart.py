@@ -9,13 +9,13 @@ object to the missing return statements here.
 
 
 class Product:
-    def __init__(self, name: str, price: float):
+    def __init__(self, name: str, price: float) -> None:
         # Implement
         ...
 
 
 class ShoppingCart:
-    def __init__(self):
+    def __init__(self) -> None:
         # Implement
         ...
 
@@ -27,19 +27,19 @@ class ShoppingCart:
         # Implement
         return 0.0
 
-    def add_item(self, product: Product, quantity: int):
+    def add_item(self, product: Product, quantity: int) -> None:
         # Implement
         ...
 
-    def remove_item(self, product: Product, quantity: int):
+    def remove_item(self, product: Product, quantity: int) -> None:
         # Implement
         ...
 
-    def apply_discount(self, percentage: float | None = None, amount: float | None = None):
+    def apply_discount(self, percentage: float | None = None, amount: float | None = None) -> None:
         # Implement
         ...
 
-    def set_tax_rate(self, rate: float):
+    def set_tax_rate(self, rate: float) -> None:
         # Implement
         ...
 

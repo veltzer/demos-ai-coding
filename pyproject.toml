@@ -64,6 +64,8 @@ search-path = [
     "live-examples/08_intent_to_production/app",
     # The TDD exercise's tests import `src.<module>` from its code/ folder.
     "exercises/03_software_engineering/00_tdd_with_ai/code",
+    # The refactored service layer names the classes of its sibling modules.
+    "exercises/03_software_engineering/01_refactoring_legacy/code/after",
 ]
 # Loose scripts import their siblings: search each importing file's folder.
 enable-fallback-search-path = true
@@ -78,6 +80,7 @@ replace-imports-with-any = [
 implicit-any-attribute = "error"
 implicit-any-empty-container = "error"
 implicit-any-lambda = "error"
+implicit-any-parameter = "error"
 implicit-any-type-argument = "error"
 instance-var-assign = "error"
 method-assign = "error"

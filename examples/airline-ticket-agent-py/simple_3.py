@@ -14,9 +14,13 @@ The modules you need to install to make this work are `passpy` and `anthropic`
 
 
 import json
+from typing import TYPE_CHECKING
 
 import anthropic
 import passpy
+
+if TYPE_CHECKING:
+    from anthropic.types.message import Message
 
 MODEL = "claude-opus-5"
 
@@ -52,12 +56,12 @@ CLASSIFIER_SCHEMA: dict[str, object] = {
 }
 
 
-def text_of(response):
+def text_of(response: Message):
     """Concatenate the text blocks of a response, skipping thinking blocks."""
     return "".join(b.text for b in response.content if b.type == "text")
 
 
-def is_ticket_sales(question):
+def is_ticket_sales(question: str):
     """Ask Claude whether the question is about airline ticket sales."""
     response = client.messages.create(
         model=MODEL,
@@ -72,7 +76,7 @@ def is_ticket_sales(question):
     return json.loads(text_of(response))["on_topic"]
 
 
-def answer(question):
+def answer(question: str):
     """Answer a ticket sales question."""
     response = client.messages.create(
         model=MODEL,

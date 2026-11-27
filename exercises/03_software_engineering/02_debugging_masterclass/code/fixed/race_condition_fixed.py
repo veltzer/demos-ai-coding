@@ -8,7 +8,7 @@ import time
 balance = 0
 lock = threading.Lock()
 
-def deposit_fixed(amount):
+def deposit_fixed(amount: int) -> None:
     global balance  # noqa: PLW0603  teaching: kept from the buggy version so the diff is only the lock
     with lock:
         current = balance
@@ -17,7 +17,7 @@ def deposit_fixed(amount):
         print(f"Deposited {amount}, balance now {balance}")
 
 # Test to verify fix
-def test_race_condition_fixed():
+def test_race_condition_fixed() -> None:
     global balance  # noqa: PLW0603  teaching: kept from the buggy version so the diff is only the lock
     balance = 0
 

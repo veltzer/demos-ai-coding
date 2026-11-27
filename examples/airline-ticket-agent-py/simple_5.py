@@ -17,9 +17,13 @@ The modules you need to install to make this work are `passpy` and `anthropic`
 
 import datetime as dt
 import json
+from typing import TYPE_CHECKING
 
 import anthropic
 import passpy
+
+if TYPE_CHECKING:
+    from anthropic.types.message_param import MessageParam
 
 MODEL = "claude-opus-5"
 
@@ -90,7 +94,7 @@ REPLY_SCHEMA: dict[str, object] = {
 SLOTS = ("departure_city", "destination_city", "date")
 
 
-def ask(messages):
+def ask(messages: list[MessageParam]):
     """Send the conversation and return the parsed structured reply."""
     today = dt.datetime.now(dt.UTC).date().isoformat()
     response = client.messages.create(
@@ -104,7 +108,7 @@ def ask(messages):
     return json.loads(text)
 
 
-def buy_ticket(departure_city, destination_city, date):
+def buy_ticket(departure_city: str, destination_city: str, date: str) -> None:
     """'Buy' the ticket -- stands in for a real booking system."""
     print("\n--- TICKET PURCHASED ---")
     print(f"From: {departure_city}")

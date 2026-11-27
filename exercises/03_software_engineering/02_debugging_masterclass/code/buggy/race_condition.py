@@ -7,7 +7,7 @@ import threading
 
 balance = 0
 
-def deposit(amount):
+def deposit(amount: int) -> None:
     global balance  # noqa: PLW0603  teaching: the unsynchronised global is the race the reader is asked to find
     current = balance
     # Imagine another thread runs here!
@@ -19,7 +19,7 @@ def deposit(amount):
 # Actual: Could be 100 or 50 (race condition!)
 
 # Test to expose race condition
-def test_race_condition():
+def test_race_condition() -> None:
     global balance  # noqa: PLW0603  teaching: the test resets the same shared global the race corrupts
     balance = 0
 

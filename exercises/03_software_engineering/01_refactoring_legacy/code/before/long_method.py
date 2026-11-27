@@ -12,7 +12,7 @@ email_service: Any = None
 generate_confirmation_email: Any = None
 
 
-def process_order(order_data):
+def process_order(order_data: dict[str, Any]):
     # Validate order
     if not order_data.get('customer_id'):
         return {"error": "Missing customer ID"}

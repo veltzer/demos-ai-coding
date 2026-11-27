@@ -12,6 +12,7 @@ The module you need to install to make this work is `chromadb`
 
 import pathlib
 import re
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import chromadb
@@ -24,7 +25,7 @@ DB_DIR = pathlib.Path(__file__).parent / "chroma_db"
 COLLECTION = "flights"
 
 
-def chunks_of(path):
+def chunks_of(path: Path):
     """Split a markdown file into (section title, text) pairs on `##` headings."""
     text = path.read_text(encoding="utf-8")
     title = re.match(r"#\s+(.*)", text)
@@ -38,7 +39,7 @@ def chunks_of(path):
             yield heading.strip(), f"{title} -- {heading.strip()}\n\n{body}"
 
 
-def main():
+def main() -> None:
     client = chromadb.PersistentClient(path=str(DB_DIR))
     # Rebuild from scratch so re-running never duplicates or leaves stale text.
     if COLLECTION in [c.name for c in client.list_collections()]:

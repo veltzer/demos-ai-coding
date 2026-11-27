@@ -33,7 +33,7 @@ def search(query: str, n_results: int = RESULTS) -> list[tuple[str, Metadata, fl
     return list(zip(documents[0], metadatas[0], distances[0], strict=True))
 
 
-def main():
+def main() -> None:
     if len(sys.argv) < 2:
         sys.exit(f"usage: {sys.argv[0]} <query>")
     query = " ".join(sys.argv[1:])

@@ -7,7 +7,7 @@
 from src.password_validator import PasswordValidator
 
 
-def test_password_must_be_at_least_8_characters():
+def test_password_must_be_at_least_8_characters() -> None:
     """Test that password requires minimum 8 characters."""
     validator = PasswordValidator()
 

@@ -15,19 +15,19 @@ app = importlib.import_module("app").app
 class TestSecurityHeaders:
     """Test security headers are present."""
 
-    def test_csp_header(self):
+    def test_csp_header(self) -> None:
         """Test Content-Security-Policy header."""
         with app.test_client() as client:
             response = client.get('/')
             assert 'Content-Security-Policy' in response.headers
 
-    def test_xss_protection_header(self):
+    def test_xss_protection_header(self) -> None:
         """Test X-XSS-Protection header."""
         with app.test_client() as client:
             response = client.get('/')
             assert response.headers.get('X-XSS-Protection') == '1; mode=block'
 
-    def test_clickjacking_protection(self):
+    def test_clickjacking_protection(self) -> None:
         """Test X-Frame-Options header."""
         with app.test_client() as client:
             response = client.get('/')
@@ -36,14 +36,14 @@ class TestSecurityHeaders:
 class TestInputValidation:
     """Test input validation."""
 
-    def test_sql_injection_prevention(self):
+    def test_sql_injection_prevention(self) -> None:
         """Test SQL injection is prevented."""
         with app.test_client() as client:
             # Try SQL injection
             response = client.get('/user?id=1 OR 1=1')
             assert response.status_code == 400
 
-    def test_xss_prevention(self):
+    def test_xss_prevention(self) -> None:
         """Test XSS is prevented."""
         with app.test_client() as client:
             response = client.get('/search?query=<script>alert(1)</script>')
@@ -53,7 +53,7 @@ class TestInputValidation:
 class TestAuthentication:
     """Test authentication security."""
 
-    def test_rate_limiting(self):
+    def test_rate_limiting(self) -> None:
         """Test login rate limiting."""
         with app.test_client() as client:
             # Try multiple failed logins
@@ -70,6 +70,6 @@ class TestAuthentication:
             })
             assert response.status_code == 429
 
-    def test_session_timeout(self):
+    def test_session_timeout(self) -> None:
         """Test session expires after timeout."""
         # Test implementation

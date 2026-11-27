@@ -7,36 +7,36 @@ from src.string_calculator import StringCalculator
 
 
 class TestStringCalculator:
-    def setup_method(self):
+    def setup_method(self) -> None:
         self.calc = StringCalculator()
 
-    def test_empty_string_returns_zero(self):
+    def test_empty_string_returns_zero(self) -> None:
         """Empty string should return 0."""
         assert self.calc.add("") == 0
 
-    def test_single_number_returns_that_number(self):
+    def test_single_number_returns_that_number(self) -> None:
         """Single number should return that number."""
         assert self.calc.add("1") == 1
         assert self.calc.add("5") == 5
 
-    def test_two_numbers_comma_delimited_returns_sum(self):
+    def test_two_numbers_comma_delimited_returns_sum(self) -> None:
         """Two numbers separated by comma should return their sum."""
         assert self.calc.add("1,2") == 3
         assert self.calc.add("10,20") == 30
 
-    def test_multiple_numbers_returns_sum(self):
+    def test_multiple_numbers_returns_sum(self) -> None:
         """Multiple numbers should return their sum."""
         assert self.calc.add("1,2,3") == 6
         assert self.calc.add("1,2,3,4,5") == 15
         assert self.calc.add("10,20,30,40") == 100
 
-    def test_newline_as_delimiter(self):
+    def test_newline_as_delimiter(self) -> None:
         """Newlines can be used as delimiters."""
         assert self.calc.add("1\n2,3") == 6
         assert self.calc.add("1\n2\n3") == 6
         assert self.calc.add("10\n20,30") == 60
 
-    def test_negative_numbers_throw_exception(self):
+    def test_negative_numbers_throw_exception(self) -> None:
         """Negative numbers should throw exception with the negative number in message."""
         with pytest.raises(ValueError, match="Negatives not allowed: -1"):
             self.calc.add("1,-1,2")
@@ -44,12 +44,12 @@ class TestStringCalculator:
         with pytest.raises(ValueError, match="Negatives not allowed: -1, -2"):
             self.calc.add("1,-1,2,-2")
 
-    def test_numbers_bigger_than_1000_ignored(self):
+    def test_numbers_bigger_than_1000_ignored(self) -> None:
         """Numbers bigger than 1000 should be ignored."""
         assert self.calc.add("2,1001") == 2
         assert self.calc.add("1000,1001,2") == 1002
 
-    def test_custom_delimiter(self):
+    def test_custom_delimiter(self) -> None:
         """Support custom delimiter specified in format: //[delimiter]\n[numbers]"""
         assert self.calc.add("//;\n1;2") == 3
         assert self.calc.add("//|\n1|2|3") == 6

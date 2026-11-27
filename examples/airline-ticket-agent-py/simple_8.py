@@ -23,7 +23,7 @@ import json
 import os
 import pathlib
 import re
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import anthropic
 import chromadb
@@ -168,7 +168,7 @@ PREFS_TOOL: ToolParam = {
 }
 
 
-def search_policy(query):
+def search_policy(query: str) -> str:
     """Search the indexed policy documents and return the matching passages."""
     print(f"[vector db query: {query!r}]")
     found = collection.query(query_texts=[query], n_results=POLICY_RESULTS)
@@ -184,12 +184,12 @@ def search_policy(query):
     return "\n\n---\n\n".join(passages)
 
 
-def named_files(text):
+def named_files(text: str):
     """Return the set of filenames the user typed in this message."""
     return set(FILENAME_RE.findall(text))
 
 
-def read_preferences(filename, allowed):
+def read_preferences(filename: str, allowed: set[str]) -> str:
     """Read a preferences file on the model's behalf, if the user named it."""
     if filename not in allowed:
         return f"Error: you did not name {filename!r} in your message."
@@ -203,7 +203,7 @@ def read_preferences(filename, allowed):
         return f"Error reading {filename}: {error.strerror}."
 
 
-def ask(messages, allowed):
+def ask(messages: list[anthropic.types.MessageParam], allowed: set[str]):
     """Run the turn to completion, servicing tool calls, and return the reply."""
     today = dt.datetime.now(dt.UTC).date().isoformat()
     # Tools and structured output can't drive the same call, so let the model
@@ -219,15 +219,15 @@ def ask(messages, allowed):
         if response.stop_reason != "tool_use":
             break
         messages.append({"role": "assistant", "content": response.content})
-        results = []
+        results: list[anthropic.types.ToolResultBlockParam] = []
         for block in response.content:
             if block.type != "tool_use":
                 continue
             if block.name == "search_policy":
-                content = search_policy(block.input["query"])
+                content = search_policy(str(block.input["query"]))
             else:
                 print(f"[reading {block.input['filename']}]")
-                content = read_preferences(block.input["filename"], allowed)
+                content = read_preferences(str(block.input["filename"]), allowed)
             results.append(
                 {
                     "type": "tool_result",
@@ -248,7 +248,7 @@ def ask(messages, allowed):
     return json.loads(text)
 
 
-def buy_ticket(departure_city, destination_city, date):
+def buy_ticket(departure_city: str, destination_city: str, date: str) -> None:
     """'Buy' the ticket -- stands in for a real booking system."""
     print("\n--- TICKET PURCHASED ---")
     print(f"From: {departure_city}")
@@ -265,7 +265,7 @@ client = anthropic.Anthropic(api_key=api_key)
 
 collection = chromadb.PersistentClient(path=str(DB_DIR)).get_collection(COLLECTION)
 
-messages: list[dict[str, Any]] = []
+messages: list[anthropic.types.MessageParam] = []
 print(
     "Ask me about airline tickets. Name a preferences file to have me read it. "
     "Type '/clear' to start over, or 'exit' or 'quit' (or Ctrl-D) to stop."

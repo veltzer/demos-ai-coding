@@ -56,7 +56,7 @@ REPLY_SCHEMA: dict[str, object] = {
 }
 
 
-def reply(question):
+def reply(question: str):
     """Classify and answer a question in one call; return the text to print."""
     response = client.messages.create(
         model=MODEL,

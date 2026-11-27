@@ -149,7 +149,7 @@ def write_parquet(path: str, rows: Iterator[dict[str, object]], chunk_size: int 
         if writer is not None:
             writer.close()
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Generate fake people data.")
     parser.add_argument("-n", "--num", type=int, default=1_000_000, help="Number of records to generate")
     parser.add_argument("-o", "--out", type=str, default="people.csv", help="Output file path")

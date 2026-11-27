@@ -5,7 +5,7 @@ from typing import Any
 """Data-access layer extracted from before/user_manager.py."""
 
 class UserRepository:
-    def __init__(self, db):
+    def __init__(self, db: Any) -> None:
         self.db = db
 
     def find_by_email(self, email: str):

@@ -1,11 +1,14 @@
+
+from typing import Any
+
 # buggy_app.py
 """Application seeded with bugs for the debugging masterclass."""
 
-def calculate_discount(price, discount_percent):
+def calculate_discount(price: float, discount_percent: float):
     discount_amount = price * (discount_percent / 100)
     return price - discount_amount
 
-def apply_bulk_discounts(items):
+def apply_bulk_discounts(items: list[dict[str, Any]]):
     results = []
     for item in items:
         discounted = calculate_discount(item['price'], item['discount'])
@@ -15,7 +18,7 @@ def apply_bulk_discounts(items):
         })
     return results
 
-def process_order(order_data):
+def process_order(order_data: dict[str, list[dict[str, int | str] | dict[str, int | str | None]]]):
     items = order_data['items']
     discounted_items = apply_bulk_discounts(items)
     total = sum(item['final_price'] for item in discounted_items)

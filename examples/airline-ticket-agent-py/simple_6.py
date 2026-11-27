@@ -16,7 +16,6 @@ The modules you need to install to make this work are `passpy` and `anthropic`
 
 import datetime as dt
 import json
-from typing import Any
 
 import anthropic
 import passpy
@@ -90,7 +89,7 @@ REPLY_SCHEMA: dict[str, object] = {
 SLOTS = ("departure_city", "destination_city", "date")
 
 
-def ask(messages):
+def ask(messages: list[anthropic.types.MessageParam]):
     """Send the conversation and return the parsed structured reply."""
     today = dt.datetime.now(dt.UTC).date().isoformat()
     response = client.messages.create(
@@ -104,7 +103,7 @@ def ask(messages):
     return json.loads(text)
 
 
-def buy_ticket(departure_city, destination_city, date):
+def buy_ticket(departure_city: str, destination_city: str, date: str) -> None:
     """'Buy' the ticket -- stands in for a real booking system."""
     print("\n--- TICKET PURCHASED ---")
     print(f"From: {departure_city}")
@@ -119,7 +118,7 @@ assert api_key is not None
 api_key = api_key.rstrip()
 client = anthropic.Anthropic(api_key=api_key)
 
-messages: list[dict[str, Any]] = []
+messages: list[anthropic.types.MessageParam] = []
 print(
     "Ask me about airline tickets. Type '/clear' to start over, "
     "or 'exit' or 'quit' (or Ctrl-D) to stop."

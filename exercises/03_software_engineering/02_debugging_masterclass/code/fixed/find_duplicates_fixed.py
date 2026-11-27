@@ -1,6 +1,6 @@
 """Corrected counterpart to buggy/find_duplicates.py."""
 
-def find_duplicates(items):
+def find_duplicates(items: list[int]):
     seen = set()
     duplicates = set()  # Use set instead of list!
 

@@ -17,7 +17,7 @@ S3Storage: Any = None
 
 
 class UserManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.db = MySQLConnection()
         self.cache = RedisConnection()
         self.email_service = SMTPService()
@@ -25,7 +25,7 @@ class UserManager:
         self.session_store = SessionStore()
         self.file_storage = S3Storage()
 
-    def create_user(self, data):
+    def create_user(self, data: dict[str, Any]):
         # Validate email
         if '@' not in data['email']:
             raise ValueError("Invalid email")
@@ -68,23 +68,23 @@ class UserManager:
 
         return user_id
 
-    def login_user(self, email, password):
+    def login_user(self, email: str, password: str) -> None:
         # ... another 50 lines of mixed concerns
         pass
 
-    def update_profile(self, user_id, data):
+    def update_profile(self, user_id: int, data: dict[str, Any]) -> None:
         # ... another 50 lines
         pass
 
-    def delete_user(self, user_id):
+    def delete_user(self, user_id: int) -> None:
         # ... another 50 lines
         pass
 
-    def reset_password(self, email):
+    def reset_password(self, email: str) -> None:
         # ... another 50 lines
         pass
 
-    def generate_welcome_email(self, user_data):
+    def generate_welcome_email(self, user_data: dict[str, Any]) -> None:
         # ... email template logic
         pass
 

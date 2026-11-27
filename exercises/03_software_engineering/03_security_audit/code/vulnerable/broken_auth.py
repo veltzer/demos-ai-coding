@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = "secret"  # Weak secret key!
 
 @app.route('/login', methods=['POST'])
-def login():
+def login() -> str | tuple[str, int]:
     username = request.form['username']
     password = request.form['password']
 
@@ -38,7 +38,7 @@ def login():
     return "Login failed", 401
 
 @app.route('/admin')
-def admin():
+def admin() -> str | tuple[str, int]:
     # Weak authorization check
     if session.get('is_admin'):
         return "Admin panel"

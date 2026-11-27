@@ -1,6 +1,6 @@
 """Duplicate finder with a deliberate defect for the reader to locate."""
 
-def find_duplicates(items):
+def find_duplicates(items: list[int]):
     seen = set()
     duplicates = []
 

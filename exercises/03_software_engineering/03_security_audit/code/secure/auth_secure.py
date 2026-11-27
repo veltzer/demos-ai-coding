@@ -6,12 +6,16 @@ import secrets
 import sqlite3
 import time
 from datetime import UTC, datetime, timedelta
+from typing import TYPE_CHECKING
 
 import bcrypt
 import pyotp
 from flask import Flask, jsonify, request, session
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+
+if TYPE_CHECKING:
+    from flask.wrappers import Response
 
 app = Flask(__name__)
 
@@ -116,7 +120,7 @@ def record_failed_attempt(username: str) -> None:
 
 @app.route('/register', methods=['POST'])
 @limiter.limit("5 per hour")
-def register():
+def register() -> tuple[Response, int]:
     """Register a new user."""
     data = request.get_json()
 
@@ -263,7 +267,7 @@ def login():
 
 
 @app.route('/logout', methods=['POST'])
-def logout():
+def logout() -> tuple[Response, int]:
     """Logout user and invalidate session."""
     username = session.get('username', 'unknown')
     session.clear()
@@ -276,7 +280,7 @@ def logout():
 
 
 @app.before_request
-def check_session_timeout():
+def check_session_timeout() -> tuple[Response, int] | None:
     """Check for session timeout (30 minutes)."""
     if 'login_time' in session:
         login_time = datetime.fromisoformat(session['login_time'])
