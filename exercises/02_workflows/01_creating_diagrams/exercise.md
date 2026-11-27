@@ -17,39 +17,39 @@ Learn how to use GitHub Copilot to generate various types of diagrams using Merm
 
 Start with comments describing what you want to diagram, then let Copilot suggest Mermaid syntax:
 
-```markdown
+````markdown
 <!-- Flowchart showing user login process -->
 ```mermaid
 flowchart TD
     <!-- Let Copilot complete this flowchart -->
-```
+````
 
-```markdown
+````markdown
 <!-- Sequence diagram for API authentication -->
 ```mermaid
 sequenceDiagram
     <!-- Let Copilot complete this sequence diagram -->
-```
+````
 
-```markdown
+````markdown
 <!-- Entity relationship diagram for a blog database -->
 ```mermaid
 erDiagram
     <!-- Let Copilot complete this ER diagram -->
-```
+````
 
-```markdown
+````markdown
 <!-- Git workflow diagram showing feature branch process -->
 ```mermaid
 gitgraph
     <!-- Let Copilot complete this git diagram -->
-```
+````
 
 ### Part 2: System Architecture Diagrams
 
 Use comments to describe complex systems and let Copilot create the diagrams:
 
-```markdown
+````markdown
 <!-- Cloud architecture diagram showing:
      - Frontend (React app)
      - Load balancer
@@ -60,13 +60,13 @@ Use comments to describe complex systems and let Copilot create the diagrams:
 ```mermaid
 graph TB
     <!-- Let Copilot create the architecture diagram -->
-```
+````
 
 ### Part 3: Class Diagrams for Code
 
 Create a Python file with some classes, then ask Copilot to generate UML diagrams:
 
-```python
+````python
 # E-commerce system classes
 class User:
     def __init__(self, username, email):
@@ -90,13 +90,13 @@ class Order:
 ```mermaid
 classDiagram
     <!-- Let Copilot create UML diagram from the Python classes -->
-```
+````
 
 ### Part 4: Process Flow Diagrams
 
 Describe business processes and let Copilot create flowcharts:
 
-```markdown
+````markdown
 <!-- Software deployment process flowchart including:
      - Code commit
      - Automated testing
@@ -108,7 +108,7 @@ Describe business processes and let Copilot create flowcharts:
 ```mermaid
 flowchart LR
     <!-- Let Copilot create the deployment process diagram -->
-```
+````
 
 ### Part 5: ASCII Art Diagrams
 

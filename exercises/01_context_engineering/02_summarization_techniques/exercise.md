@@ -1244,7 +1244,7 @@ NOW CREATE: Wishlist following same pattern
 
 **Good Approach**:
 
-```txt
+````txt
 BUG: /orders endpoint 500 errors
 
 CONTEXT (summary):
@@ -1264,7 +1264,7 @@ RELEVANT CODE (full detail):
 [Paste recent migration - 20 lines]
 
 QUESTION: Why is inventory_reserved_at null?
-```
+````
 
 ### Scenario 3: Code Review
 

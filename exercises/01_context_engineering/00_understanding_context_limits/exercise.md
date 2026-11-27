@@ -442,7 +442,7 @@ AI: [Gives complete, contextually perfect solution]
 
 1. Create a context primer document:
 
-```markdown
+````markdown
 # Project Context: Task Management System
 
 ## Architecture
@@ -459,7 +459,7 @@ AI: [Gives complete, contextually perfect solution]
 class BaseRepository:
     def __init__(self, session: Session):
         self.session = session
-```
+````
 
 ### Service Pattern
 
@@ -482,7 +482,7 @@ async def create_task(
 
 ## Now implement: Comment system for tasks
 
-```txt
+````txt
 1. Ask AI to implement the comment system
 1. Compare with asking without context primer
 
@@ -502,7 +502,7 @@ async def create_task(
 ```txt
 User: "Here's my entire project [pastes 10,000 lines]
        Fix the bug in the payment processing"
-```
+````
 
 **Why Bad**:
 
@@ -881,7 +881,7 @@ Production bug, need quick context for AI assistance:
 
 **Practice**:
 
-```txt
+````txt
 User: "Production bug in payment processing:
 
 Error:
@@ -902,7 +902,7 @@ Environment:
 - Production load: 1000 req/min
 
 What's wrong and how to fix?"
-```
+````
 
 ---
 

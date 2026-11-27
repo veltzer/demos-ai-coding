@@ -145,7 +145,7 @@ Ask Copilot to analyze specific files:
 
 When you find a bug, document it properly:
 
-```markdown
+````markdown
 ## Bug Report: [Brief Description]
 
 ### Location
@@ -178,7 +178,7 @@ def buggy_function():
 # Fixed version
 def fixed_function():
     ...
-```
+````
 
 ### Test Case
 

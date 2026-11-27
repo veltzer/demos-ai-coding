@@ -978,7 +978,7 @@ def parse_args():
 
 Create a personal library of prompts for common tasks. Here's a template:
 
-```markdown
+````markdown
 # Prompt Library
 
 ## Data Validation
@@ -1004,7 +1004,7 @@ Create a personal library of prompts for common tasks. Here's a template:
 # - user@domain.com
 # - user.name+tag@domain.co.uk
 # - user@subdomain.domain.com
-```
+````
 
 ### URL Validator
 

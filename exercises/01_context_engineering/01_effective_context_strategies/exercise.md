@@ -336,7 +336,7 @@ class UserRepository:
 
 Create a context map document:
 
-```markdown
+````markdown
 # Context Map: User Management Feature
 
 ## File Structure
@@ -348,7 +348,7 @@ user_management/
 +-- services.py        # UserService
 +-- api.py            # FastAPI endpoints
 +-- validators.py     # Input validation
-```
+````
 
 ## Key Relationships
 
