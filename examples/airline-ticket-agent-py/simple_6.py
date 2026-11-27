@@ -16,6 +16,7 @@ The modules you need to install to make this work are `passpy` and `anthropic`
 
 import datetime as dt
 import json
+from typing import Any
 
 import anthropic
 import passpy
@@ -118,7 +119,7 @@ assert api_key is not None
 api_key = api_key.rstrip()
 client = anthropic.Anthropic(api_key=api_key)
 
-messages: list[dict] = []
+messages: list[dict[str, Any]] = []
 print(
     "Ask me about airline tickets. Type '/clear' to start over, "
     "or 'exit' or 'quit' (or Ctrl-D) to stop."

@@ -6,7 +6,7 @@ import csv
 import os
 import random
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -124,7 +124,7 @@ def write_parquet(path: str, rows: Iterator[dict[str, object]], chunk_size: int 
 
     writer = None
     try:
-        batch: dict[str, list] = {
+        batch: dict[str, list[Any]] = {
             "name": [],
             "family_name": [],
             "marital_status": [],

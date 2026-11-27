@@ -23,7 +23,7 @@ import json
 import os
 import pathlib
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import anthropic
 import chromadb
@@ -265,7 +265,7 @@ client = anthropic.Anthropic(api_key=api_key)
 
 collection = chromadb.PersistentClient(path=str(DB_DIR)).get_collection(COLLECTION)
 
-messages: list[dict] = []
+messages: list[dict[str, Any]] = []
 print(
     "Ask me about airline tickets. Name a preferences file to have me read it. "
     "Type '/clear' to start over, or 'exit' or 'quit' (or Ctrl-D) to stop."

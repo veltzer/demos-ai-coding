@@ -1,3 +1,6 @@
+
+from typing import Any
+
 # services.py
 """Refactored service layer extracted from before/user_manager.py.
 
@@ -18,7 +21,7 @@ class UserService:
         self.email_service = email_service
         self.cache = cache
 
-    def create_user(self, data: dict) -> int:
+    def create_user(self, data: dict[str, Any]) -> int:
         self.validator.validate_email(data['email'])
         # ... orchestrates the operations
   # body elided in the sketch
