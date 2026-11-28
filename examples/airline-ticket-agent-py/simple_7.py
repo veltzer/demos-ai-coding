@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Stage 7: let the model read a preferences file the user names.
+Stage 7: let the model read a preferences file with the user name.
 
 If the user's message contains a filename, the model is offered a
 `read_preferences` tool for that turn. The client -- not the model -- does the
