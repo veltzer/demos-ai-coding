@@ -2,8 +2,8 @@
 
 """HTTP MCP server exposing two arithmetic tools: add and subtract.
 
-Run with `python server.py`; the server speaks the MCP streamable-http
-transport at http://127.0.0.1:8000/mcp. Pass --debug to log every MCP
+Run with `python mcp_server.py`; the server speaks the MCP streamable-http
+transport at http://127.0.0.1:8001/mcp. Pass --debug to log every MCP
 request, notification, and response.
 """
 
@@ -75,7 +75,7 @@ def main() -> None:
         logger.setLevel(logging.DEBUG)
         server.middleware.append(log_messages)
 
-    server.run(transport="streamable-http", host="127.0.0.1", port=8000)
+    server.run(transport="streamable-http", host="127.0.0.1", port=8001)
 
 
 if __name__ == "__main__":
